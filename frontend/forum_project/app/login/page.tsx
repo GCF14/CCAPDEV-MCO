@@ -47,6 +47,7 @@ export default function Login() {
               <div className="relative">
                 <Input
                   id="password"
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required

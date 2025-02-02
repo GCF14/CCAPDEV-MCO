@@ -1,25 +1,29 @@
 'use client'
 
-import { useState } from 'react'
-import { motion } from "framer-motion"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Label } from "@/components/ui/label"
-import { Eye, EyeOff, Mail} from 'lucide-react'
-import Link from 'next/link'
+import Post from "@/components/post";
 
-export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-
+export default function Hompage() {
 
   return (
-    <head>
-        <title>Login</title>
-        <meta name="description" content="Login" />
-    </head>
+    <div>
+
+    <div>
+      <h1>Homepage</h1>
+    </div>
+
+    <div className="flex flex-col items-center justify-center min-h-screen w-full mt-16 space-y-4">
+      <Post username="Christian" content="First post in the forum" />
+      <Post username="Christian" content="Hello" />
+      <Post username="Christian" content="Hi!" />
+      <Post username="Christian" content="woahhh" />
+      <Post username="Christian" content="sheeshhh" />
+    </div>
+  
+
+
+
+    </div>
+    
     
     
     
