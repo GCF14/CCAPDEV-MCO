@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/sidebar"
 import { Plus } from "lucide-react";
 import CreatePostButton from "@/components/create-post-button";
+import Header from '@/components/Header';
 
 export default function Homepage() {
 
@@ -18,6 +19,7 @@ export default function Homepage() {
         <SidebarProvider>
           <AppSidebar />
           <SidebarInset>
+            <Header/>
             <div className="flex flex-1 flex-col gap-4 px-4 py-10">
               <div className="mx-auto h-full w-full max-w-3xl rounded-xl">
                 <div className="flex flex-col items-center justify-center min-h-screen w-full mt-16 space-y-4">
@@ -38,12 +40,6 @@ export default function Homepage() {
       
       
     </div>
-    
-    
-
-    
-    
-    
     
   );
 }
