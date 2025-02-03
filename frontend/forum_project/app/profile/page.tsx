@@ -1,11 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import Header from '@/app/profile/Header';
+import Header from '@/components/Header';
 import Post from "@/components/post";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
-import ProfileCard from './ProfileCard';
+import ProfileCard from '../../components/ProfileCard';
 
 export default function Profile() {
   return ( 
