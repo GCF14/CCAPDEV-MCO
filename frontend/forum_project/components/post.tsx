@@ -19,13 +19,21 @@ import {
 import React from "react";
 
 interface PostProps {
+    id: string;
     username: string;
+    title: string;
     content: React.ReactNode;
 }
 
 import { ThumbsUp, ThumbsDown, MessageSquare, Share2 } from "lucide-react";
 
-export default function Post({ username, content }: PostProps) {
+import Link from "next/link";
+
+import { Button } from "@/components/ui/button";
+
+
+
+export default function Post({id, username, title, content }: PostProps) {
     return (
         <Card className="w-full max-w-lg">
             <CardHeader>
@@ -59,18 +67,25 @@ export default function Post({ username, content }: PostProps) {
                     </HoverCardContent>
                     </HoverCard>
                 </div>
+                <CardTitle className="text-lg font-semibold">{title}</CardTitle> 
             </CardHeader>
 
-            <CardContent>
-                <CardDescription>{content}</CardDescription>
+            <CardContent>     
+        
+                <CardDescription>{content}</CardDescription>               
             </CardContent>
             <CardFooter>
                 <div className="flex items-center space-x-2">
                     <ThumbsUp className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />
                     <ThumbsDown className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />
                     <MessageSquare className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />
-                    <Share2 className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />
+                    <Share2 className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />    
+                    <Link href={`/post/${id}`} passHref>
+                        <Button variant="outline">View Post</Button>
+                    </Link>                  
                 </div>
+
+                
             </CardFooter>
         </Card>
 
