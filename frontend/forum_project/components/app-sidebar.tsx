@@ -2,8 +2,6 @@
 
 import * as React from "react"
 import {
-  Blocks,
-  Calendar,
   Home,
   Search,
   Settings2,
