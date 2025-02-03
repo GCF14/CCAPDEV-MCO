@@ -31,6 +31,11 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 
+const getTextContent = (node: React.ReactNode): string => {
+    if (typeof node === "string") return node; // If it's already a string, return it
+    if (typeof node === "number") return node.toString(); // Convert numbers to strings
+    return ""; // Ignore anything else (like JSX)
+  };
 
 
 export default function Post({id, username, title, content }: PostProps) {
@@ -80,7 +85,7 @@ export default function Post({id, username, title, content }: PostProps) {
                     <ThumbsDown className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />
                     <MessageSquare className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />
                     <Share2 className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />    
-                    <Link href={`/post/${id}`} passHref>
+                    <Link href={`/post?id=${id}&title=${encodeURIComponent(title)}&username=${encodeURIComponent(username)}&content=${encodeURIComponent(getTextContent(content))}`}>
                         <Button variant="outline">View Post</Button>
                     </Link>                  
                 </div>
