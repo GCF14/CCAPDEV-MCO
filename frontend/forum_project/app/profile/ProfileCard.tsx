@@ -9,6 +9,13 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar"
+
 interface ProfileInfo {
   username: string;
 }
@@ -18,27 +25,34 @@ export default function ProfileCard({ username }: ProfileInfo){
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>{username}</CardTitle>
-        <CardTitle>Following: 4 Followers: 4</CardTitle>
+        <div className="relative w-full h-32 bg-gray-400">
+        <Avatar className="absolute left-2 bottom-[-30px] w-20 h-20 border-2 border-black">
+        <AvatarImage src='/profile-pic.jpg' alt="Avatar" />
+        <AvatarFallback>
+            <span className="material-symbols-rounded medium">
+            account_circle
+            </span>
+        </AvatarFallback>
+        </Avatar>
+        </div>
+        <div className="pt-10">
+
+          <CardTitle></CardTitle>
+          <p className="">{username}</p>
+          <p>Following: 4 Followers: 4</p>
+        </div>
+        
+
         <CardDescription>Bio</CardDescription>
       </CardHeader>
       <CardContent>
         <form>
           <div className="grid w-full items-center gap-4">
-            <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="name">Name</Label>
-              <Input id="name" placeholder="Name of your project" />
-            </div>
-            <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="framework">Framework</Label>
-              
-            </div>
           </div>
         </form>
       </CardContent>
-      <CardFooter className="flex justify-between">
-        <Button variant="outline">Cancel</Button>
-        <Button>Deploy</Button>
+      <CardFooter className="flex justify-end">
+        <Button>Edit Profile</Button>
       </CardFooter>
     </Card>
   )
