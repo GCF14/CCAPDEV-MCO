@@ -39,7 +39,7 @@ export default function ProfileCard({ username }: ProfileInfo){
 
           <CardTitle></CardTitle>
           <p className="">{username}</p>
-          <p>Following: 4 Followers: 4</p>
+          <p>Following: 4 Followers: 5</p>
         </div>
         
 
