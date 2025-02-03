@@ -7,6 +7,7 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar"
 import { Plus } from "lucide-react";
+import CreatePostButton from "@/components/create-post-button";
 
 export default function Homepage() {
 
@@ -32,14 +33,8 @@ export default function Homepage() {
         </SidebarProvider>
       </div>
 
-      <div className="fixed bottom-6 right-6">
-        <button className="group flex items-center justify-center gap-2 rounded-full bg-black px-4 py-3 text-white shadow-lg transition-all hover:w-40 hover:bg-black">
-          <Plus className="size-5" />
-          <span className="hidden opacity-0 transition-opacity group-hover:inline group-hover:opacity-100">
-            Create Post
-          </span>
-        </button>
-      </div>
+        <CreatePostButton/>
+      
       
     </div>
     
