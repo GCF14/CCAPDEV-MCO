@@ -8,7 +8,6 @@ import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import ProfileCard from './ProfileCard';
 
 export default function Profile() {
-
   return ( 
     <div className="flex flex-col w-full">
       <div className="flex flex-col md:flex-row w-full">

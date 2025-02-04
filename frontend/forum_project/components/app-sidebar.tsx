@@ -30,7 +30,7 @@ const data = {
   navMain: [
     {
       title: "Home",
-      url: "#",
+      url: "http://localhost:3000/",
       icon: Home,
       isActive: true,
     },
