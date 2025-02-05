@@ -9,7 +9,6 @@ import {
 import Header from "@/components/Header"
 import CreatePostButton from "@/components/create-post-button";
 
-
 export default function Homepage() {
 
   return (

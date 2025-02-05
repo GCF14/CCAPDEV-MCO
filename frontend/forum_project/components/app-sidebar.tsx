@@ -41,7 +41,7 @@ const data = {
     },
     {
       title: "Profile",
-      url: "/profile",
+      url: "http://localhost:3000/profile",
       icon: CircleUserRound,
       badge: "10",
     },
@@ -85,7 +85,8 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar className="border-r-0" {...props}>
+    // <Sidebar className="border-r-0 " {...props}>
+    <Sidebar collapsible="icon" className="border-r-0 " {...props}>
       <SidebarHeader>
         <TitleLogo title={data.forumTitle} />
         <NavMain items={data.navMain} />

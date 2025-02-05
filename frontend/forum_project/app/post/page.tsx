@@ -14,14 +14,36 @@ const commentsData: Record<string, { id: string; user: string; text: string; edi
   "1": [
     { id: "c1", user: "JaneDoe", text: "Nice post!", edited: false },
     { id: "c2", user: "User123", text: "I disagree!", edited: false },
-  ],
-  "2": [{ id: "c3", user: "Alice", text: "Hey there!", edited: false }],
-  "3": [
+    { id: "c3", user: "Alice", text: "Hey there!", edited: false },
     { id: "c4", user: "Bob", text: "You too!", edited: false },
     { id: "c5", user: "Eve", text: "Have a good one!", edited: false },
   ],
-  "4": [],
-  "5": [],
+  "2": [{ id: "c1", user: "JaneDoe", text: "Nice post!", edited: false },
+  { id: "c2", user: "User123", text: "I disagree!", edited: false },
+  { id: "c3", user: "Alice", text: "Hey there!", edited: false },
+  { id: "c4", user: "Bob", text: "You too!", edited: false },
+  { id: "c5", user: "Eve", text: "Have a good one!", edited: false },],
+  "3": [
+    { id: "c1", user: "JaneDoe", text: "Nice post!", edited: false },
+    { id: "c2", user: "User123", text: "I disagree!", edited: false },
+    { id: "c3", user: "Alice", text: "Hey there!", edited: false },
+    { id: "c4", user: "Bob", text: "You too!", edited: false },
+    { id: "c5", user: "Eve", text: "Have a good one!", edited: false },
+  ],
+  "4": [
+    { id: "c1", user: "JaneDoe", text: "Nice post!", edited: false },
+    { id: "c2", user: "User123", text: "I disagree!", edited: false },
+    { id: "c3", user: "Alice", text: "Hey there!", edited: false },
+    { id: "c4", user: "Bob", text: "You too!", edited: false },
+    { id: "c5", user: "Eve", text: "Have a good one!", edited: false },
+  ],
+  "5": [
+    { id: "c1", user: "JaneDoe", text: "Nice post!", edited: false },
+    { id: "c2", user: "User123", text: "I disagree!", edited: false },
+    { id: "c3", user: "Alice", text: "Hey there!", edited: false },
+    { id: "c4", user: "Bob", text: "You too!", edited: false },
+    { id: "c5", user: "Eve", text: "Have a good one!", edited: false },
+  ],
 };
 
 export default function PostPage() {

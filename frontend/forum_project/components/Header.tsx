@@ -11,7 +11,7 @@ export default function Header(){
       {/* <div className="w-12"></div> */}
       <div className="flex items-center w-1/2 space-x-2">
         <Input 
-          type="email" 
+          type="search" 
           placeholder="Search 'Website Name'"
           className="w-full h-12"
           />
