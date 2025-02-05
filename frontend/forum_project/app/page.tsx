@@ -9,6 +9,7 @@ import {
 import Header from "@/components/Header"
 import CreatePostButton from "@/components/create-post-button";
 
+
 export default function Homepage() {
 
   return (
@@ -29,24 +30,13 @@ export default function Homepage() {
                 <Post id="3" username="Joshua" title="Morning Thoughts" content="Hope you're all having a great day so far!" />
                 <Post id="4" username="Robbie" title="Exciting News!" content="I just finished my first Next.js project. Feeling accomplished!" />
                 <Post id="5" username="James" title="Random Musings" content="Sometimes, I wonder if AI will take over the world... or just help us write forum posts." />
-
                 </div>
               </div>
             </div>
           </SidebarInset>
         </SidebarProvider>
       </div>
-
-        <CreatePostButton/>
-      
-      
+        <CreatePostButton/>  
     </div>
-    
-    
-
-    
-    
-    
-    
   );
 }
