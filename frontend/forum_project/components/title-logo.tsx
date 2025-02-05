@@ -12,7 +12,7 @@ export function TitleLogo({
 }: {
   title: {
     name: string
-    logo: React.ElementType
+    // logo: React.ElementType
   }
 }) {
 
@@ -20,9 +20,9 @@ export function TitleLogo({
     <SidebarMenu>
       <SidebarMenuItem>
         <div className="flex w-fit items-center gap-2 px-1.5">
-          <div className="flex aspect-square size-5 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground">
+          {/* <div className="flex aspect-square size-5 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground">
             <title.logo className="size-3" />
-          </div>
+          </div> */}
           <span className="truncate font-semibold">{title.name}</span>
         </div>
       </SidebarMenuItem>
