@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import Header from '@/app/profile/Header';
+import Header from '@/components/Header';
 import Post from "@/components/post";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
@@ -20,10 +20,10 @@ export default function Profile() {
               <div className="mx-auto h-full w-full max-w-3xl rounded-xl">
                 <div className="flex flex-col items-center justify-center w-full mt-4 space-y-4">
                   <ProfileCard username='Joshua'/>
-                  <Post username="Christian" content="First post in the forum" />
-                  <Post username="Kellie" content="Hello" />
-                  <Post username="Robbie" content="Hi!" />
-                  <Post username="Joshua" content="woahhh" />
+                  <Post id="6" username="Joshua" title="First Post!" content="First post in the forum" />
+                  <Post id="7" username="Joshua" title="Greetings!" content="Hello" />
+                  <Post id="8" username="Joshua" title="Hello" content="Hi!" />
+                  <Post id="9" username="Joshua" title="Hi" content="woahhh" />
                 </div>
               </div>
             </div>
