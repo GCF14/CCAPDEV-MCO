@@ -3,10 +3,10 @@
 import * as React from "react"
 import {
   Home,
-  Settings2,
   Flame,
   Command,
   CircleUserRound,
+  LogOut
 } from "lucide-react"
 
 import { NavFavorites } from "@/components/nav-favorites"
@@ -24,8 +24,7 @@ import {
 const data = {
   forumTitle:
     {
-      name: "title + logo",
-      logo: Command,
+      name: "Inspiration Station",
     },
   navMain: [
     {
@@ -49,9 +48,9 @@ const data = {
   ],
   navSecondary: [
     {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
+      title: "LogOut",
+      url: "/login",
+      icon: LogOut
     },
   ],
   favorites: [
