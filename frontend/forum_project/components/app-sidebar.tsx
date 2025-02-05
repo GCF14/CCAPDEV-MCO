@@ -3,7 +3,6 @@
 import * as React from "react"
 import {
   Home,
-  Search,
   Settings2,
   Flame,
   Command,
@@ -30,11 +29,6 @@ const data = {
     },
   navMain: [
     {
-      title: "Search",
-      url: "#",
-      icon: Search,
-    },
-    {
       title: "Home",
       url: "http://localhost:3000/",
       icon: Home,
@@ -42,13 +36,13 @@ const data = {
     },
     {
       title: "Popular",
-      url: "#",
+      url: "/popular",
       icon: Flame,
       badge: "10",
     },
     {
       title: "Profile",
-      url: "#",
+      url: "/profile",
       icon: CircleUserRound,
       badge: "10",
     },
@@ -63,27 +57,27 @@ const data = {
   favorites: [
     {
       name: "Music",
-      url: "#",
+      url: "/favorites/music",
       emoji: "🎵",
     },
     {
       name: "Art",
-      url: "#",
+      url: "/favorites/art",
       emoji: "🎨",
     },
     {
       name: "Travel",
-      url: "#",
+      url: "/favorites/travel",
       emoji: "🧳",
     },
     {
       name: "Books",
-      url: "#",
+      url: "/favorites/books",
       emoji: "📚",
     },
     {
       name: "Movies",
-      url: "#",
+      url: "/favorites/movies",
       emoji: "🎥",
     },
   ],
