@@ -18,6 +18,7 @@ import {
   } from "@/components/ui/hover-card"
 import React from "react";
 
+
 interface PostProps {
     id: string;
     username: string;
@@ -53,7 +54,11 @@ export default function Post({id, username, title, content }: PostProps) {
                     </Avatar>
 
                     <HoverCard>
-                    <HoverCardTrigger className="hover:underline font-medium">{username}</HoverCardTrigger>
+                    <Link href="/profile">
+                    <HoverCardTrigger className="hover:underline font-medium">
+                        {username}
+                    </HoverCardTrigger>
+                    </Link>
                     <HoverCardContent className="w-80">
                         <div className="flex items-center space-x-4">
                         <Avatar>
@@ -66,7 +71,7 @@ export default function Post({id, username, title, content }: PostProps) {
                         </Avatar>
                         <div>
                             <p className="font-semibold">{username}</p>
-                            <p className="text-sm text-gray-500">chrisfelipe05</p>
+                            
                         </div>
                         </div>
                     </HoverCardContent>

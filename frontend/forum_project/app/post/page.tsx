@@ -13,7 +13,7 @@ import { ThumbsUp, ThumbsDown, MessageSquare, Share2 } from "lucide-react";
 const commentsData: Record<string, { id: string; user: string; text: string; edited: boolean }[]> = {
   "1": [
     { id: "c1", user: "JaneDoe", text: "Nice post!", edited: false },
-    { id: "c2", user: "User123", text: "I disagree!", edited: false },
+    { id: "c2", user: "Christian", text: "I disagree!", edited: true },
     { id: "c3", user: "Alice", text: "Hey there!", edited: false },
     { id: "c4", user: "Bob", text: "You too!", edited: false },
     { id: "c5", user: "Eve", text: "Have a good one!", edited: false },
@@ -71,7 +71,9 @@ export default function PostPage() {
                     <ThumbsUp className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />
                     <ThumbsDown className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />
                     <MessageSquare className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />
-                    <Share2 className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />    
+                    <Share2 className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />  
+                    <Button className="mt-2">Edit</Button>  
+                    <Button className="mt-2">Delete</Button>  
                 </div>
 
 
@@ -94,6 +96,7 @@ export default function PostPage() {
                     <div key={comment.id} className="p-3 border rounded">
                       <p className="text-gray-800 font-semibold">{comment.user}</p>
                       <p>{comment.text} {comment.edited && <span className="text-gray-500 text-sm">(edited)</span>}</p>
+                      {comment.user === "Christian" && <Button>Edit</Button>}
                     </div>
                   ))
                 ) : (
