@@ -1,5 +1,4 @@
 const Post = require('../models/postModel');
-const User = require('../models/userModel');
 const mongoose = require('mongoose');
 
 // Create post
@@ -121,7 +120,6 @@ const editComment = async (req, res) => {
         }
 
         // update the comment
-
         post.comments[commentIndex].content = content;
         await post.save();
 
@@ -160,6 +158,56 @@ const deleteComment = async (req, res) => {
     }
 };
 
+const upvotePost = async (req, res) => {
+    try {
+        const {id} = req.params;
+        const post = await Post.findByIdAndUpdate(
+            id,
+            {$inc: {upvotes: 1}},
+            {new: true}
+        );
+
+        if (!post)
+            return res.status(404).json({message: 'Post not found'});
+
+        res.json({message: 'Post upvoted', upvotes: post.upvotes})
+    } catch(error) {
+        res.status(400).json({error: error.message});
+    }
+};
+
+const downvotePost = async (req, res) => {
+    try {
+        const {id} = req.params;
+        const post = await Post.findByIdAndUpdate(
+            id,
+            {$inc: {downvotes: 1}},
+            {new: true}
+        );
+
+        if (!post)
+            return res.status(404).json({message: 'Post not found'});
+
+        res.json({message: 'Post upvoted', downvotes: post.downvotes})
+    } catch(error) {
+        res.status(400).json({error: error.message});
+    }
+};
+
+const getPostsByTag = async (req, res) => {
+    try {
+        const {tag} = req.params;
+
+        const posts = await Post.find({tags: {$in: [tag]}})
+            .populate('user', 'username')
+            .sort({date: -1});
+        
+        res.json(posts);
+    } catch(error) {
+        res.status(400).json({error: error.message});
+    }
+};
+
 module.exports = {
     createPost,
     editPost,
@@ -168,5 +216,8 @@ module.exports = {
     getPostsByUserId,
     createComment,
     editComment,
-    deleteComment
+    deleteComment,
+    upvotePost,
+    downvotePost,
+    getPostsByTag
 };

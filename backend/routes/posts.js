@@ -9,7 +9,10 @@ const {
     getPostsByUserId,
     createComment, 
     editComment, 
-    deleteComment
+    deleteComment,
+    upvotePost,
+    downvotePost,
+    getPostsByTag
 } = require('../controllers/postController');
 
 // create post route
@@ -36,6 +39,13 @@ router.put('/:postId/comments/:commentId', editComment);
 // delete comment route
 router.delete('/:postId/comments/:commentId', deleteComment);
 
+// upvote post route
+router.post('/:id/upvote', upvotePost);
 
+// downvote post route
+router.post('/:id/downvote', downvotePost);
+
+//get posts by tag route
+router.post('/:tag', getPostsByTag);
 
 module.exports = router;
