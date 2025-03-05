@@ -12,7 +12,7 @@ const createPost = async (req, res) => {
 
         res.status(201).json({message: 'New post created', post: newPost})
     } catch(error) {
-        res.status(500).json({error: error.message});
+        res.status(400).json({error: error.message});
     }
 };
 
@@ -25,7 +25,7 @@ const editPost = async (req, res) => {
         const editedPost = await Post.findByIdAndUpdate(id, {title, content}, {new: true})
         res.json({ message: 'Post edited successfully', post: updatedPost });
     } catch(error) {
-        res.status(500).json({error: error.message});
+        res.status(400).json({error: error.message});
     }
 };
 
@@ -36,7 +36,7 @@ const deletePost = async (req, res) => {
         const deletedPost = await Post.findByIdAndDelete(id);
         res.json({ message: 'Post deleted successfully' });
     } catch(error) {
-        res.status(500).json({error: error.message});
+        res.status(400).json({error: error.message});
     }
 };
 
@@ -48,7 +48,7 @@ const getAllPosts = async (req, res) => {
             .populate('comments.user', 'username');
         res.json(posts);
     } catch(error) {
-        res.status(500).json({error: error.message});
+        res.status(400).json({error: error.message});
     }
 };
 
@@ -62,7 +62,7 @@ const getPostsByUserId = async (req, res) => {
             .sort({date: -1});
         res.json(posts);
     } catch(error) {
-        res.status(500).json({error: error.message});
+        res.status(400).json({error: error.message});
     }
 };
 
@@ -90,7 +90,7 @@ const createComment = async (req, res) => {
         await post.save();
         res.json(post); // return updated post
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(400).json({ error: error.message });
     }
 };
 // Edit a comment
@@ -120,7 +120,7 @@ const editComment = async (req, res) => {
 
         res.json(post);  // return the updated post with the edited comment
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(400).json({ error: error.message });
     }
 };
 
@@ -146,7 +146,7 @@ const deleteComment = async (req, res) => {
         post.comments.splice(commentIndex, 1);
         await post.save();
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(400).json({ error: error.message });
     }
 };
 
