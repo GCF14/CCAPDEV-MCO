@@ -16,21 +16,33 @@ import {
     HoverCardContent,
     HoverCardTrigger,
   } from "@/components/ui/hover-card"
-import React from "react";
 
+import React, { useState } from "react";
+import { ThumbsUp, ThumbsDown, MessageSquare, Share2 } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import axios from 'axios';
 
-interface PostProps {
+export interface PostProps {
     id: string;
+    // user: {
+    //     username: string;
+    // }
     username: string;
     title: string;
-    content: React.ReactNode;
+    content: string;
+    comments?: {
+        id: string;
+        username: string;
+        content: string;
+        edited: boolean;
+    }[];
+    upvotes: number;
+    downvotes: number;
+    tags?: string[];
 }
 
-import { ThumbsUp, ThumbsDown, MessageSquare, Share2 } from "lucide-react";
 
-import Link from "next/link";
-
-import { Button } from "@/components/ui/button";
 
 const getTextContent = (node: React.ReactNode): string => {
     if (typeof node === "string") return node; // If it's already a string, return it
@@ -39,7 +51,23 @@ const getTextContent = (node: React.ReactNode): string => {
   };
 
 
-export default function Post({id, username, title, content }: PostProps) {
+export default function Post({id, username, title, content, upvotes, downvotes, tags}: PostProps) {
+    const [likes, setLikes] = useState(upvotes);
+    const [dislikes, setDislikes] = useState(downvotes);
+
+    const handleVote = async(type: 'upvote' | 'downvote') => {
+        try {
+            const resp = await axios.post('http://localhost:3001/api/posts/${id}/${type}');
+            if (type === 'upvote') {
+                setLikes(likes + 1);
+            } else {
+                setDislikes(dislikes + 1);
+            }
+        } catch (error) {
+            console.error('Error voting:', error);
+          }
+    }
+
     return (
         <Card className="w-full max-w-lg">
             <CardHeader>
@@ -86,8 +114,14 @@ export default function Post({id, username, title, content }: PostProps) {
             </CardContent>
             <CardFooter>
                 <div className="flex items-center space-x-2">
-                    <ThumbsUp className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />
-                    <ThumbsDown className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />
+                    <button onClick={() => handleVote('upvote')}>
+                        <ThumbsUp className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />
+                        <span>{likes}</span>
+                    </button>
+                    <button onClick={() => handleVote('downvote')}>
+                        <ThumbsDown className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />
+                        <span>{dislikes}</span>
+                    </button>
                     <MessageSquare className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />
                     <Share2 className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />    
                     <Link href={`/post?id=${id}&title=${encodeURIComponent(title)}&username=${encodeURIComponent(username)}&content=${encodeURIComponent(getTextContent(content))}`}>

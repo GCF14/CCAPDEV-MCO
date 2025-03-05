@@ -10,6 +10,7 @@ const {
     createComment, 
     editComment, 
     deleteComment,
+    getPost,
     upvotePost,
     downvotePost,
     getPostsByTag
@@ -38,6 +39,9 @@ router.put('/:postId/comments/:commentId', editComment);
 
 // delete comment route
 router.delete('/:postId/comments/:commentId', deleteComment);
+
+// get specific post route
+router.get('/:id', getPost);
 
 // upvote post route
 router.post('/:id/upvote', upvotePost);

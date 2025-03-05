@@ -4,14 +4,15 @@ const mongoose = require('mongoose');
 // Create post
 const createPost = async (req, res) => {
     try {
-        if (!req.user) {
-            return res.status(401).json({message: 'User not authenticated'});
-        }
+        // if (!req.user) {
+        //     return res.status(401).json({message: 'User not authenticated'});
+        // }
         
-        const user = req.user._id;
-        const {title, content} = req.body;
+        // const user = req.user._id;
+        // const {title, content} = req.body;
+        const {username, title, content} = req.body;
 
-        const newPost = new Post({user, title, content})
+        const newPost = new Post({username, title, content})
         await newPost.save();
 
         res.status(201).json({message: 'New post created', post: newPost})
@@ -27,7 +28,7 @@ const editPost = async (req, res) => {
         const {title, content} = req.body;
 
         const editedPost = await Post.findByIdAndUpdate(id, {title, content}, {new: true})
-        res.json({ message: 'Post edited successfully', post: updatedPost });
+        res.json({ message: 'Post edited successfully', post: editedPost });
     } catch(error) {
         res.status(400).json({error: error.message});
     }
@@ -48,8 +49,8 @@ const deletePost = async (req, res) => {
 const getAllPosts = async (req, res) => {
     try {
         const posts = await Post.find()
-            .populate('user', 'username')
-            .populate('comments.user', 'username');
+            // .populate('user', 'username')
+            // .populate('comments.user', 'username');
         res.json(posts);
     } catch(error) {
         res.status(400).json({error: error.message});
@@ -73,7 +74,7 @@ const getPostsByUserId = async (req, res) => {
 // Add a comment
 const createComment = async (req, res) => {
     const {postId} = req.params;  
-    const {content} = req.body; 
+    const {username, content} = req.body; 
 
     try {
         const post = await Post.findById(postId);
@@ -81,11 +82,12 @@ const createComment = async (req, res) => {
             return res.status(404).json({ message: 'Post not found' });
         }
 
-        const user = req.user._id;
+        // const user = req.user._id;
 
         // add the comment to the post's comments array
         post.comments.push({
-            user: user,   
+            // user: user,   
+            username: username,
             content: content 
         });
         await post.save();
@@ -103,7 +105,7 @@ const editComment = async (req, res) => {
         const post = await Post.findById(postId);
 
         if (!post) {
-        return res.status(404).json({ message: 'Post not found' });
+            return res.status(404).json({ message: 'Post not found' });
         }
 
         // find the comment index by matching the commentId
@@ -115,9 +117,9 @@ const editComment = async (req, res) => {
             return res.status(404).json({ message: 'Comment not found' });
         }
 
-        if (comment.user.toString() !== req.user._id.toString()) {
-            return res.status(403).json({ message: 'You can only edit your own comments' });
-        }
+        // if (comment.user.toString() !== req.user._id.toString()) {
+        //     return res.status(403).json({ message: 'You can only edit your own comments' });
+        // }
 
         // update the comment
         post.comments[commentIndex].content = content;
@@ -146,9 +148,9 @@ const deleteComment = async (req, res) => {
         if (commentIndex === -1) {
             return res.status(404).json({ message: 'Comment not found' });
         }
-        if (post.comments[commentIndex].user.toString() !== req.user._id.toString()) {
-            return res.status(403).json({ message: 'You can only delete your own comments' });
-        }
+        // if (post.comments[commentIndex].user.toString() !== req.user._id.toString()) {
+        //     return res.status(403).json({ message: 'You can only delete your own comments' });
+        // }
     
         // remove the comment from the comments array
         post.comments.splice(commentIndex, 1);
@@ -158,6 +160,21 @@ const deleteComment = async (req, res) => {
     }
 };
 
+// Get a specific post
+const getPost = async(req, res) => {
+    try {
+        const {id} = req.params;
+        const post = await Post.findById(id);
+        if (!post) {
+            return res.status(404).json({ message: 'Post not found' });
+        }
+        res.json(post);
+    } catch(error) {
+        res.status(400).json({error: error.message});
+    }
+}
+
+// Upvote a post
 const upvotePost = async (req, res) => {
     try {
         const {id} = req.params;
@@ -176,6 +193,7 @@ const upvotePost = async (req, res) => {
     }
 };
 
+// Downvote a post
 const downvotePost = async (req, res) => {
     try {
         const {id} = req.params;
@@ -194,6 +212,7 @@ const downvotePost = async (req, res) => {
     }
 };
 
+// Get posts with a specific tag
 const getPostsByTag = async (req, res) => {
     try {
         const {tag} = req.params;
@@ -217,6 +236,7 @@ module.exports = {
     createComment,
     editComment,
     deleteComment,
+    getPost,
     upvotePost,
     downvotePost,
     getPostsByTag

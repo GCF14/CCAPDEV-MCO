@@ -4,9 +4,13 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const postSchema = new Schema({
-    user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+    // user: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'User',
+    //     required: true
+    // },
+    username: {
+        type: String,
         required: true
     },
 
@@ -26,9 +30,13 @@ const postSchema = new Schema({
     },
 
     comments: [{
-        user: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'User',
+        // user: {
+        //     type: mongoose.Schema.Types.ObjectId,
+        //     ref: 'User',
+        //     required: true
+        // },
+        username: {
+            type: String,
             required: true
         },
         content: {
