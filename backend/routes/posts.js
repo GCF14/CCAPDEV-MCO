@@ -1,41 +1,40 @@
 const express = require('express');
-
+const router = express.Router();
 // controller
 const {
     createPost, 
     editPost, 
     deletePost, 
     getAllPosts, 
-    getPostsByUserId, 
+    getPostsByUserId,
+    createComment, 
     editComment, 
     deleteComment
 } = require('../controllers/postController');
 
-const router = express.Router();
-
 // create post route
-router.post('/post', createPost);
+router.post('/create', createPost);
 
 // edit post route
-router.put('/post/:id', editPost);
+router.put('/:id', editPost);
 
 // delete post route
-router.delete('/post/:id', deletePost);
+router.delete('/:id', deletePost);
 
 // get all posts route
-router.get('/posts', getAllPosts);
+router.get('/', getAllPosts);
 
 // get posts by a specific user route
-router.get('/posts/user/:userId', getPostsByUserId);
+router.get('/user/:userId', getPostsByUserId);
 
 // create comment route
-router.post('/post/:postId', createComment);
+router.post('/:postId', createComment);
 
 // edit comment route
-router.put('/post/:postId/comments/:commentId', editComment);
+router.put('/:postId/comments/:commentId', editComment);
 
 // delete comment route
-router.delete('/post/:postId/comments/:commentId', deleteComment);
+router.delete('/:postId/comments/:commentId', deleteComment);
 
 
 

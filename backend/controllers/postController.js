@@ -5,7 +5,12 @@ const mongoose = require('mongoose');
 // Create post
 const createPost = async (req, res) => {
     try {
-        const {user, title, content} = req.body;
+        if (!req.user) {
+            return res.status(401).json({message: 'User not authenticated'});
+        }
+        
+        const user = req.user._id;
+        const {title, content} = req.body;
 
         const newPost = new Post({user, title, content})
         await newPost.save();
@@ -68,8 +73,8 @@ const getPostsByUserId = async (req, res) => {
 
 // Add a comment
 const createComment = async (req, res) => {
-    const { postId } = req.params;  
-    const { userId, content } = req.body; 
+    const {postId} = req.params;  
+    const {content} = req.body; 
 
     try {
         const post = await Post.findById(postId);
@@ -77,14 +82,11 @@ const createComment = async (req, res) => {
             return res.status(404).json({ message: 'Post not found' });
         }
 
-        const user = await User.findById(userId);
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
+        const user = req.user._id;
 
         // add the comment to the post's comments array
         post.comments.push({
-            user: user._id,   
+            user: user,   
             content: content 
         });
         await post.save();
@@ -114,7 +116,12 @@ const editComment = async (req, res) => {
             return res.status(404).json({ message: 'Comment not found' });
         }
 
+        if (comment.user.toString() !== req.user._id.toString()) {
+            return res.status(403).json({ message: 'You can only edit your own comments' });
+        }
+
         // update the comment
+
         post.comments[commentIndex].content = content;
         await post.save();
 
@@ -141,6 +148,9 @@ const deleteComment = async (req, res) => {
         if (commentIndex === -1) {
             return res.status(404).json({ message: 'Comment not found' });
         }
+        if (post.comments[commentIndex].user.toString() !== req.user._id.toString()) {
+            return res.status(403).json({ message: 'You can only delete your own comments' });
+        }
     
         // remove the comment from the comments array
         post.comments.splice(commentIndex, 1);
@@ -150,3 +160,13 @@ const deleteComment = async (req, res) => {
     }
 };
 
+module.exports = {
+    createPost,
+    editPost,
+    deletePost,
+    getAllPosts,
+    getPostsByUserId,
+    createComment,
+    editComment,
+    deleteComment
+};
