@@ -16,7 +16,8 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar"
 
-interface ProfileInfo {
+export interface ProfileInfo {
+  _id: string;
   username: string;
 }
 

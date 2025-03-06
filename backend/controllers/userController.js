@@ -51,12 +51,25 @@ const logoutUser = async (req, res) => {
 const getUser = async (req, res) => {
 
     try {
+        const {id} = req.params;
+        const user = await User.findById(id);
+
+        res.json(user);
 
     } catch(error) {
         res.status(400).json({error: error.message})
     }
   
 };
+
+const getAllUsers = async (req, res) => {
+    try {
+        const users = await User.find();
+        res.json(users);
+    } catch(error) {
+        res.status(400).json({error: error.message})
+    }
+}
 
 // delete a user
 const deleteUser = async(req, res) => {
@@ -84,4 +97,4 @@ const deleteUser = async(req, res) => {
 }
 
 
-module.exports = { signUpUser, loginUser, logoutUser, getUser, deleteUser }
+module.exports = { signUpUser, loginUser, logoutUser, getUser, getAllUsers, deleteUser }

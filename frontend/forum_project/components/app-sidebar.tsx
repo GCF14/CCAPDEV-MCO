@@ -56,27 +56,27 @@ const data = {
   favorites: [
     {
       name: "Music",
-      url: "/favorites/music",
+      url: "/search?tags=music",
       emoji: "🎵",
     },
     {
       name: "Art",
-      url: "/favorites/art",
+      url: "/search?tags=art",
       emoji: "🎨",
     },
     {
       name: "Travel",
-      url: "/favorites/travel",
+      url: "/search?tags=travel",
       emoji: "🧳",
     },
     {
       name: "Books",
-      url: "/favorites/books",
+      url: "/search?tags=books",
       emoji: "📚",
     },
     {
       name: "Movies",
-      url: "/favorites/movies",
+      url: "/search?tags=movies",
       emoji: "🎥",
     },
   ],

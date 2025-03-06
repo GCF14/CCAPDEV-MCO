@@ -77,21 +77,23 @@ export default function Post({_id, username, title, content, upvotes, downvotes,
         <Card className="w-full max-w-lg">
             <CardHeader>
                 <div className="flex items-center space-x-3">
-                    <Avatar className="w-10 h-10">
-                    <AvatarImage src='/profile-pic.jpg' alt="Avatar" />
-                    <AvatarFallback>
-                        <span className="material-symbols-rounded medium">
-                        account_circle
-                        </span>
-                    </AvatarFallback>
-                    </Avatar>
+                    <Link href={`/profile?id=${_id}`}>
+                        <Avatar className="w-10 h-10">
+                            <AvatarImage src='/profile-pic.jpg' alt="Avatar" />
+                            <AvatarFallback>
+                                <span className="material-symbols-rounded medium">
+                                account_circle
+                                </span>
+                            </AvatarFallback>
+                        </Avatar>
+                    </Link>
 
                     <HoverCard>
-                    <Link href="/profile">
-                    <HoverCardTrigger className="hover:underline font-medium">
-                        {username}
-                    </HoverCardTrigger>
-                    </Link>
+                        <Link href={`/profile?id=${_id}`}>
+                            <HoverCardTrigger className="hover:underline font-medium">
+                                {username}
+                            </HoverCardTrigger>
+                        </Link>
                     <HoverCardContent className="w-80">
                         <div className="flex items-center space-x-4">
                         <Avatar>
@@ -116,21 +118,40 @@ export default function Post({_id, username, title, content, upvotes, downvotes,
 
             <CardContent>     
         
-                <CardDescription>{content}</CardDescription>               
+                <CardDescription>
+                    {content}
+                    <br/>
+                    {/* tags */}
+                    {tags && tags.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mt-2">
+                        {tags.map((tag) => (
+                            <Link href={`/search?tags=${encodeURIComponent(tag)}`} key={tag}>
+                                <span className="px-2 py-1 text-sm bg-gray-100 rounded-lg cursor-pointer hover:bg-gray-200">
+                                    {tag}
+                                </span>
+                            </Link>
+                            
+                        ))}
+                    </div>
+                    )}
+                </CardDescription>               
             </CardContent>
             <CardFooter>
+                
                 <div className="flex items-center space-x-2">
+                    {/* upvote button */}
                     <button onClick={() => handleVote('upvote')}>
                         <ThumbsUp className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />
                         <span>{likes}</span>
                     </button>
+                    {/* downvote button */}
                     <button onClick={() => handleVote('downvote')}>
                         <ThumbsDown className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />
                         <span>{dislikes}</span>
                     </button>
                     <MessageSquare className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />
                     <Share2 className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />    
-                    <Link href={`/post?id=${_id}&title=${encodeURIComponent(title)}&username=${encodeURIComponent(username)}&content=${encodeURIComponent(getTextContent(content))}`}>
+                    <Link href={`/post?id=${_id}`}>
                         <Button variant="outline">View Post</Button>
                     </Link>                  
                 </div>

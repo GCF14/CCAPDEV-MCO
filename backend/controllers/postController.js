@@ -10,9 +10,9 @@ const createPost = async (req, res) => {
         
         // const user = req.user._id;
         // const {title, content} = req.body;
-        const {username, title, content} = req.body;
+        const {username, title, content, tags = null} = req.body; // tags are optional
 
-        const newPost = new Post({username, title, content})
+        const newPost = new Post({username, title, content, tags})
         await newPost.save();
 
         res.status(201).json({message: 'New post created', post: newPost})
@@ -25,9 +25,17 @@ const createPost = async (req, res) => {
 const editPost = async (req, res) => {
     try {
         const {id} = req.params; // post id
-        const {title, content} = req.body;
+        const {title = null, content = null, tags = null} = req.body; // all of em optional
 
-        const editedPost = await Post.findByIdAndUpdate(id, {title, content, edited: true}, {new: true})
+        // only get fields that are not null
+        const updateFields = Object.fromEntries(
+            Object.entries({title, content, tags}).filter(([_, v]) => v != null)
+        );
+        // only update if at least one field was changed
+        if (Object.keys(updateFields).length > 0) {
+            const editedPost = await Post.findByIdAndUpdate(id, {...updateFields, edited:true}, { new: true });
+        }
+            
 
         res.json({ message: 'Post edited successfully', post: editedPost });
     } catch(error) {
@@ -249,7 +257,7 @@ const downvotePost = async (req, res) => {
 // Get posts with a specific tag
 const getPostsByTag = async (req, res) => {
     try {
-        const {tag} = req.query;
+        const {tag} = req.params;
 
         const posts = await Post.find({tags: {$in: [tag]}})
             // .populate('user', 'username')
@@ -263,19 +271,17 @@ const getPostsByTag = async (req, res) => {
 
 // Search for keywords in a post
 const searchPosts = async (req, res) => {
-    console.log('hello');
     try {
-        console.log(req.query);
-        console.log(req.originalUrl);
-        const {search} = req.query;
+        const {search} = req.params;
         if (!search) {
             return res.status(400).json({error: 'Search term required'});
         }
         // case insensitive search for query
         const posts = await Post.find({
             $or: [
-                {title: {$regex: search, $options: 'i'}}, 
-                {content: {$regex: search, $options: 'i'}}
+                {title: {$regex: `\\b${search}\\b`, $options: 'i'}}, 
+                {content: {$regex: `\\b${search}\\b`, $options: 'i'}},
+                {tags: {$in: [search]}}
             ]
         }).sort({date: -1});
         

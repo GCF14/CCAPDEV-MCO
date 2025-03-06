@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ThumbsUp, ThumbsDown, MessageSquare, Share2 } from "lucide-react";
-
+import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import {PostProps, CommentProps} from "@/components/post";
@@ -61,6 +61,20 @@ export default function PostPage() {
                 <h1 className="text-2xl font-bold">{post.title} {post.edited && <span className="text-gray-500 text-sm">(edited)</span>}</h1>
                 <p className="text-gray-600">By {post.username}</p>
                 <p className="mt-4 text-gray-800">{post.content}</p>
+                {/* tags */}
+                {post.tags && post.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-2">
+                    {post.tags.map((tag) => (
+                        <Link href={`/search?tags=${encodeURIComponent(tag)}`} key={tag}>
+                            <span className="px-2 py-1 text-sm bg-gray-100 rounded-lg cursor-pointer hover:bg-gray-200">
+                                {tag}
+                            </span>
+                        </Link>
+                        
+                    ))}
+                </div>
+                )}
+                <br/>
 
                 {/* BUTTONS */}
                 <div className="flex items-center space-x-2">

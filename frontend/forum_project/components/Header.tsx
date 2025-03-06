@@ -18,11 +18,7 @@ export default function Header(){
           className="w-full h-12"
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
-          onKeyDown={(e) => { // for enter to submit search
-            if (e.key === 'Enter') {
-              e.preventDefault();
-            }
-          }}
+          
         />
         {/* don't allow search if empty input */}
         <Link href={isSearchDisabled ? '#' : `/search?search=${searchValue}`}>

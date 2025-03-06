@@ -55,10 +55,10 @@ router.post('/:id/upvote', upvotePost);
 router.post('/:id/downvote', downvotePost);
 
 // get posts by tag route
-router.post('/:tag', getPostsByTag);
+router.post('/search/:tag', getPostsByTag);
 
 // search posts route
-router.get('/search', searchPosts);
+router.get('/search/:search', searchPosts);
 
 
 module.exports = router;

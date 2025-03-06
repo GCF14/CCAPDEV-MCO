@@ -12,30 +12,53 @@ import { useSearchParams } from 'next/navigation';
 
 export default function Search() {
     const searchParams = useSearchParams();
-    const search = searchParams.get("search") || "0";
+    const search = searchParams.get("search") || "";
+    const tags = searchParams.get("tags") || "";
     const [posts, setPosts] = useState<PostProps[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        if (!search) return;
-        const fetchPosts = async() => {
-        try {
-            const resp = await axios.get(`http://localhost:3001/api/posts/search?search=${search}`);
-            setPosts(resp.data);
-            setLoading(false);
-        } catch (err) {
-            if (axios.isAxiosError(err)) {
-                setError(err.response?.data?.message || 'Error fetching posts');
-            } else {
-                setError('An unexpected error occured');
+    if (search) {
+        useEffect(() => {
+            const fetchPosts = async() => {
+            try {
+                const resp = await axios.get(`http://localhost:3001/api/posts/search/${search}`);
+                setPosts(resp.data);
+                setLoading(false);
+            } catch (err) {
+                if (axios.isAxiosError(err)) {
+                    setError(err.response?.data?.message || 'Error fetching posts');
+                } else {
+                    setError('An unexpected error occured');
+                }
+                setLoading(false);
             }
-            setLoading(false);
-        }
-        };
-
-        fetchPosts();
-    }, []);
+            };
+    
+            fetchPosts();
+        }, [search]);
+    } else if (tags) {
+        useEffect(() => {
+            const fetchPosts = async() => {
+            try {
+                const resp = await axios.get(`http://localhost:3001/api/posts/search/${tags}`);
+                setPosts(resp.data);
+                setLoading(false);
+            } catch (err) {
+                if (axios.isAxiosError(err)) {
+                    setError(err.response?.data?.message || 'Error fetching posts');
+                } else {
+                    setError('An unexpected error occured');
+                }
+                setLoading(false);
+            }
+            };
+    
+            fetchPosts();
+        }, [tags]);
+    } else {
+        return;
+    }
+    
 
     if (error)
         return <p>Error: {error}</p>

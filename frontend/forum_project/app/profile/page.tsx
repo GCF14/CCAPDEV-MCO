@@ -1,14 +1,17 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Header from '@/components/Header';
-import Post from "@/components/post";
+import Post, {PostProps} from "@/components/post";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import ProfileCard from '../../components/ProfileCard';
 import Link  from 'next/link';
 import { cn } from "@/lib/utils"
 import { usePathname } from "next/navigation"
+import { ProfileInfo } from '@/components/ProfileCard'
+import { useSearchParams } from 'next/navigation';
+import axios from 'axios';
 
 interface TabItem{
   name: string;
@@ -16,15 +19,67 @@ interface TabItem{
 }
 
 const tabs: TabItem[] = [
-  { name: "Posts", href: "/posts" },
+  { name: "Posts", href: "/profile" },
   { name: "Replies", href: "/replies" },
   { name: "Likes", href: "/likes" },
   { name: "Media", href: "/media" },
 ]
 
 export default function Profile() {
-
+  const [profile, setProfile] = useState<ProfileInfo | null>(null);
+  const [posts, setPosts] = useState<PostProps[] | null>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const pathname = usePathname()
+  const searchParams = useSearchParams();
+  const _id = searchParams.get("id") || "0";
+
+  useEffect(() => {
+    if (!_id) return;
+    const fetchProfile = async() => {
+      try {
+        const resp = await axios.get(`http://localhost:3001/api/users/${_id}`);
+        setProfile(resp.data);
+        setLoading(false);
+      } catch (err) {
+        if (axios.isAxiosError(err)) {
+          setError(err.response?.data?.message || 'Error fetching profile');
+        } else {
+          setError('An unexpected error occured');
+        }
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+    
+    const fetchPosts = async() => {
+      setLoading(true);
+      try {
+        const resp = await axios.get(`http://localhost:3001/api/posts/user/${_id}`);
+        setProfile(resp.data);
+        setLoading(false);
+      } catch (err) {
+        if (axios.isAxiosError(err)) {
+          setError(err.response?.data?.message || 'Error fetching profile');
+        } else {
+          setError('An unexpected error occured');
+        }
+        setLoading(false);
+      }
+    };
+
+    fetchPosts();
+
+  }, [_id]);
+
+
+  if (loading)
+    return <p>Loading...</p>
+
+  if (!profile)
+    return <p>Profile not found.</p>
+
 
   return ( 
     <div className="flex flex-col w-full">
@@ -37,7 +92,7 @@ export default function Profile() {
             <div className="flex flex-col gap-0 px-4 py-10">
               <div className="">
                 <div className="flex flex-col items-center justify-center w-full mt-4 space-y-4 border p-6">
-                  <ProfileCard username='Joshua'/>
+                  <ProfileCard _id={profile._id} username={profile.username}/>
                   <nav className="w-full flex justify-evenly space-x-8 border p-2" aria-label="Profile navigation">
                     {tabs.map((tab) => (
                       <Link
@@ -55,11 +110,26 @@ export default function Profile() {
                       </Link>
                     ))}
                   </nav>
-                  <Post id="1" username="Joshua" title="How to Optimize My Python Code for Large Datasets?" content="Hey everyone, I'm working with a dataset containing millions of records, and my Python script runs too slowly. I'm using Pandas, but some operations take minutes to execute. Does anyone have tips on optimizing performance, maybe using NumPy, multiprocessing, or other techniques? Thanks!" />
-                  <Post id="2" username="Joshua" title="What’s the Best Open-World RPG of All Time?" content="I’ve played The Witcher 3, Skyrim, and Elden Ring, but I’m wondering if there are any other open-world RPGs that are just as immersive. What’s your favorite and why?" />
-                  <Post id="3" username="Joshua" title="Best Places to Visit in Japan for a First-Time Traveler?" content="I’m planning a trip to Japan for two weeks and want to make the most of it. Tokyo and Kyoto are obvious choices, but are there any hidden gems or lesser-known spots I should visit? Any tips would be greatly appreciated!" />
-                  <Post id="4" username="Joshua" title="Struggling to Gain Muscle—Need Help!" content="I’ve been working out for six months, but I’m not seeing much muscle growth. I eat clean and train four times a week, but I feel like I’ve hit a plateau. What should I change?" />
-                  <Post id="5" username="Joshua" title="Is Oppenheimer Worth Watching?" content="I’m thinking of watching Oppenheimer, but I’m not sure if it’s too slow or complex. For those who’ve seen it, is it worth it?" />
+                  {loading ? (
+                    <p>Loading...</p>
+                  ) : posts && posts.length > 0 ? (
+                    posts.map((post) => (
+                      <Post
+                        key={post._id}
+                        _id={post._id}
+                        username={post.username}
+                        // username={post.user.username}
+                        title={post.title}
+                        content={post.content}
+                        upvotes={post.upvotes}
+                        downvotes={post.downvotes}
+                        tags={post.tags}
+                        edited={post.edited}
+                      />
+                    ))
+                  ) : (
+                    <p>No posts available.</p>
+                  )}
                 </div>
               </div>
             </div>
