@@ -27,7 +27,8 @@ const editPost = async (req, res) => {
         const {id} = req.params; // post id
         const {title, content} = req.body;
 
-        const editedPost = await Post.findByIdAndUpdate(id, {title, content}, {new: true})
+        const editedPost = await Post.findByIdAndUpdate(id, {title, content, edited: true}, {new: true})
+
         res.json({ message: 'Post edited successfully', post: editedPost });
     } catch(error) {
         res.status(400).json({error: error.message});
@@ -50,7 +51,8 @@ const getAllPosts = async (req, res) => {
     try {
         const posts = await Post.find()
             // .populate('user', 'username')
-            // .populate('comments.user', 'username');
+            // .populate('comments.user', 'username')
+            .sort({date: -1});
         res.json(posts);
     } catch(error) {
         res.status(400).json({error: error.message});
@@ -62,8 +64,8 @@ const getPostsByUserId = async (req, res) => {
     const {userId} = req.params;
     try {
         const posts = await Post.find({user: userId})
-            .populate('user', 'username')
-            .populate('comments.user', 'comments')
+            // .populate('user', 'username')
+            // .populate('comments.user', 'comments')
             .sort({date: -1});
         res.json(posts);
     } catch(error) {
@@ -71,25 +73,62 @@ const getPostsByUserId = async (req, res) => {
     }
 };
 
+// Get all posts sorted by popularity (most upvotes)
+const getPopularPosts = async (req, res) => {
+    try {
+        const posts = await Post.find().sort({upvotes: -1});
+        res.json(posts);
+    } catch(error) {
+        res.status(400).json({error: error.message})
+    }
+}
+
+// Helper function to find comment by id recursively (for nested comments)
+const findCommentById = (comments, commentId) => {
+    for (const comment of comments) {
+        if (comment._id.toString() === commentId) {
+            return comment; 
+        }
+
+        const nestedComment = findCommentById(comment.comments, commentId);
+        if (nestedComment) {
+            return nestedComment;
+        }
+    }
+    return null; 
+};
+
 // Add a comment
 const createComment = async (req, res) => {
     const {postId} = req.params;  
-    const {username, content} = req.body; 
-
+    const {username, content, parentCommentId = null} = req.body; // parentCommendId optional if nested comment 
     try {
         const post = await Post.findById(postId);
         if (!post) {
             return res.status(404).json({ message: 'Post not found' });
         }
-
         // const user = req.user._id;
 
-        // add the comment to the post's comments array
-        post.comments.push({
-            // user: user,   
-            username: username,
-            content: content 
-        });
+        // if nested comment
+        if (parentCommentId) {
+            const parentComment = findCommentById(post.comments, parentCommentId);
+            if (!parentComment) {
+                return res.status(404).json({ message: 'Parent comment not found' });
+            }
+            // add comment to parent comment
+            parentComment.comments.push({
+                username: username,
+                content: content
+            });
+        } else {
+            // add the comment to the post's comments array
+            post.comments.push({
+                // user: user,   
+                username: username,
+                content: content 
+            });
+        }
+        
         await post.save();
         res.json(post); // return updated post
     } catch (error) {
@@ -103,17 +142,12 @@ const editComment = async (req, res) => {
 
     try {
         const post = await Post.findById(postId);
-
         if (!post) {
             return res.status(404).json({ message: 'Post not found' });
         }
 
-        // find the comment index by matching the commentId
-        const commentIndex = post.comments.findIndex(
-            comment => comment._id.toString() === commentId
-        );
-
-        if (commentIndex === -1) {
+        const comment = findCommentById(post.comments, commentId)
+        if (!comment) {
             return res.status(404).json({ message: 'Comment not found' });
         }
 
@@ -122,7 +156,8 @@ const editComment = async (req, res) => {
         // }
 
         // update the comment
-        post.comments[commentIndex].content = content;
+        comment.content = content;
+        comment.edited = true;
         await post.save();
 
         res.json(post);  // return the updated post with the edited comment
@@ -141,20 +176,19 @@ const deleteComment = async (req, res) => {
             return res.status(404).json({ message: 'Post not found' });
         }
       
-        // find the comment index by matching the commentId
-        const commentIndex = post.comments.findIndex(
-            comment => comment._id.toString() === commentId
-        );
-        if (commentIndex === -1) {
+        const comment = findCommentById(post.comments, commentId)
+        if (!comment) {
             return res.status(404).json({ message: 'Comment not found' });
         }
+
         // if (post.comments[commentIndex].user.toString() !== req.user._id.toString()) {
         //     return res.status(403).json({ message: 'You can only delete your own comments' });
         // }
     
         // remove the comment from the comments array
-        post.comments.splice(commentIndex, 1);
+        comment.content = 'This comment has been deleted.';
         await post.save();
+        res.json(post);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -215,11 +249,35 @@ const downvotePost = async (req, res) => {
 // Get posts with a specific tag
 const getPostsByTag = async (req, res) => {
     try {
-        const {tag} = req.params;
+        const {tag} = req.query;
 
         const posts = await Post.find({tags: {$in: [tag]}})
-            .populate('user', 'username')
+            // .populate('user', 'username')
             .sort({date: -1});
+        
+        res.json(posts);
+    } catch(error) {
+        res.status(400).json({error: error.message});
+    }
+};
+
+// Search for keywords in a post
+const searchPosts = async (req, res) => {
+    console.log('hello');
+    try {
+        console.log(req.query);
+        console.log(req.originalUrl);
+        const {search} = req.query;
+        if (!search) {
+            return res.status(400).json({error: 'Search term required'});
+        }
+        // case insensitive search for query
+        const posts = await Post.find({
+            $or: [
+                {title: {$regex: search, $options: 'i'}}, 
+                {content: {$regex: search, $options: 'i'}}
+            ]
+        }).sort({date: -1});
         
         res.json(posts);
     } catch(error) {
@@ -233,11 +291,13 @@ module.exports = {
     deletePost,
     getAllPosts,
     getPostsByUserId,
+    getPopularPosts,
     createComment,
     editComment,
     deleteComment,
     getPost,
     upvotePost,
     downvotePost,
-    getPostsByTag
+    getPostsByTag,
+    searchPosts
 };

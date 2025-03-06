@@ -7,13 +7,15 @@ const {
     deletePost, 
     getAllPosts, 
     getPostsByUserId,
+    getPopularPosts,
     createComment, 
     editComment, 
     deleteComment,
     getPost,
     upvotePost,
     downvotePost,
-    getPostsByTag
+    getPostsByTag,
+    searchPosts
 } = require('../controllers/postController');
 
 // create post route
@@ -30,6 +32,9 @@ router.get('/', getAllPosts);
 
 // get posts by a specific user route
 router.get('/user/:userId', getPostsByUserId);
+
+// get all posts sorted by popularity
+router.get('/popular', getPopularPosts);
 
 // create comment route
 router.post('/:postId', createComment);
@@ -49,7 +54,11 @@ router.post('/:id/upvote', upvotePost);
 // downvote post route
 router.post('/:id/downvote', downvotePost);
 
-//get posts by tag route
+// get posts by tag route
 router.post('/:tag', getPostsByTag);
+
+// search posts route
+router.get('/search', searchPosts);
+
 
 module.exports = router;

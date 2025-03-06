@@ -1,3 +1,5 @@
+'use client'
+
 import {
     Card,
     CardContent,
@@ -23,23 +25,26 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import axios from 'axios';
 
+export interface CommentProps {
+    _id: string;
+    username: string;
+    content: string;
+    edited: boolean;
+    comments?: CommentProps[];
+}
 export interface PostProps {
-    id: string;
+    _id: string;
     // user: {
     //     username: string;
     // }
     username: string;
     title: string;
     content: string;
-    comments?: {
-        id: string;
-        username: string;
-        content: string;
-        edited: boolean;
-    }[];
+    comments?: CommentProps[];
     upvotes: number;
     downvotes: number;
     tags?: string[];
+    edited: boolean;
 }
 
 
@@ -51,17 +56,17 @@ const getTextContent = (node: React.ReactNode): string => {
   };
 
 
-export default function Post({id, username, title, content, upvotes, downvotes, tags}: PostProps) {
+export default function Post({_id, username, title, content, upvotes, downvotes, tags, edited}: PostProps) {
     const [likes, setLikes] = useState(upvotes);
     const [dislikes, setDislikes] = useState(downvotes);
 
     const handleVote = async(type: 'upvote' | 'downvote') => {
         try {
-            const resp = await axios.post('http://localhost:3001/api/posts/${id}/${type}');
+            const resp = await axios.post(`http://localhost:3001/api/posts/${_id}/${type}`);
             if (type === 'upvote') {
-                setLikes(likes + 1);
+                setLikes((prevLikes) => prevLikes + 1);
             } else {
-                setDislikes(dislikes + 1);
+                setDislikes((prevDislikes) => prevDislikes + 1);
             }
         } catch (error) {
             console.error('Error voting:', error);
@@ -105,7 +110,8 @@ export default function Post({id, username, title, content, upvotes, downvotes, 
                     </HoverCardContent>
                     </HoverCard>
                 </div>
-                <CardTitle className="text-lg font-semibold">{title}</CardTitle> 
+                <CardTitle className="text-lg font-semibold">{title} {edited && <span className="text-gray-500 text-sm">(edited)</span>}</CardTitle> 
+                
             </CardHeader>
 
             <CardContent>     
@@ -124,7 +130,7 @@ export default function Post({id, username, title, content, upvotes, downvotes, 
                     </button>
                     <MessageSquare className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />
                     <Share2 className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />    
-                    <Link href={`/post?id=${id}&title=${encodeURIComponent(title)}&username=${encodeURIComponent(username)}&content=${encodeURIComponent(getTextContent(content))}`}>
+                    <Link href={`/post?id=${_id}&title=${encodeURIComponent(title)}&username=${encodeURIComponent(username)}&content=${encodeURIComponent(getTextContent(content))}`}>
                         <Button variant="outline">View Post</Button>
                     </Link>                  
                 </div>

@@ -8,17 +8,18 @@ const mongoose = require('mongoose');
 
 const app = express()
 const cors = require('cors');
-app.use(express.json());
 app.use(cors());
 
-app.use((req, res, next) => {
-    console.log(req.path, req.method);
-    next();
-});
+// app.use((req, res, next) => {
+//     console.log(req.path, req.method);
+//     next();
+// });
 
 app.get('/', (req, res) => {
     res.json({mssg: 'Hello World!'})
 })
+
+app.use(express.json());
 
 // routes
 app.use('/api/users', userRoutes);

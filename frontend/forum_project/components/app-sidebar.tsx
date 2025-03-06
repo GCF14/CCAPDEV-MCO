@@ -29,7 +29,7 @@ const data = {
   navMain: [
     {
       title: "Home",
-      url: "http://localhost:3000/",
+      url: "/",
       icon: Home,
       isActive: true,
     },
@@ -41,7 +41,7 @@ const data = {
     },
     {
       title: "Profile",
-      url: "http://localhost:3000/profile",
+      url: "/profile",
       icon: CircleUserRound,
       badge: "10",
     },

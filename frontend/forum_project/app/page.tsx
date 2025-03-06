@@ -34,9 +34,6 @@ export default function Homepage() {
     fetchPosts();
   }, []);
 
-  if (loading)
-    return <p>Loading...</p>;
-
   if (error)
     return <p>Error: {error}</p>
 
@@ -54,23 +51,26 @@ export default function Homepage() {
             <div className="flex flex-1 flex-col gap-4 px-4 pb-10">
               <div className="mx-auto h-full w-full max-w-3xl rounded-xl">
                 <div className="flex flex-col items-center justify-center min-h-screen w-full mt-16 space-y-4">
-                {posts.length > 0 ? (
-                  posts.map((post) => (
-                    <Post
-                      key={post.id}
-                      id={post.id}
-                      username={post.username}
-                      // username={post.user.username}
-                      title={post.title}
-                      content={post.content}
-                      upvotes={post.upvotes}
-                      downvotes={post.downvotes}
-                      tags={post.tags}
-                    />
-                  ))
-                ) : (
-                  <p>No posts available.</p>
-                )}
+                  {loading ? (
+                    <p>Loading...</p>
+                  ) : posts.length > 0 ? (
+                    posts.map((post) => (
+                      <Post
+                        key={post._id}
+                        _id={post._id}
+                        username={post.username}
+                        // username={post.user.username}
+                        title={post.title}
+                        content={post.content}
+                        upvotes={post.upvotes}
+                        downvotes={post.downvotes}
+                        tags={post.tags}
+                        edited={post.edited}
+                      />
+                    ))
+                  ) : (
+                    <p>No posts available.</p>
+                  )}
                 </div>
               </div>
             </div>
