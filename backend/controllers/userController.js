@@ -8,15 +8,15 @@ const createToken = (_id) => {
 
 // login the user
 const loginUser = async (req, res) => {
-    const {email, password} = req.body
+    const {username, password} = req.body
 
     try {
-        const user = await User.login(email, password)
+        const user = await User.login(username, password)
 
         // create a token when logging in
         const token = createToken(user._id)
         
-        res.status(200).json({email: user.email, username: user.username, token})
+        res.status(200).json({username: user.username, token})
 
     } catch(error) {
         res.status(400).json({error: error.message})
@@ -26,16 +26,18 @@ const loginUser = async (req, res) => {
 
 // signup the user 
 const signUpUser = async (req, res) => {
-
+    console.log(req.body);
     try {
-        const {email, password, username, firstName, lastName} = req.body
+        const {password, username, firstName, lastName} = req.body
+        console.log("Extracted data:", password, username, firstName, lastName);
 
-        const user = await User.signup(email, password, username, firstName, lastName);
+        const user = await User.signup(password, username, firstName, lastName);
+        
 
         // create a token when signing up
         const token = createToken(user._id)
 
-        res.status(200).json({email, token})
+        res.status(200).json({username, token})
 
     } catch(error) {
         res.status(400).json({error: error.message})

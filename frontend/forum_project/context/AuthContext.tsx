@@ -40,28 +40,6 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
     user: null 
   });
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await fetch("http://localhost:5500/api/users/me", {
-          method: "GET",
-          credentials: "include", // Ensure cookies are sent
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          dispatch({ type: "LOGIN", payload: data });
-        } else {
-          dispatch({ type: "LOGOUT" });
-        }
-      } catch (error) {
-        console.error("Error fetching user:", error);
-      }
-    };
-
-    fetchUser();
-  }, []);
-
   console.log("AuthContext state: ", state);
 
   return (

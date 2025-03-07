@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Eye, EyeOff} from 'lucide-react'
 import Link from 'next/link'
+import { useSignup } from '@/hooks/useSignup'
+import { useRouter } from "next/navigation";
 
 export default function Login() {
   const [password, setPassword] = useState('');
@@ -14,6 +16,22 @@ export default function Login() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [username, setUsername] = useState('');
+  const { signup, error, isLoading } = useSignup()
+  const router = useRouter()
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const success = await signup(password, username, firstName, lastName)
+
+    if (success) {
+      // redirect to home page
+      router.push('/')
+
+    }
+
+  };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center p-4">
@@ -29,7 +47,7 @@ export default function Login() {
             <p className="text-muted-foreground">Enter your credentials to register an account</p>
           </div>
 
-          <form className="space-y-4">
+          <form className="space-y-4" onSubmit={handleSubmit}>
             <div className="flex space-x-4">
                 <div className="w-full">
                     <Label htmlFor="firstName">First Name</Label>
@@ -50,7 +68,6 @@ export default function Login() {
                     required
                     />
                 </div>
-                
             </div>
 
           
@@ -82,7 +99,7 @@ export default function Login() {
                   </button>
               </div>
             </div>
-            <Button type="submit" className="w-full">Sign-up</Button>
+            <Button type="submit" className="w-full" disabled={isLoading}>Sign-up</Button>
           </form>
           <div className="text-center mt-4">
             <p className="text-muted-foreground">Already have an account?</p>
