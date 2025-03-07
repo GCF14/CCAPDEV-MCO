@@ -60,7 +60,10 @@ export default function Post({_id, username, title, content, upvotes, downvotes,
     const [likes, setLikes] = useState(upvotes);
     const [dislikes, setDislikes] = useState(downvotes);
 
-    const handleVote = async(type: 'upvote' | 'downvote') => {
+    const handleVote = async(type: 'upvote' | 'downvote', e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+
         try {
             const resp = await axios.post(`http://localhost:3001/api/posts/${_id}/${type}`);
             if (type === 'upvote') {
@@ -74,92 +77,90 @@ export default function Post({_id, username, title, content, upvotes, downvotes,
     }
 
     return (
-        <Card className="w-full max-w-lg">
-            <CardHeader>
-                <div className="flex items-center space-x-3">
-                    <Link href={`/profile?id=${_id}`}>
-                        <Avatar className="w-10 h-10">
-                            <AvatarImage src='/profile-pic.jpg' alt="Avatar" />
-                            <AvatarFallback>
-                                <span className="material-symbols-rounded medium">
-                                account_circle
-                                </span>
-                            </AvatarFallback>
-                        </Avatar>
-                    </Link>
-
-                    <HoverCard>
+        <Link href={`/post?id=${_id}`} className="block">
+            <Card className="w-full max-w-lg">
+                <CardHeader>
+                    <div className="flex items-center space-x-3">
                         <Link href={`/profile?id=${_id}`}>
-                            <HoverCardTrigger className="hover:underline font-medium">
-                                {username}
-                            </HoverCardTrigger>
+                            <Avatar className="w-10 h-10">
+                                <AvatarImage src='/profile-pic.jpg' alt="Avatar" />
+                                <AvatarFallback>
+                                    <span className="material-symbols-rounded medium">
+                                    account_circle
+                                    </span>
+                                </AvatarFallback>
+                            </Avatar>
                         </Link>
-                    <HoverCardContent className="w-80">
-                        <div className="flex items-center space-x-4">
-                        <Avatar>
-                            <AvatarImage src="/profile-pic.jpg" />
-                            <AvatarFallback>
-                            <span className="material-symbols-rounded medium">
-                                account_circle
-                            </span>
-                            </AvatarFallback>
-                        </Avatar>
-                        <div>
-                            <p className="font-semibold">{username}</p>
-                            
-                        </div>
-                        </div>
-                    </HoverCardContent>
-                    </HoverCard>
-                </div>
-                <CardTitle className="text-lg font-semibold">{title} {edited && <span className="text-gray-500 text-sm">(edited)</span>}</CardTitle> 
-                
-            </CardHeader>
 
-            <CardContent>     
-        
-                <CardDescription>
-                    {content}
-                    <br/>
-                    {/* tags */}
-                    {tags && tags.length > 0 && (
-                        <div className="flex flex-wrap gap-2 mt-2">
-                        {tags.map((tag) => (
-                            <Link href={`/search?tags=${encodeURIComponent(tag)}`} key={tag}>
-                                <span className="px-2 py-1 text-sm bg-gray-100 rounded-lg cursor-pointer hover:bg-gray-200">
-                                    {tag}
-                                </span>
+                        <HoverCard>
+                            <Link href={`/profile?id=${_id}`}>
+                                <HoverCardTrigger className="hover:underline font-medium">
+                                    {username}
+                                </HoverCardTrigger>
                             </Link>
-                            
-                        ))}
+                        <HoverCardContent className="w-80">
+                            <div className="flex items-center space-x-4">
+                            <Avatar>
+                                <AvatarImage src="/profile-pic.jpg" />
+                                <AvatarFallback>
+                                <span className="material-symbols-rounded medium">
+                                    account_circle
+                                </span>
+                                </AvatarFallback>
+                            </Avatar>
+                            <div>
+                                <p className="font-semibold">{username}</p>
+                                
+                            </div>
+                            </div>
+                        </HoverCardContent>
+                        </HoverCard>
                     </div>
-                    )}
-                </CardDescription>               
-            </CardContent>
-            <CardFooter>
-                
-                <div className="flex items-center space-x-2">
-                    {/* upvote button */}
-                    <button onClick={() => handleVote('upvote')}>
-                        <ThumbsUp className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />
-                        <span>{likes}</span>
-                    </button>
-                    {/* downvote button */}
-                    <button onClick={() => handleVote('downvote')}>
-                        <ThumbsDown className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />
-                        <span>{dislikes}</span>
-                    </button>
-                    <MessageSquare className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />
-                    <Share2 className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />    
-                    <Link href={`/post?id=${_id}`}>
-                        <Button variant="outline">View Post</Button>
-                    </Link>                  
-                </div>
+                    <CardTitle className="text-lg font-semibold">{title} {edited && <span className="text-gray-500 text-sm">(edited)</span>}</CardTitle> 
+                    
+                </CardHeader>
 
-                
-            </CardFooter>
-        </Card>
+                <CardContent>     
+            
+                    <CardDescription>
+                        {content}
+                        <br/>
+                        {/* tags */}
+                        {tags && tags.length > 0 && (
+                            <div className="flex flex-wrap gap-2 mt-2">
+                            {tags.map((tag) => (
+                                <Link href={`/search?tags=${encodeURIComponent(tag)}`} key={tag}>
+                                    <span className="px-2 py-1 text-sm bg-gray-100 rounded-lg cursor-pointer hover:bg-gray-200">
+                                        {tag}
+                                    </span>
+                                </Link>
+                                
+                            ))}
+                        </div>
+                        )}
+                    </CardDescription>               
+                </CardContent>
+                <CardFooter>
+                        
+                    <div className="flex items-center space-x-2">
+                        {/* upvote button */}
+                        <button onClick={(e) => handleVote('upvote', e)}>
+                            <ThumbsUp className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />
+                            <span>{likes}</span>
+                        </button>
+                        {/* downvote button */}
+                        <button onClick={(e) => handleVote('downvote', e)}>
+                            <ThumbsDown className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />
+                            <span>{dislikes}</span>
+                        </button>
+                        <MessageSquare className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />
+                        <Share2 className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />          
+                    </div>
 
+                    
+                </CardFooter>
+            </Card>
+        </Link>    
     )
 
 }
