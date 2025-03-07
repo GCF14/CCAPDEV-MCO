@@ -33,8 +33,6 @@ export default function Popular() {
         fetchPosts();
     }, []);
 
-    
-
     if (error)
         return <p>Error: {error}</p>
 
