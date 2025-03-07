@@ -77,8 +77,8 @@ export default function Post({_id, username, title, content, upvotes, downvotes,
     }
 
     return (
-        <Link href={`/post?id=${_id}`} className="block">
-            <Card className="w-full max-w-lg">
+        <Link href={`/post?id=${_id}`} className="block w-full max-w-lg">
+            <Card>
                 <CardHeader>
                     <div className="flex items-center space-x-3">
                         <Link href={`/profile?id=${_id}`}>
