@@ -1,60 +1,67 @@
-import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+"use client"
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar"
+import { useState } from "react"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import EditPopUp from "./EditPopUp"
+import AvatarUpload from "./EditProfileAvatar"
 
-interface ProfileInfo {
-  username: string;
+export interface ProfileInfo {
+  username: string
+  bio?: string
 }
 
-export default function ProfileCard({ username }: ProfileInfo){
+export default function ProfileCard({ username: initialUsername, bio: initialBio = "" }: ProfileInfo) {
+  const [isPopupOpen, setIsPopupOpen] = useState(false)
+  const [profileImageUrl, setProfileImageUrl] = useState("/profile-pic.jpg")
+  const [username, setUsername] = useState(initialUsername)
+  const [bio, setBio] = useState(initialBio)
+
+  const handleProfileImageChange = (newImageUrl: string) => {
+    setProfileImageUrl(newImageUrl)
+    // Update this in the back alos
+  }
+
+  const handleProfileUpdate = (newUsername: string, newBio: string) => {
+    setUsername(newUsername)
+    setBio(newBio)
+    // Update this in backend also
+  }
 
   return (
     <Card className="w-full">
       <CardHeader>
         <div className="relative w-full h-32 bg-gray-400">
-        <Avatar className="absolute left-2 bottom-[-30px] w-20 h-20 border-2 border-black">
-        <AvatarImage src='/profile-pic.jpg' alt="Avatar" />
-        <AvatarFallback>
-            <span className="material-symbols-rounded medium">
-            account_circle
-            </span>
-        </AvatarFallback>
-        </Avatar>
+          <div className="absolute left-2 bottom-[-30px]">
+            <AvatarUpload currentImageUrl={profileImageUrl} onImageChange={handleProfileImageChange} size="md" />
+          </div>
         </div>
         <div className="pt-10">
-
           <CardTitle></CardTitle>
-          <p className="">{username}</p>
+          <p className="font-semibold text-lg">{username}</p>
           <p>Following: 4 Followers: 5</p>
         </div>
-        
 
         <CardDescription>Bio</CardDescription>
       </CardHeader>
       <CardContent>
-        <form>
-          <div className="grid w-full items-center gap-4">
-          </div>
-        </form>
+        <p className="text-sm text-muted-foreground">{bio || "No bio yet."}</p>
       </CardContent>
       <CardFooter className="flex justify-end">
-        <Button>Edit Profile</Button>
+        <div>
+          <button onClick={() => setIsPopupOpen(true)} className="bg-blue-500 text-white p-2 rounded">
+            Edit Profile
+          </button>
+
+          <EditPopUp
+            bool={isPopupOpen}
+            onClose={() => setIsPopupOpen(false)}
+            currentUsername={username}
+            currentBio={bio}
+            onSave={handleProfileUpdate}
+          />
+        </div>
       </CardFooter>
     </Card>
   )
-
 }
+
