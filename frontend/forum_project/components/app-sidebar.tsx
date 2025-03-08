@@ -20,70 +20,79 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 
-// sample data.
-const data = {
-  forumTitle:
-    {
-      name: "Inspiration Station",
-    },
-  navMain: [
-    {
-      title: "Home",
-      url: "/",
-      icon: Home,
-      isActive: true,
-    },
-    {
-      title: "Popular",
-      url: "/popular",
-      icon: Flame,
-      badge: "10",
-    },
-    {
-      title: "Profile",
-      url: "/profile",
-      icon: CircleUserRound,
-      badge: "10",
-    },
-  ],
-  navSecondary: [
-    {
-      title: "LogOut",
-      url: "/login",
-      icon: LogOut
-    },
-  ],
-  favorites: [
-    {
-      name: "Music",
-      url: "/search?tags=music",
-      emoji: "🎵",
-    },
-    {
-      name: "Art",
-      url: "/search?tags=art",
-      emoji: "🎨",
-    },
-    {
-      name: "Travel",
-      url: "/search?tags=travel",
-      emoji: "🧳",
-    },
-    {
-      name: "Books",
-      url: "/search?tags=books",
-      emoji: "📚",
-    },
-    {
-      name: "Movies",
-      url: "/search?tags=movies",
-      emoji: "🎥",
-    },
-  ],
-  
-}
+import { useLogout } from "@/hooks/useLogout"
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+
+  const { logout } = useLogout();
+  // sample data.
+  const data = {
+    forumTitle:
+      {
+        name: "Inspiration Station",
+      },
+    navMain: [
+      {
+        title: "Home",
+        url: "/",
+        icon: Home,
+        isActive: true,
+      },
+      {
+        title: "Popular",
+        url: "/popular",
+        icon: Flame,
+        badge: "10",
+      },
+      {
+        title: "Profile",
+        url: "/profile",
+        icon: CircleUserRound,
+        badge: "10",
+      },
+    ],
+    navSecondary: [
+      {
+        title: "LogOut",
+        url: "/login",
+        onClick: () => {
+          console.log("Logout button clicked");
+          logout();
+        },
+        icon: LogOut,
+      },
+    ],
+    favorites: [
+      {
+        name: "Music",
+        url: "/search?tags=music",
+        emoji: "🎵",
+      },
+      {
+        name: "Art",
+        url: "/search?tags=art",
+        emoji: "🎨",
+      },
+      {
+        name: "Travel",
+        url: "/search?tags=travel",
+        emoji: "🧳",
+      },
+      {
+        name: "Books",
+        url: "/search?tags=books",
+        emoji: "📚",
+      },
+      {
+        name: "Movies",
+        url: "/search?tags=movies",
+        emoji: "🎥",
+      },
+    ],
+    
+  }
+
+
   return (
     // <Sidebar className="border-r-0 " {...props}>
     <Sidebar collapsible="icon" className="border-r-0 " {...props}>

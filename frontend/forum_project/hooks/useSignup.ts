@@ -13,7 +13,7 @@ export const useSignup = () => {
         setError(null)
         
 
-        const response = await fetch(`http://localhost:3001/api/users/signup`, {
+        const response = await fetch(`http://localhost:${port}/api/users/signup`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({password, username, firstName, lastName}),
@@ -31,6 +31,8 @@ export const useSignup = () => {
             
             // update the auth context
             dispatch({type: 'LOGIN', payload: json})
+
+            // store user in session storage
             sessionStorage.setItem('user', JSON.stringify(json));
 
             setIsLoading(false)

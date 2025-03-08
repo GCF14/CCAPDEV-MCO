@@ -9,11 +9,16 @@ import {
 import Header from "@/components/Header"
 import CreatePostButton from "@/components/create-post-button";
 import axios from 'axios';
+import { LogOut, Router } from 'lucide-react';
+import { useLogout } from "@/hooks/useLogout"
+import { useRouter } from 'next/navigation';
 
 export default function Homepage() {
   const [posts, setPosts] = useState<PostProps[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { logout } = useLogout();
+  const router = useRouter();
 
   useEffect(() => {
     const fetchPosts = async() => {
@@ -37,7 +42,12 @@ export default function Homepage() {
   if (error)
     return <p>Error: {error}</p>
 
-  
+  const handleClick = () => {
+    logout()
+    router.push('/login')
+    
+  }
+
   return (
     
     <div>
@@ -77,7 +87,16 @@ export default function Homepage() {
           </SidebarInset>
         </SidebarProvider>
       </div>
+      <button 
+      onClick={handleClick} 
+      className="absolute top-5 right-5 px-4 py-2 bg-black text-white rounded-md shadow-md hover:bg-gray-800 transition"
+      >
+        Log out
+      </button>
         <CreatePostButton/>  
+        
+
+
     </div>
   );
 }
