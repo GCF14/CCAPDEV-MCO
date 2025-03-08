@@ -30,7 +30,7 @@ const signUpUser = async (req, res) => {
         const {password, username, firstName, lastName} = req.body
         console.log("Extracted data:", password, username, firstName, lastName);
 
-        const pfp = `https://api.dicebear.com/8.x/adventurer/svg?seed=${encodeURIComponent(username)}`;
+        const pfp = `https://api.dicebear.com/9.x/thumbs/svg?seed=${encodeURIComponent(username)}`;
         
         const user = await User.signup(password, username, firstName, lastName, pfp);
         

@@ -13,7 +13,6 @@ import axios from 'axios';
 import {PostProps, CommentProps} from "@/components/post";
 import {
   Avatar,
-  AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar";
 
@@ -22,8 +21,9 @@ export default function PostPage() {
   const searchParams = useSearchParams();
   const _id = searchParams.get("id") || "0";
   const [post, setPost] = useState<PostProps | null>(null);
-  // const [newComment, setNewComment] = useState<string>('');
+  const [newComment, setNewComment] = useState<string>('');
   const [comments, setComments] = useState<CommentProps[]>([]);
+  const [parentCommentId, setParentCommentId] = useState<string>('');
 
   const userData = sessionStorage.getItem('user');
   const token = userData ? JSON.parse(userData).token : null;
@@ -63,6 +63,22 @@ export default function PostPage() {
   if (!post) 
     return <p>Post not found.</p>;
 
+  const handlePostComment = async(content: string, parentCommentId: string) => {
+    const body: {content: string, parentCommentId?: string} = {
+      content
+    }
+    if (parentCommentId && parentCommentId.length > 0) {
+      body.parentCommentId = parentCommentId
+    }
+
+    try {
+      const resp = await axios.post(`http://localhost:3001/api/posts/${_id}`, body, {
+        headers: {Authorization: `Bearer ${token}`}
+      });
+    } catch (error) {
+      console.error('Error posting comment:', error);
+  }
+  }
   return (
     <SidebarProvider>
         <AppSidebar />
@@ -72,11 +88,15 @@ export default function PostPage() {
               
                 {/* POST AND TITLE*/}
                 <h1 className="text-2xl font-bold">{post.title} {post.edited && <span className="text-gray-500 text-sm">(edited)</span>}</h1>
-                <p className="text-gray-600 flex items-center space-x-2"> By
-                  <Avatar>
-                    <AvatarImage src={post.user.pfp} alt="Avatar" /> 
-                  </Avatar>
-                  {post.user.username}</p>
+                <Link href={`/profile?id=${post.user._id}`}>
+                  <p className="text-gray-600 flex items-center">
+                    <Avatar>
+                      <AvatarImage src={post.user.pfp} alt="Avatar" /> 
+                    </Avatar>
+                    <span className='ml-2'>{post.user.username}</span>
+                  </p>
+                </Link>
+                
                 <p className="mt-4 text-gray-800">{post.content}</p>
                 {/* tags */}
                 {post.tags && post.tags.length > 0 && (
@@ -103,23 +123,25 @@ export default function PostPage() {
                         <ThumbsDown className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />
                         <span>{post.downvotes}</span>
                     </button>
-                    <MessageSquare className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />
-                    <Share2 className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />  
-                    {post._id === userId && <Button className="mt-2">Edit</Button>}
-                    {post._id === userId && <Button className="mt-2">Delete</Button>}
+                    {/* <MessageSquare className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" /> */}
+                    {/* <Share2 className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />   */}
+                    {post.user._id === userId && <Button className="mt-2">Edit</Button>}
+                    {post.user._id === userId && <Button className="mt-2">Delete</Button>}
                       
                 </div>
 
 
                 {/* COMMENT */}
-                <div className="mt-6">
+                <div className="mt-3">
                 
                 <Textarea
                   id="comment-box"
                   placeholder="Write your comment here..."
                   className="w-full mt-2 p-2 border rounded-lg resize-none"
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
                 />
-                <Button className="mt-2">Post Comment</Button>
+                <Button onClick={(e) => {handlePostComment(newComment, parentCommentId); window.location.reload();}} className="mt-2">Post Comment</Button>
                 </div>
 
                 {/* COMMENTS */}
@@ -128,17 +150,26 @@ export default function PostPage() {
                 {comments.length > 0 ? (
                   comments.map((comment) => (
                     <div key={comment._id} className="p-3 border rounded">
-                      <p className="text-gray-800 font-semibold">{comment.username}</p>
+                      <p className="text-gray-800 font-semibold flex items-center">
+                        <Avatar>
+                          <AvatarImage src={comment.user.pfp} alt="Avatar" /> 
+                        </Avatar>
+                        <span className='ml-2'>{comment.user.username}</span>
+                      </p>
                       <p>{comment.content} {comment.edited && <span className="text-gray-500 text-sm">(edited)</span>}</p>
-                      {comment._id === userId && <Button>Edit</Button>}
+                      {comment.user._id === userId && <Button>Edit</Button>}
                       {/* If the comment has nested comments, recursively render them */}
                       {comment.comments && comment.comments.length > 0 && (
                         <div className="ml-4 mt-3 space-y-2">
                           {comment.comments.map((nestedComment) => (
                             <div key={nestedComment._id} className="p-3 border rounded">
-                              <p className="text-gray-800 font-semibold">{nestedComment.username}</p>
+                              <p className="text-gray-800 font-semibold">
+                              <Avatar>
+                                <AvatarImage src={nestedComment.user.pfp} alt="Avatar" /> 
+                              </Avatar>
+                               {nestedComment.user.username}</p>
                               <p>{nestedComment.content} {nestedComment.edited && <span className="text-gray-500 text-sm">(edited)</span>}</p>
-                              {nestedComment._id === userId && <Button>Edit</Button>}
+                              {nestedComment.user._id === userId && <Button>Edit</Button>}
                             </div>
                           ))}
                         </div>

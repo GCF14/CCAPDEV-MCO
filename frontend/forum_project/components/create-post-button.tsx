@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState} from "react";
 import { 
     Plus,
     Paperclip,
@@ -12,11 +12,57 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
+import axios from 'axios'
 
 export default function CreatePostButton() {
-  const [isOpen, setIsOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
+    const [title, setTitle] = useState('');
+    const [content, setContent] = useState('');
+    const [tags, setTags] = useState<string[]>([]);
+    const [tagInput, setTagInput] = useState('');
+    const userData = sessionStorage.getItem('user');
+    const token = userData ? JSON.parse(userData).token : null;
+    const handlePost = async(title: string, content: string, tags: string[], e: React.MouseEvent ) => {
+        e.preventDefault();
+        e.stopPropagation();
 
-  return (
+        const body: { title: string, content: string, tags?: string[] } = {
+            title,
+            content,
+        };
+    
+        // Conditionally add tags if they are provided
+        if (tags && tags.length > 0) {
+            body.tags = tags;
+        }
+
+        try {   
+            const resp = await axios.post('http://localhost:3001/api/posts/create', body, {
+                headers: {Authorization: `Bearer ${token}`}
+            });
+
+        
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter' && tagInput.trim() !== '') {
+            if (!tags.includes(tagInput.trim())) {
+                setTags([...tags, tagInput.trim()]);
+            }
+            setTagInput(''); // Reset input field
+        }
+    };
+
+    // to remove a tag
+    const removeTag = (tagToRemove: string) => {
+        const updatedTags = tags.filter(tag => tag !== tagToRemove);
+        setTags(updatedTags);
+    };
+
+    return (
     <>
         <div className="fixed bottom-6 right-6 z-50">
             <button
@@ -39,20 +85,48 @@ export default function CreatePostButton() {
                 </CardHeader>
             <CardContent>
                 <textarea
-                    className="w-full h-40 rounded-md border p-2"
-                    placeholder="Write something..."
+                    className="w-full h-11 mb-1 rounded-md border p-2"
+                    placeholder="Title..."
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
                 />
+                <textarea
+                    className="w-full h-40 mb-3 rounded-md border p-2"
+                    placeholder="Write something..."
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
+                />
+                <div>
+                    <input
+                        type='text'
+                        className="w-full h-11 rounded-md border p-2"
+                        placeholder="Press enter to add a tag (music, movies)"
+                        value={tagInput}
+                        onChange={(e) => setTagInput(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                    />
+                     <div className="flex flex-wrap gap-2 mt-2">
+                        {tags.map((tag, index) => (
+                            <div
+                                key={index}
+                                className="px-4 py-1 bg-gray-800 text-white rounded-full flex items-center"
+                            >
+                                {tag}
+                                <span
+                                    onClick={() => removeTag(tag)}
+                                    className="ml-2 cursor-pointer text-sm text-white hover:text-gray-200"
+                                >
+                                    {/* x button for removing a tag */}
+                                    &#x2715; 
+                                </span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                
             </CardContent>
             <CardFooter className="flex justify-between">
-                {/* attachment buttons */}
-                <div className="flex text-gray-500">
-                    <button className="p-2 rounded-full hover:bg-gray-200 transition">
-                    <Paperclip className="size-5" />
-                    </button>
-                    <button className="p-2 rounded-full hover:bg-gray-200 transition">
-                    <Image className="size-5" />
-                    </button>
-                </div>
+                
                 {/* post and cancel buttons */}
                 <div className="flex gap-4" >
                     <button
@@ -61,7 +135,7 @@ export default function CreatePostButton() {
                     >
                         Cancel
                     </button>
-                    <button className="rounded-md bg-black text-white px-4 py-2">
+                    <button onClick={(e) => {handlePost(title, content, tags, e); setIsOpen(false); window.location.reload();}} className="rounded-md bg-black text-white px-4 py-2">
                         Post
                     </button>
                 </div>

@@ -26,7 +26,11 @@ import axios from 'axios';
 
 export interface CommentProps {
     _id: string;
-    username: string;
+    user: {
+        _id: string;
+        username: string;
+        pfp: string;
+    };
     content: string;
     edited: boolean;
     comments?: CommentProps[];
@@ -61,7 +65,6 @@ export default function Post({_id, user, title, content, upvotes, downvotes, tag
     const [dislikes, setDislikes] = useState(downvotes);
     const userData = sessionStorage.getItem('user');
     const token = userData ? JSON.parse(userData).token : null;
-    console.log(token);
     const handleVote = async(type: 'upvote' | 'downvote', e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
@@ -160,7 +163,7 @@ export default function Post({_id, user, title, content, upvotes, downvotes, tag
                             <span>{dislikes}</span>
                         </button>
                         <MessageSquare className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />
-                        <Share2 className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />          
+                        {/* <Share2 className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />           */}
                     </div>
 
                     

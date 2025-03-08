@@ -74,7 +74,7 @@ const getPostsByUserId = async (req, res) => {
     try {
         const posts = await Post.find({user: userId})
             .populate('user', 'username pfp')
-            .populate('comments.user', 'comments pfp')
+            .populate('comments.user', 'username pfp')
             .sort({date: -1});
         res.json(posts);
     } catch(error) {
@@ -87,7 +87,7 @@ const getPopularPosts = async (req, res) => {
     try {
         const posts = await Post.find()
         .populate('user', 'username pfp')
-        .populate('comments.user', 'comments pfp')
+        .populate('comments.user', 'username pfp')
         .sort({upvotes: -1});
         res.json(posts);
     } catch(error) {
@@ -121,6 +121,11 @@ const createComment = async (req, res) => {
         }
         const user = req.user._id;
 
+        let newComment = {
+            user: user,
+            content: content,
+            comments: []
+        }
         // if nested comment
         if (parentCommentId) {
             const parentComment = findCommentById(post.comments, parentCommentId);
@@ -128,16 +133,10 @@ const createComment = async (req, res) => {
                 return res.status(404).json({ message: 'Parent comment not found' });
             }
             // add comment to parent comment
-            parentComment.comments.push({
-                user: user,
-                content: content
-            });
+            parentComment.comments.push(newComment);
         } else {
             // add the comment to the post's comments array
-            post.comments.push({
-                user: user,   
-                content: content 
-            });
+            post.comments.push(newComment);
         }
         
         await post.save();
@@ -178,9 +177,36 @@ const editComment = async (req, res) => {
 };
 
 // Delete a comment
+// const deleteComment = async (req, res) => {
+//     const {postId, commentId} = req.params;
+
+//     try {
+//         const post = await Post.findById(postId);
+//         if (!post) {
+//             return res.status(404).json({ message: 'Post not found' });
+//         }
+      
+//         const comment = findCommentById(post.comments, commentId)
+//         if (!comment) {
+//             return res.status(404).json({ message: 'Comment not found' });
+//         }
+
+//         if (comment.user.toString() !== req.user._id.toString()) {
+//             return res.status(403).json({ message: 'You can only delete your own comments' });
+//         }
+    
+//         // remove the comment from the comments array
+//         comment.content = 'This comment has been deleted.';
+//         comment.edited = false;
+//         await post.save();
+//         res.json(post);
+//     } catch (error) {
+//         res.status(400).json({ error: error.message });
+//     }
+// };
+// permanently delete comment (for testing purposes)
 const deleteComment = async (req, res) => {
     const {postId, commentId} = req.params;
-
     try {
         const post = await Post.findById(postId);
         if (!post) {
@@ -192,26 +218,27 @@ const deleteComment = async (req, res) => {
             return res.status(404).json({ message: 'Comment not found' });
         }
 
-        if (post.comments[commentIndex].user.toString() !== req.user._id.toString()) {
+        if (comment.user.toString() !== req.user._id.toString()) {
             return res.status(403).json({ message: 'You can only delete your own comments' });
         }
     
         // remove the comment from the comments array
         comment.content = 'This comment has been deleted.';
+        comment.edited = false;
+        deletedComment = await 
         await post.save();
         res.json(post);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
-};
-
+}
 // Get a specific post
 const getPost = async(req, res) => {
     try {
         const {id} = req.params;
         const post = await Post.findById(id)
             .populate('user', 'username pfp')
-            .populate('comments.user', 'comments pfp');
+            .populate('comments.user', 'username pfp');
         if (!post) {
             return res.status(404).json({ message: 'Post not found' });
         }
@@ -291,7 +318,7 @@ const searchPosts = async (req, res) => {
             ]
         })
             .populate('user', 'username pfp')
-            .populate('comments.user', 'comments pfp')
+            .populate('comments.user', 'username pfp')
             .sort({date: -1});
         
         res.json(posts);
