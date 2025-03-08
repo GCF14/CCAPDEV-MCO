@@ -8,15 +8,25 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { Eye, EyeOff, Mail} from 'lucide-react'
 import Link from 'next/link'
+import { useLogin } from "@/hooks/useLogin"
+import { useRouter } from "next/navigation";
 
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const { login, error, isLoading } = useLogin()
+  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log({ username, password });
+
+    const success = await login(username, password);
+
+    if (success) { 
+      router.push("/");
+    }
+
   };
 
   return (
@@ -71,7 +81,7 @@ export default function Login() {
               </div>
               <a href="#" className="text-primary-500 hover:underline">Forgot password?</a>
             </div>
-            <Button type="submit" className="w-full">Login</Button>
+            <Button type="submit" className="w-full" disabled={isLoading}>Login</Button>
           </form>
           <div className="relative">
             <div className="absolute inset-0 flex items-center">

@@ -51,13 +51,13 @@ userSchema.statics.signup = async function(password, username, firstName, lastNa
 }
 
 // static login method
-userSchema.statics.login = async function(email, password){
+userSchema.statics.login = async function(username, password){
     
-    if(!email || !password) {
+    if(!username || !password) {
         throw Error("All fields must be filled")
     }
 
-    const user = await this.findOne({ email })
+    const user = await this.findOne({ username })
 
     if(!user) {
         throw Error('Invalid login credentials')
