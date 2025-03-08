@@ -195,7 +195,7 @@ const editComment = async (req, res) => {
 //             return res.status(403).json({ message: 'You can only delete your own comments' });
 //         }
     
-//         // remove the comment from the comments array
+//         // remove the content of the comment
 //         comment.content = 'This comment has been deleted.';
 //         comment.edited = false;
 //         await post.save();
@@ -223,9 +223,8 @@ const deleteComment = async (req, res) => {
         }
     
         // remove the comment from the comments array
-        comment.content = 'This comment has been deleted.';
-        comment.edited = false;
-        deletedComment = await 
+        post.comments = post.comments.filter(c => c._id.toString() !== commentId);
+         
         await post.save();
         res.json(post);
     } catch (error) {
