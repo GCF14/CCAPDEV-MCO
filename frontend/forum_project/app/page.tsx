@@ -12,8 +12,9 @@ import axios from 'axios';
 import { LogOut, Router } from 'lucide-react';
 import { useLogout } from "@/hooks/useLogout"
 import { useRouter } from 'next/navigation';
+import withAuth from "@/components/withAuth";
 
-export default function Homepage() {
+function Homepage() {
   const [posts, setPosts] = useState<PostProps[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -101,3 +102,5 @@ export default function Homepage() {
     </div>
   );
 }
+
+export default withAuth(Homepage);
