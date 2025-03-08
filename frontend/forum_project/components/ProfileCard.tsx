@@ -7,8 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import EditProfileButton from "./edit-profile-button";
 
 import {
   Avatar,
@@ -54,7 +53,7 @@ export default function ProfileCard({ username, pfp, bio }: ProfileInfo){
         </form>
       </CardContent>
       <CardFooter className="flex justify-end">
-        <Button>Edit Profile</Button>
+        <EditProfileButton/>
       </CardFooter>
     </Card>
   )

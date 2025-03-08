@@ -15,7 +15,8 @@ const {
     upvotePost,
     downvotePost,
     getPostsByTag,
-    searchPosts
+    searchPosts,
+    getCommentsByUserId
 } = require('../controllers/postController');
 
 // middleware
@@ -63,10 +64,13 @@ router.put('/:id/upvote', upvotePost);
 router.put('/:id/downvote', downvotePost);
 
 // get posts by tag route
-router.post('/search/:tag', getPostsByTag);
+router.get('/search/tags/:tag', getPostsByTag);
 
 // search posts route
 router.get('/search/:search', searchPosts);
+
+// get comments by specific user route
+router.get('/user/:userId/comments', getCommentsByUserId)
 
 
 module.exports = router;
