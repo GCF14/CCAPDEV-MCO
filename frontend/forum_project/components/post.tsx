@@ -77,7 +77,7 @@ export default function Post({_id, username, title, content, upvotes, downvotes,
     }
 
     return (
-        <Link href={`/post?id=${_id}`} className="block w-full max-w-lg">
+        <Link href={`/post?id=${_id}`} className="block w-full max-w-lg cursor-pointer hover:bg-gray-100 transition">
             <Card>
                 <CardHeader>
                     <div className="flex items-center space-x-3">

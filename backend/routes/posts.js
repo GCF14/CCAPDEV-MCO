@@ -1,5 +1,5 @@
 const express = require('express');
-const router = express.Router();
+
 // controller
 const {
     createPost, 
@@ -17,6 +17,14 @@ const {
     getPostsByTag,
     searchPosts
 } = require('../controllers/postController');
+
+// middleware
+const requireAuth = require('../middleware/requireAuth');
+
+const router = express.Router();
+
+// require auth for all post routes
+// router.use(requireAuth);
 
 // create post route
 router.post('/create', createPost);

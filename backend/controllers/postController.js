@@ -56,6 +56,7 @@ const deletePost = async (req, res) => {
 
 // Get all posts
 const getAllPosts = async (req, res) => {
+    console.log("getAllPosts route hit by user:", req.user)
     try {
         const posts = await Post.find()
             // .populate('user', 'username')
