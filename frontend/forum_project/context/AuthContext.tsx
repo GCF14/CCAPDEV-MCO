@@ -40,6 +40,13 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
     user: null 
   });
 
+  useEffect(() => {
+    const user = sessionStorage.getItem('user');
+    if (user) {
+      dispatch({ type: 'LOGIN', payload: user }); 
+    }
+  }, [])
+
   console.log("AuthContext state: ", state);
 
   return (
