@@ -22,7 +22,6 @@ import {
 import React, { useState } from "react";
 import { ThumbsUp, ThumbsDown, MessageSquare, Share2 } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import axios from 'axios';
 
 export interface CommentProps {
@@ -34,10 +33,11 @@ export interface CommentProps {
 }
 export interface PostProps {
     _id: string;
-    // user: {
-    //     username: string;
-    // }
-    username: string;
+    user: {
+        _id: string;
+        username: string;
+        pfp: string;
+    };
     title: string;
     content: string;
     comments?: CommentProps[];
@@ -49,23 +49,29 @@ export interface PostProps {
 
 
 
-const getTextContent = (node: React.ReactNode): string => {
-    if (typeof node === "string") return node; // If it's already a string, return it
-    if (typeof node === "number") return node.toString(); // Convert numbers to strings
-    return ""; // Ignore anything else (like JSX)
-  };
+// const getTextContent = (node: React.ReactNode): string => {
+//     if (typeof node === "string") return node; // If it's already a string, return it
+//     if (typeof node === "number") return node.toString(); // Convert numbers to strings
+//     return ""; // Ignore anything else (like JSX)
+//   };
 
 
-export default function Post({_id, username, title, content, upvotes, downvotes, tags, edited}: PostProps) {
+export default function Post({_id, user, title, content, upvotes, downvotes, tags, edited}: PostProps) {
     const [likes, setLikes] = useState(upvotes);
     const [dislikes, setDislikes] = useState(downvotes);
-
+    const userData = sessionStorage.getItem('user');
+    const token = userData ? JSON.parse(userData).token : null;
+    console.log(token);
     const handleVote = async(type: 'upvote' | 'downvote', e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
-
+        
+    
         try {
-            const resp = await axios.post(`http://localhost:3001/api/posts/${_id}/${type}`);
+            const resp = await axios.put(`http://localhost:3001/api/posts/${_id}/${type}`, {}, {
+                headers: {Authorization: `Bearer ${token}`}
+            });
+
             if (type === 'upvote') {
                 setLikes((prevLikes) => prevLikes + 1);
             } else {
@@ -81,9 +87,9 @@ export default function Post({_id, username, title, content, upvotes, downvotes,
             <Card>
                 <CardHeader>
                     <div className="flex items-center space-x-3">
-                        <Link href={`/profile?id=${_id}`}>
-                            <Avatar className="w-10 h-10">
-                                <AvatarImage src='/profile-pic.jpg' alt="Avatar" />
+                        <Link href={`/profile?id=${user._id}`}>
+                            <Avatar>
+                                <AvatarImage src={user.pfp} alt="Avatar" />
                                 <AvatarFallback>
                                     <span className="material-symbols-rounded medium">
                                     account_circle
@@ -93,15 +99,15 @@ export default function Post({_id, username, title, content, upvotes, downvotes,
                         </Link>
 
                         <HoverCard>
-                            <Link href={`/profile?id=${_id}`}>
+                            <Link href={`/profile?id=${user._id}`}>
                                 <HoverCardTrigger className="hover:underline font-medium">
-                                    {username}
+                                    {user.username}
                                 </HoverCardTrigger>
                             </Link>
                         <HoverCardContent className="w-80">
                             <div className="flex items-center space-x-4">
                             <Avatar>
-                                <AvatarImage src="/profile-pic.jpg" />
+                                <AvatarImage src={user.pfp} />
                                 <AvatarFallback>
                                 <span className="material-symbols-rounded medium">
                                     account_circle
@@ -109,7 +115,7 @@ export default function Post({_id, username, title, content, upvotes, downvotes,
                                 </AvatarFallback>
                             </Avatar>
                             <div>
-                                <p className="font-semibold">{username}</p>
+                                <p className="font-semibold">{user.username}</p>
                                 
                             </div>
                             </div>

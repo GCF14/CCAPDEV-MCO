@@ -12,11 +12,10 @@ const loginUser = async (req, res) => {
 
     try {
         const user = await User.login(username, password)
-
         // create a token when logging in
         const token = createToken(user._id)
         
-        res.status(200).json({username: user.username, token})
+        res.status(200).json({username: user.username, token, _id: user._id})
 
     } catch(error) {
         res.status(400).json({error: error.message})
@@ -31,7 +30,9 @@ const signUpUser = async (req, res) => {
         const {password, username, firstName, lastName} = req.body
         console.log("Extracted data:", password, username, firstName, lastName);
 
-        const user = await User.signup(password, username, firstName, lastName);
+        const pfp = `https://api.dicebear.com/8.x/adventurer/svg?seed=${encodeURIComponent(username)}`;
+        
+        const user = await User.signup(password, username, firstName, lastName, pfp);
         
 
         // create a token when signing up

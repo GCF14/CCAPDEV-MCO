@@ -21,7 +21,8 @@ import {
 
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-
+  const userData = sessionStorage.getItem('user');
+  const userId = userData ? JSON.parse(userData)._id : null;
   
   // sample data.
   const data = {
@@ -44,7 +45,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       },
       {
         title: "Profile",
-        url: "/profile",
+        url: `/profile?id=${encodeURIComponent(userId)}`,
         icon: CircleUserRound,
         badge: "10",
       },

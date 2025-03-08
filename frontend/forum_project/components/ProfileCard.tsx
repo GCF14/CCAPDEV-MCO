@@ -19,16 +19,18 @@ import {
 export interface ProfileInfo {
   _id: string;
   username: string;
+  pfp: string;
+  bio: string;
 }
 
-export default function ProfileCard({ username }: ProfileInfo){
+export default function ProfileCard({ username, pfp, bio }: ProfileInfo){
 
   return (
     <Card className="w-full">
       <CardHeader>
         <div className="relative w-full h-32 bg-gray-400">
-        <Avatar className="absolute left-2 bottom-[-30px] w-20 h-20 border-2 border-black">
-        <AvatarImage src='/profile-pic.jpg' alt="Avatar" />
+        <Avatar className="absolute left-2 bottom-[-30px] w-20 h-20 border-2 border-black bg-white">
+        <AvatarImage src={pfp} alt="Avatar" />
         <AvatarFallback>
             <span className="material-symbols-rounded medium">
             account_circle
@@ -40,11 +42,10 @@ export default function ProfileCard({ username }: ProfileInfo){
 
           <CardTitle></CardTitle>
           <p className="">{username}</p>
-          <p>Following: 4 Followers: 5</p>
         </div>
         
 
-        <CardDescription>Bio</CardDescription>
+        <CardDescription>{bio}</CardDescription>
       </CardHeader>
       <CardContent>
         <form>

@@ -17,14 +17,19 @@ export default function Popular() {
     useEffect(() => {
         const fetchPosts = async() => {
         try {
-            const resp = await axios.get('http://localhost:3001/api/posts/popular');
+            const userData = sessionStorage.getItem('user');
+            const token = userData ? JSON.parse(userData).token : null;
+
+            const resp = await axios.get('http://localhost:3001/api/posts/popular', {
+                headers: {Authorization: `Bearer ${token}`}
+            });
             setPosts(resp.data);
             setLoading(false);
         } catch (err) {
             if (axios.isAxiosError(err)) {
-            setError(err.response?.data?.message || 'Error fetching posts');
+                setError(err.response?.data?.message || 'Error fetching posts');
             } else {
-            setError('An unexpected error occured');
+                setError('An unexpected error occured');
             }
             setLoading(false);
         }
@@ -54,8 +59,7 @@ export default function Popular() {
                                 <Post
                                 key={post._id}
                                 _id={post._id}
-                                username={post.username}
-                                // username={post.user.username}
+                                user={post.user}
                                 title={post.title}
                                 content={post.content}
                                 upvotes={post.upvotes}

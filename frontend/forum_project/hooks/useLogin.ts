@@ -28,12 +28,12 @@ export const useLogin = () => {
         }
 
         if(response.ok) {
-            
+            const {username, token, _id} = json
             // update the auth context
             dispatch({type: 'LOGIN', payload: json})
 
             // store user in session storage
-            sessionStorage.setItem('user', JSON.stringify(json));
+            sessionStorage.setItem('user', JSON.stringify({username, token, _id}));
 
             setIsLoading(false)
             return true;

@@ -21,11 +21,15 @@ function Homepage() {
   const { logout } = useLogout();
   const router = useRouter();
   const port = process.env.NEXT_PUBLIC_PORT
+  const userData = sessionStorage.getItem('user');
+  const token = userData ? JSON.parse(userData).token : null;
 
   useEffect(() => {
     const fetchPosts = async() => {
       try {
-        const resp = await axios.get(`http://localhost:${port}/api/posts/`);
+        const resp = await axios.get(`http://localhost:${port}/api/posts/`, {
+          headers: { Authorization: `Bearer ${token}`}
+        });
         setPosts(resp.data);
         setLoading(false);
       } catch (err) {
@@ -70,8 +74,7 @@ function Homepage() {
                       <Post
                         key={post._id}
                         _id={post._id}
-                        username={post.username}
-                        // username={post.user.username}
+                        user={post.user}
                         title={post.title}
                         content={post.content}
                         upvotes={post.upvotes}

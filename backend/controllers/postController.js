@@ -4,15 +4,14 @@ const mongoose = require('mongoose');
 // Create post
 const createPost = async (req, res) => {
     try {
-        // if (!req.user) {
-        //     return res.status(401).json({message: 'User not authenticated'});
-        // }
+        if (!req.user) {
+            return res.status(401).json({message: 'User not authenticated'});
+        }
         
-        // const user = req.user._id;
-        // const {title, content} = req.body;
-        const {username, title, content, tags = null} = req.body; // tags are optional
+        const user = req.user._id;
+        const {title, content, tags = null} = req.body; // tags are optional
 
-        const newPost = new Post({username, title, content, tags})
+        const newPost = new Post({user, title, content, tags})
         await newPost.save();
 
         res.status(201).json({message: 'New post created', post: newPost})
@@ -34,10 +33,11 @@ const editPost = async (req, res) => {
         // only update if at least one field was changed
         if (Object.keys(updateFields).length > 0) {
             const editedPost = await Post.findByIdAndUpdate(id, {...updateFields, edited:true}, { new: true });
+            res.json({ message: 'Post edited successfully', post: editedPost });
         }
-            
+        
+        
 
-        res.json({ message: 'Post edited successfully', post: editedPost });
     } catch(error) {
         res.status(400).json({error: error.message});
     }
@@ -59,8 +59,8 @@ const getAllPosts = async (req, res) => {
     console.log("getAllPosts route hit by user:", req.user)
     try {
         const posts = await Post.find()
-            // .populate('user', 'username')
-            // .populate('comments.user', 'username')
+            .populate('user', 'username pfp')
+            .populate('comments.user', 'username pfp')
             .sort({date: -1});
         res.json(posts);
     } catch(error) {
@@ -73,8 +73,8 @@ const getPostsByUserId = async (req, res) => {
     const {userId} = req.params;
     try {
         const posts = await Post.find({user: userId})
-            // .populate('user', 'username')
-            // .populate('comments.user', 'comments')
+            .populate('user', 'username pfp')
+            .populate('comments.user', 'comments pfp')
             .sort({date: -1});
         res.json(posts);
     } catch(error) {
@@ -85,7 +85,10 @@ const getPostsByUserId = async (req, res) => {
 // Get all posts sorted by popularity (most upvotes)
 const getPopularPosts = async (req, res) => {
     try {
-        const posts = await Post.find().sort({upvotes: -1});
+        const posts = await Post.find()
+        .populate('user', 'username pfp')
+        .populate('comments.user', 'comments pfp')
+        .sort({upvotes: -1});
         res.json(posts);
     } catch(error) {
         res.status(400).json({error: error.message})
@@ -110,13 +113,13 @@ const findCommentById = (comments, commentId) => {
 // Add a comment
 const createComment = async (req, res) => {
     const {postId} = req.params;  
-    const {username, content, parentCommentId = null} = req.body; // parentCommendId optional if nested comment 
+    const {content, parentCommentId = null} = req.body; // parentCommendId optional if nested comment 
     try {
         const post = await Post.findById(postId);
         if (!post) {
             return res.status(404).json({ message: 'Post not found' });
         }
-        // const user = req.user._id;
+        const user = req.user._id;
 
         // if nested comment
         if (parentCommentId) {
@@ -126,14 +129,13 @@ const createComment = async (req, res) => {
             }
             // add comment to parent comment
             parentComment.comments.push({
-                username: username,
+                user: user,
                 content: content
             });
         } else {
             // add the comment to the post's comments array
             post.comments.push({
-                // user: user,   
-                username: username,
+                user: user,   
                 content: content 
             });
         }
@@ -160,9 +162,9 @@ const editComment = async (req, res) => {
             return res.status(404).json({ message: 'Comment not found' });
         }
 
-        // if (comment.user.toString() !== req.user._id.toString()) {
-        //     return res.status(403).json({ message: 'You can only edit your own comments' });
-        // }
+        if (comment.user.toString() !== req.user._id.toString()) {
+            return res.status(403).json({ message: 'You can only edit your own comments' });
+        }
 
         // update the comment
         comment.content = content;
@@ -190,9 +192,9 @@ const deleteComment = async (req, res) => {
             return res.status(404).json({ message: 'Comment not found' });
         }
 
-        // if (post.comments[commentIndex].user.toString() !== req.user._id.toString()) {
-        //     return res.status(403).json({ message: 'You can only delete your own comments' });
-        // }
+        if (post.comments[commentIndex].user.toString() !== req.user._id.toString()) {
+            return res.status(403).json({ message: 'You can only delete your own comments' });
+        }
     
         // remove the comment from the comments array
         comment.content = 'This comment has been deleted.';
@@ -207,7 +209,9 @@ const deleteComment = async (req, res) => {
 const getPost = async(req, res) => {
     try {
         const {id} = req.params;
-        const post = await Post.findById(id);
+        const post = await Post.findById(id)
+            .populate('user', 'username pfp')
+            .populate('comments.user', 'comments pfp');
         if (!post) {
             return res.status(404).json({ message: 'Post not found' });
         }
@@ -261,7 +265,8 @@ const getPostsByTag = async (req, res) => {
         const {tag} = req.params;
 
         const posts = await Post.find({tags: {$in: [tag]}})
-            // .populate('user', 'username')
+            .populate('user', 'username pfp')
+            .populate('comments', 'username pfp')
             .sort({date: -1});
         
         res.json(posts);
@@ -284,7 +289,10 @@ const searchPosts = async (req, res) => {
                 {content: {$regex: `\\b${search}\\b`, $options: 'i'}},
                 {tags: {$in: [search]}}
             ]
-        }).sort({date: -1});
+        })
+            .populate('user', 'username pfp')
+            .populate('comments.user', 'comments pfp')
+            .sort({date: -1});
         
         res.json(posts);
     } catch(error) {

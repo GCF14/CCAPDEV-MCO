@@ -24,7 +24,7 @@ const requireAuth = require('../middleware/requireAuth');
 const router = express.Router();
 
 // require auth for all post routes
-// router.use(requireAuth);
+router.use(requireAuth);
 
 // create post route
 router.post('/create', createPost);
@@ -57,10 +57,10 @@ router.delete('/:postId/comments/:commentId', deleteComment);
 router.get('/:id', getPost);
 
 // upvote post route
-router.post('/:id/upvote', upvotePost);
+router.put('/:id/upvote', upvotePost);
 
 // downvote post route
-router.post('/:id/downvote', downvotePost);
+router.put('/:id/downvote', downvotePost);
 
 // get posts by tag route
 router.post('/search/:tag', getPostsByTag);

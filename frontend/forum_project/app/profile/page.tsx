@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Header from '@/components/Header';
-import Post, {PostProps} from "@/components/post";
+import Post, {PostProps, CommentProps} from "@/components/post";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import ProfileCard from '../../components/ProfileCard';
@@ -28,17 +28,22 @@ const tabs: TabItem[] = [
 export default function Profile() {
   const [profile, setProfile] = useState<ProfileInfo | null>(null);
   const [posts, setPosts] = useState<PostProps[] | null>([]);
+  const [comments, setComments] = useState<CommentProps[] | null>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const pathname = usePathname()
   const searchParams = useSearchParams();
   const _id = searchParams.get("id") || "0";
 
+  const userData = sessionStorage.getItem('user');
+  const token = userData ? JSON.parse(userData).token : null;
   useEffect(() => {
     if (!_id) return;
     const fetchProfile = async() => {
       try {
-        const resp = await axios.get(`http://localhost:3001/api/users/${_id}`);
+        const resp = await axios.get(`http://localhost:3001/api/users/${_id}`, {
+          headers: {Authorization: `Bearer ${token}`}
+        });
         setProfile(resp.data);
         setLoading(false);
       } catch (err) {
@@ -56,8 +61,11 @@ export default function Profile() {
     const fetchPosts = async() => {
       setLoading(true);
       try {
-        const resp = await axios.get(`http://localhost:3001/api/posts/user/${_id}`);
-        setProfile(resp.data);
+        const resp = await axios.get(`http://localhost:3001/api/posts/user/${_id}`, {
+          headers: {Authorization: `Bearer ${token}`}
+        });
+        setPosts(resp.data);
+        setComments(resp.data.comments);
         setLoading(false);
       } catch (err) {
         if (axios.isAxiosError(err)) {
@@ -77,6 +85,9 @@ export default function Profile() {
   if (loading)
     return <p>Loading...</p>
 
+  if (error)
+    return <p>{error}</p>
+    
   if (!profile)
     return <p>Profile not found.</p>
 
@@ -92,7 +103,7 @@ export default function Profile() {
             <div className="flex flex-col gap-0 px-4 py-10">
               <div className="">
                 <div className="flex flex-col items-center justify-center w-full mt-4 space-y-4 border p-6">
-                  <ProfileCard _id={profile._id} username={profile.username}/>
+                  <ProfileCard _id={profile._id} username={profile.username} pfp={profile.pfp} bio={profile.bio}/>
                   <nav className="w-full flex justify-evenly space-x-8 border p-2" aria-label="Profile navigation">
                     {tabs.map((tab) => (
                       <Link
@@ -117,8 +128,7 @@ export default function Profile() {
                       <Post
                         key={post._id}
                         _id={post._id}
-                        username={post.username}
-                        // username={post.user.username}
+                        user={post.user}
                         title={post.title}
                         content={post.content}
                         upvotes={post.upvotes}

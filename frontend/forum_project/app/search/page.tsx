@@ -17,11 +17,17 @@ export default function Search() {
     const [posts, setPosts] = useState<PostProps[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const userData = sessionStorage.getItem('user');
+    const token = userData ? JSON.parse(userData).token : null;
+
+    
     if (search) {
         useEffect(() => {
             const fetchPosts = async() => {
             try {
-                const resp = await axios.get(`http://localhost:3001/api/posts/search/${search}`);
+                const resp = await axios.get(`http://localhost:3001/api/posts/search/${search}`, {
+                    headers: {Authorization: `Bearer ${token}`}
+                });
                 setPosts(resp.data);
                 setLoading(false);
             } catch (err) {
@@ -40,7 +46,9 @@ export default function Search() {
         useEffect(() => {
             const fetchPosts = async() => {
             try {
-                const resp = await axios.get(`http://localhost:3001/api/posts/search/${tags}`);
+                const resp = await axios.get(`http://localhost:3001/api/posts/search/${tags}`, {
+                    headers: {Authorization: `Bearer ${token}`}
+                });
                 setPosts(resp.data);
                 setLoading(false);
             } catch (err) {
@@ -81,8 +89,7 @@ export default function Search() {
                                 <Post
                                 key={post._id}
                                 _id={post._id}
-                                username={post.username}
-                                // username={post.user.username}
+                                user={post.user}
                                 title={post.title}
                                 content={post.content}
                                 upvotes={post.upvotes}

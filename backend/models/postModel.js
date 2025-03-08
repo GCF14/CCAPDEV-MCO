@@ -5,15 +5,12 @@ const Schema = mongoose.Schema;
 
 // comment schema to allow nested comments
 const commentSchema = new Schema({
-    // user: {
-        //     type: mongoose.Schema.Types.ObjectId,
-        //     ref: 'User',
-        //     required: true
-        // },
-        username: {
-            type: String,
+        user: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
             required: true
         },
+
         content: {
             type: String,
             required: true
@@ -30,13 +27,9 @@ const commentSchema = new Schema({
 })
 
 const postSchema = new Schema({
-    // user: {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'User',
-    //     required: true
-    // },
-    username: {
-        type: String,
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
         required: true
     },
 
