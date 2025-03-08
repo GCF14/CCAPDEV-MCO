@@ -19,11 +19,12 @@ export default function Homepage() {
   const [error, setError] = useState<string | null>(null);
   const { logout } = useLogout();
   const router = useRouter();
+  const port = process.env.NEXT_PUBLIC_PORT
 
   useEffect(() => {
     const fetchPosts = async() => {
       try {
-        const resp = await axios.get('http://localhost:3001/api/posts/');
+        const resp = await axios.get(`http://localhost:${port}/api/posts/`);
         setPosts(resp.data);
         setLoading(false);
       } catch (err) {

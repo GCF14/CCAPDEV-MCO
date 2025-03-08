@@ -11,7 +11,6 @@ import {
 
 import { NavFavorites } from "@/components/nav-favorites"
 import { NavMain } from "@/components/nav-main"
-import { NavSecondary } from "@/components/nav-secondary"
 import { TitleLogo } from "@/components/title-logo"
 import {
   Sidebar,
@@ -20,11 +19,10 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 
-import { useLogout } from "@/hooks/useLogout"
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
-  const { logout } = useLogout();
+  
   // sample data.
   const data = {
     forumTitle:
@@ -49,17 +47,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         url: "/profile",
         icon: CircleUserRound,
         badge: "10",
-      },
-    ],
-    navSecondary: [
-      {
-        title: "LogOut",
-        url: "/login",
-        onClick: () => {
-          console.log("Logout button clicked");
-          logout();
-        },
-        icon: LogOut,
       },
     ],
     favorites: [
@@ -102,7 +89,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavFavorites favorites={data.favorites} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarRail />
     </Sidebar>
