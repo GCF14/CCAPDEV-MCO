@@ -8,12 +8,14 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import EditProfileButton from "./edit-profile-button";
+import DeleteAccountButton from "./delete-account-button";
 
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar"
+
 
 export interface ProfileInfo {
   _id: string;
@@ -54,6 +56,7 @@ export default function ProfileCard({ username, pfp, bio }: ProfileInfo){
       </CardContent>
       <CardFooter className="flex justify-end">
         <EditProfileButton/>
+        <DeleteAccountButton/>
       </CardFooter>
     </Card>
   )

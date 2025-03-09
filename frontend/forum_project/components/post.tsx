@@ -90,40 +90,36 @@ export default function Post({_id, user, title, content, upvotes, downvotes, tag
             <Card>
                 <CardHeader>
                     <div className="flex items-center space-x-3">
-                        <Link href={`/profile?id=${user._id}`}>
-                            <Avatar>
-                                <AvatarImage src={user.pfp} alt="Avatar" />
-                                <AvatarFallback>
-                                    <span className="material-symbols-rounded medium">
-                                    account_circle
-                                    </span>
-                                </AvatarFallback>
-                            </Avatar>
-                        </Link>
+                    <Link href={user?._id ? `/profile?id=${user._id}` : '#'}>
+                        <Avatar>
+                            <AvatarImage src={user?.pfp || '/default-avatar.png'} alt="Avatar" />
+                            <AvatarFallback>
+                                <span className="material-symbols-rounded medium">account_circle</span>
+                            </AvatarFallback>
+                        </Avatar>
+                    </Link>
 
-                        <HoverCard>
-                            <Link href={`/profile?id=${user._id}`}>
-                                <HoverCardTrigger className="hover:underline font-medium">
-                                    {user.username}
-                                </HoverCardTrigger>
-                            </Link>
+                    <HoverCard>
+                        <Link href={user?._id ? `/profile?id=${user._id}` : '#'}>
+                            <HoverCardTrigger className="hover:underline font-medium">
+                                {user?.username || "Unknown User"}
+                            </HoverCardTrigger>
+                        </Link>
                         <HoverCardContent className="w-80">
                             <div className="flex items-center space-x-4">
-                            <Avatar>
-                                <AvatarImage src={user.pfp} />
-                                <AvatarFallback>
-                                <span className="material-symbols-rounded medium">
-                                    account_circle
-                                </span>
-                                </AvatarFallback>
-                            </Avatar>
-                            <div>
-                                <p className="font-semibold">{user.username}</p>
-                                
-                            </div>
+                                <Avatar>
+                                    <AvatarImage src={user?.pfp || '/default-avatar.png'} />
+                                    <AvatarFallback>
+                                        <span className="material-symbols-rounded medium">account_circle</span>
+                                    </AvatarFallback>
+                                </Avatar>
+                                <div>
+                                    <p className="font-semibold">{user?.username || "Unknown User"}</p>
+                                </div>
                             </div>
                         </HoverCardContent>
-                        </HoverCard>
+                    </HoverCard>
+
                     </div>
                     <CardTitle className="text-lg font-semibold">{title} {edited && <span className="text-gray-500 text-sm">(edited)</span>}</CardTitle> 
                     
