@@ -364,6 +364,33 @@ const getCommentsByUserId = async (req, res) => {
     }
 } 
 
+const deleteCommentsByUserId = async (req, res) => {
+    try {
+        const { userId } = req.params;
+
+        // Find all posts that contain comments by this user
+        const posts = await Post.find({ "comments.user": userId });
+
+        if (!posts.length) {
+            return res.status(404).json({ message: "No comments found for this user." });
+        }
+
+        // Iterate through posts and remove the user's comments
+        for (const post of posts) {
+            post.comments = post.comments.filter(comment => 
+                comment.user.toString() !== userId
+            );
+            await post.save(); // Save the updated post
+        }
+
+        res.json({ message: "Comments deleted successfully." });
+
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+
 module.exports = {
     createPost,
     editPost,
@@ -379,5 +406,6 @@ module.exports = {
     downvotePost,
     getPostsByTag,
     searchPosts,
-    getCommentsByUserId
+    getCommentsByUserId,
+    deleteCommentsByUserId
 };

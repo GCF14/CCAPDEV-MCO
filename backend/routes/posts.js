@@ -16,7 +16,8 @@ const {
     downvotePost,
     getPostsByTag,
     searchPosts,
-    getCommentsByUserId
+    getCommentsByUserId,
+    deleteCommentsByUserId
 } = require('../controllers/postController');
 
 // middleware
@@ -71,6 +72,9 @@ router.get('/search/:search', searchPosts);
 
 // get comments by specific user route
 router.get('/user/:userId/comments', getCommentsByUserId)
+
+// delete comments by specific user route
+router.delete('/user/:userId/comments', deleteCommentsByUserId)
 
 
 module.exports = router;
