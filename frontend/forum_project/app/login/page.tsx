@@ -88,19 +88,6 @@ export default function Login() {
               {error}
             </div>
           )}
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t"/>
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white px-2 text-muted-foreground">Or continue with</span>
-            </div>
-          </div>
-          
-          <Button variant="outline" className="w-full">
-            <Mail className="mr-2 h-4 w-4"/>
-            Google
-          </Button>
           <div className="text-center mt-4">
             <p className="text-muted-foreground">Don't have an account?</p>
             <Link

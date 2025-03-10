@@ -23,6 +23,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreVertical } from "lucide-react";
+import ReplyButton from '@/components/reply-button';
 
 
 
@@ -34,6 +35,7 @@ export default function PostPage() {
   const [newComment, setNewComment] = useState<string>('');
   const [comments, setComments] = useState<CommentProps[]>([]);
   const [parentCommentId, setParentCommentId] = useState<string>('');
+  const [isOpen, setIsOpen] = useState(false);
 
   const userData = sessionStorage.getItem('user');
   const token = userData ? JSON.parse(userData).token : null;
@@ -234,6 +236,7 @@ export default function PostPage() {
                       
                       
                       <p>{comment.content} {comment.edited && <span className="text-gray-500 text-sm">(edited)</span>}</p>
+                      <ReplyButton/>
                       {comment.user._id === userId && <DropdownMenu>
                                                         <DropdownMenuTrigger asChild>
                                                           <Button variant="ghost" size="icon">
