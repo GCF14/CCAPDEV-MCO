@@ -75,7 +75,7 @@ export default function EditProfileButton() {
                     <input
                         type='text'
                         className="w-full h-11 mb-1 rounded-md border p-2"
-                        placeholder="JohnDoe"
+                        placeholder="johnDoe"
                         value={newUsername}
                         onChange={(e) => setNewUsername(e.target.value)}
                     />
@@ -85,7 +85,15 @@ export default function EditProfileButton() {
                         placeholder="Write something..."
                         value={newBio}
                         onChange={(e) => setNewBio(e.target.value)}
-                    />                         
+                    />
+                    Profile Picture:
+                    <input
+                        type='text'
+                        className="w-full h-11 mb-1 rounded-md border p-2"
+                        placeholder="https://api.dicebear.com/9.x/thumbs/svg?seed=samplepfp"
+                        value={newPfp}
+                        onChange={(e) => setNewPfp(e.target.value)}
+                    />   
                     
                 </CardContent>
                 <CardFooter className="flex justify-between">
