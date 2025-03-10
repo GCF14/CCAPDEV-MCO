@@ -12,6 +12,8 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import {PostProps, CommentProps} from "@/components/post";
 import EditPostButton from '@/components/edit-post-button'
+import EditCommentButton from '@/components/edit-comment-button'
+
 import {
   Avatar,
   AvatarImage,
@@ -244,21 +246,25 @@ export default function PostPage() {
                       
                       <p>{comment.content} {comment.edited && <span className="text-gray-500 text-sm">(edited)</span>}</p>
                       <ReplyButton/>
-                      {comment.user._id === userId && <DropdownMenu>
-                                                        <DropdownMenuTrigger asChild>
-                                                          <Button variant="ghost" size="icon">
-                                                            <MoreVertical className="w-5 h-5" />
-                                                          </Button>
-                                                        </DropdownMenuTrigger>
-                                                        <DropdownMenuContent align="end">
-                                                          <DropdownMenuItem onClick={handleEditComments}>
-                                                            Edit
-                                                          </DropdownMenuItem>
-                                                          <DropdownMenuItem className="text-red-500">
-                                                            Delete
-                                                          </DropdownMenuItem>
-                                                        </DropdownMenuContent>
-                                                      </DropdownMenu>}
+                      {comment.user._id === userId && 
+                      <div className='mt-3'>
+                        <EditCommentButton/>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                              <MoreVertical className="w-5 h-5" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            {/* <DropdownMenuItem onClick={handleEditComments}>
+                              Edit
+                            </DropdownMenuItem> */}
+                            <DropdownMenuItem className="text-red-500">
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                                                      </div>}
                       {/* If the comment has nested comments, recursively render them */}
                       {comment.comments && comment.comments.length > 0 && (
                         <div className="ml-4 mt-3 space-y-2">
