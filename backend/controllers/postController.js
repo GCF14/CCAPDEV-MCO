@@ -344,8 +344,13 @@ const downvotePost = async (req, res) => {
 const getPostsByTag = async (req, res) => {
     try {
         const {tag} = req.params;
-
-        const posts = await Post.find({tags: {$in: [tag]}})
+        
+        const posts = await Post.find({tags: {
+                                        $elemMatch: {
+                                            $regex: `^${tag}$`,
+                                            $options: 'i',
+                                        }
+                                     }})
             .populate('user', 'username pfp')
             .populate('comments', 'username pfp')
             .sort({date: -1});
@@ -368,7 +373,12 @@ const searchPosts = async (req, res) => {
             $or: [
                 {title: {$regex: `\\b${search}\\b`, $options: 'i'}}, 
                 {content: {$regex: `\\b${search}\\b`, $options: 'i'}},
-                {tags: {$in: [search]}}
+                {tags: {
+                    $elemMatch: {
+                        $regex: `^${search}$`,
+                        $options: 'i',
+                    }
+                }}
             ]
         })
             .populate('user', 'username pfp')

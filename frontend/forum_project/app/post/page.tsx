@@ -26,6 +26,7 @@ import { MoreVertical } from "lucide-react";
 
 
 
+
 export default function PostPage() {
   const searchParams = useSearchParams();
   const _id = searchParams.get("id") || "0";
@@ -115,9 +116,21 @@ export default function PostPage() {
       alert("Post succesfully edited.");
 
     } catch (error){
-      alert(`Error Deleting post: ${error}`)
+      alert(`Under Construction`)
     }
+  }
 
+  const handleEditComments = async () => {
+
+    try{
+      await axios.patch(`http://localhost:3001/api/posts/${_id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      alert("Post succesfully edited.");
+
+    } catch (error){
+      alert(`Under Construction`)
+    }
   }
 
   return (
@@ -175,10 +188,10 @@ export default function PostPage() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem>
+                      <DropdownMenuItem onClick={handleEditPost}>
                         Edit
                       </DropdownMenuItem>
-                      <DropdownMenuItem className="text-red-500">
+                      <DropdownMenuItem onClick={handleDeletePost} className="text-red-500">
                         Delete
                       </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -207,12 +220,19 @@ export default function PostPage() {
                 {comments.length > 0 ? (
                   comments.map((comment) => (
                     <div key={comment._id} className="p-3 border rounded">
-                      <p className="text-gray-800 font-semibold flex items-center">
-                        <Avatar>
-                          <AvatarImage src={comment.user?.pfp || "/default-avatar.png"} alt="Avatar" />
-                        </Avatar>
-                        <span className='ml-2'>{comment.user?.username || "Anonymous"}</span>
-                      </p>
+                      <Link href={`/profile?id=${comment.user._id}`}>
+                      <div>
+                        <p className="text-gray-800 font-semibold flex items-center">
+                          <Avatar>
+                            <AvatarImage src={comment.user?.pfp || "/default-avatar.png"} alt="Avatar" />
+                          </Avatar>
+                          <span className='ml-2'>{comment.user?.username || "Anonymous"}</span>
+                        </p>
+                      </div>
+                      
+                      </Link>
+                      
+                      
                       <p>{comment.content} {comment.edited && <span className="text-gray-500 text-sm">(edited)</span>}</p>
                       {comment.user._id === userId && <DropdownMenu>
                                                         <DropdownMenuTrigger asChild>
@@ -221,7 +241,7 @@ export default function PostPage() {
                                                           </Button>
                                                         </DropdownMenuTrigger>
                                                         <DropdownMenuContent align="end">
-                                                          <DropdownMenuItem>
+                                                          <DropdownMenuItem onClick={handleEditComments}>
                                                             Edit
                                                           </DropdownMenuItem>
                                                           <DropdownMenuItem className="text-red-500">
@@ -247,7 +267,7 @@ export default function PostPage() {
                                                           </Button>
                                                         </DropdownMenuTrigger>
                                                         <DropdownMenuContent align="end">
-                                                          <DropdownMenuItem>
+                                                          <DropdownMenuItem onClick={handleEditComments}>
                                                             Edit
                                                           </DropdownMenuItem>
                                                           <DropdownMenuItem className="text-red-500">

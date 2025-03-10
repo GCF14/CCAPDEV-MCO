@@ -36,6 +36,7 @@ export default function ProfileCard({_id, username, pfp, bio }: ProfileInfo){
     <Card className="w-full">
       <CardHeader>
         <div className="relative w-full h-32 bg-gray-400">
+        
         <Avatar className="absolute left-2 bottom-[-30px] w-20 h-20 border-2 border-black bg-white">
         <AvatarImage src={pfp} alt="Avatar" />
         <AvatarFallback>
