@@ -5,6 +5,11 @@ const Schema = mongoose.Schema;
 
 // comment schema to allow nested comments
 const commentSchema = new Schema({
+        _id: {
+            type: mongoose.Schema.Types.ObjectId,
+            default: new mongoose.Types.ObjectId,  // Automatically generate an ObjectId
+            required: true
+        },
         user: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
@@ -83,3 +88,4 @@ const postSchema = new Schema({
 
 
 module.exports = mongoose.model('Post', postSchema);
+

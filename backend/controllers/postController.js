@@ -135,6 +135,7 @@ const createComment = async (req, res) => {
         const user = req.user._id;
 
         const newComment = {
+            _id: new mongoose.Types.ObjectId,
             user: user,
             content: content,
             comments: []
@@ -193,35 +194,7 @@ const editComment = async (req, res) => {
     }
 };
 
-// Delete a comment
-// const deleteComment = async (req, res) => {
-//     const {postId, commentId} = req.params;
-
-//     try {
-//         const post = await Post.findById(postId);
-//         if (!post) {
-//             return res.status(404).json({ message: 'Post not found' });
-//         }
-      
-//         const comment = findCommentById(post.comments, commentId)
-//         if (!comment) {
-//             return res.status(404).json({ message: 'Comment not found' });
-//         }
-
-//         if (comment.user.toString() !== req.user._id.toString()) {
-//             return res.status(403).json({ message: 'You can only delete your own comments' });
-//         }
-    
-//         // remove the content of the comment
-//         comment.content = 'This comment has been deleted.';
-//         comment.edited = false;
-//         await post.save();
-//         res.json(post);
-//     } catch (error) {
-//         res.status(400).json({ error: error.message });
-//     }
-// };
-// permanently delete comment (for testing purposes)
+// permanently delete comment
 const deleteComment = async (req, res) => {
     const {postId, commentId} = req.params;
     try {
@@ -248,6 +221,7 @@ const deleteComment = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 }
+
 // Get a specific post
 const getPost = async(req, res) => {
     try {
@@ -257,6 +231,11 @@ const getPost = async(req, res) => {
             .populate('comments.user', 'username pfp')
             .populate('upvotedBy', 'username')  // populate upvoters
             .populate('downvotedBy', 'username') // populate downvoters
+
+        // if (post.comments.comments)
+        //     post.comments.populate('comments.user', 'username pfp')
+       
+
         if (!post) {
             return res.status(404).json({ message: 'Post not found' });
         }
@@ -265,6 +244,8 @@ const getPost = async(req, res) => {
         res.status(400).json({error: error.message});
     }
 }
+
+
 
 // Upvote a post
 const upvotePost = async (req, res) => {
