@@ -20,30 +20,42 @@ const DeleteAccountButton = () => {
     }
 
     try {
-      // Delete all comments by user (fixed API call)
-      await axios.delete(`http://localhost:3001/api/posts/user/${userId}/comments`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
 
-      console.log(`All comments by ${username} have been deleted`);
-
-      // Fetch all user posts
+      // Fetch all post of the user
       const { data: posts } = await axios.get(`http://localhost:3001/api/posts/user/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
+      // Fetch all user replies
+      const { data: comments } = await axios.get(`http://localhost:3001/api/posts/user/${userId}/comments`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+
+      if(comments.length > 0){
+        // Delete all comments by user (fixed API call)
+        await axios.delete(`http://localhost:3001/api/posts/user/${userId}/comments`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        console.log(`All comments by ${username} have been deleted`);
+      }
+
       console.log("Deleting posts:", posts.map((post: any) => post._id));
 
-      // Delete all posts
-      await Promise.all(
-        posts.map((post: any) =>
-          axios.delete(`http://localhost:3001/api/posts/${post._id}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          })
-        )
-      );
+      if(posts.length > 0){
+        // Delete all posts
+        await Promise.all(
+          posts.map((post: any) =>
+            axios.delete(`http://localhost:3001/api/posts/${post._id}`, {
+              headers: { Authorization: `Bearer ${token}` },
+            })
+          )
+        );
+        console.log("All posts deleted successfully");
+      }
+      
 
-      console.log("All posts deleted successfully");
+      
 
       // Delete user account
       const response = await axios.delete(`http://localhost:3001/api/users/${userId}`, {
