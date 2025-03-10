@@ -1,4 +1,5 @@
-import { Button } from "@/components/ui/button"
+'use client'
+
 import {
   Card,
   CardContent,
@@ -8,12 +9,14 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import EditProfileButton from "./edit-profile-button";
+import DeleteAccountButton from "./delete-account-button";
 
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar"
+
 
 export interface ProfileInfo {
   _id: string;
@@ -22,7 +25,12 @@ export interface ProfileInfo {
   bio: string;
 }
 
-export default function ProfileCard({ username, pfp, bio }: ProfileInfo){
+export default function ProfileCard({username, pfp, bio }: ProfileInfo){
+
+  const userData = sessionStorage.getItem('user');
+  const user = userData ? JSON.parse(userData) : null;
+  const loggedUsername = user?.username; // checks user token
+
 
   return (
     <Card className="w-full">
@@ -53,7 +61,13 @@ export default function ProfileCard({ username, pfp, bio }: ProfileInfo){
         </form>
       </CardContent>
       <CardFooter className="flex justify-end">
-        <EditProfileButton/>
+        {(loggedUsername == username) && (
+          <>
+            <EditProfileButton />
+            <DeleteAccountButton />
+          </>
+        )}
+        
       </CardFooter>
     </Card>
   )
