@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 
 export default function Login() {
   const [password, setPassword] = useState('');
+  const[confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -22,7 +23,7 @@ export default function Login() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const success = await signup(password, username, firstName, lastName)
+    const success = await signup(password, username, firstName, lastName, confirmPassword)
 
     if (success) {
       // redirect to home page
@@ -99,6 +100,25 @@ export default function Login() {
                   </button>
               </div>
             </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="confirm-password">Confirm Password</Label>
+              <div className="relative">
+                <Input
+                  id="confirm-password"
+                  type={showPassword ? "text" : "confirm-password"}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  />
+                  <button 
+                  type="button" onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700">
+                    {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
+                  </button>
+              </div>
+            </div>
+
             <Button type="submit" className="w-full" disabled={isLoading}>Sign-up</Button>
           </form>
           {error && (
