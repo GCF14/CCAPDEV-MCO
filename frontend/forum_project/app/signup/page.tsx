@@ -27,7 +27,7 @@ export default function Login() {
 
     if (success) {
       // redirect to home page
-      router.push('/')
+      router.push('/login')
 
     }
 
