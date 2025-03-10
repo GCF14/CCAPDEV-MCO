@@ -16,6 +16,15 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar";
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { MoreVertical } from "lucide-react";
+
+
 
 export default function PostPage() {
   const searchParams = useSearchParams();
@@ -159,6 +168,22 @@ export default function PostPage() {
                     {/* <Share2 className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />   */}
                     {post.user._id === userId && <Button className="mt-2" onClick={handleEditPost}>Edit</Button>}
                     {post.user._id === userId && <Button className="mt-2" onClick={handleDeletePost}>Delete</Button>}
+                  {post.user._id === userId && <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon">
+                        <MoreVertical className="w-5 h-5" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem>
+                        Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="text-red-500">
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>}
+
                       
                 </div>
 
@@ -189,7 +214,21 @@ export default function PostPage() {
                         <span className='ml-2'>{comment.user?.username || "Anonymous"}</span>
                       </p>
                       <p>{comment.content} {comment.edited && <span className="text-gray-500 text-sm">(edited)</span>}</p>
-                      {comment.user._id === userId && <Button>Edit</Button>}
+                      {comment.user._id === userId && <DropdownMenu>
+                                                        <DropdownMenuTrigger asChild>
+                                                          <Button variant="ghost" size="icon">
+                                                            <MoreVertical className="w-5 h-5" />
+                                                          </Button>
+                                                        </DropdownMenuTrigger>
+                                                        <DropdownMenuContent align="end">
+                                                          <DropdownMenuItem>
+                                                            Edit
+                                                          </DropdownMenuItem>
+                                                          <DropdownMenuItem className="text-red-500">
+                                                            Delete
+                                                          </DropdownMenuItem>
+                                                        </DropdownMenuContent>
+                                                      </DropdownMenu>}
                       {/* If the comment has nested comments, recursively render them */}
                       {comment.comments && comment.comments.length > 0 && (
                         <div className="ml-4 mt-3 space-y-2">
@@ -201,7 +240,21 @@ export default function PostPage() {
                               </Avatar>
                                {nestedComment.user?.username || "Anonymous"}</p>
                               <p>{nestedComment.content} {nestedComment.edited && <span className="text-gray-500 text-sm">(edited)</span>}</p>
-                              {nestedComment.user._id === userId && <Button>Edit</Button>}
+                              {nestedComment.user._id === userId && <DropdownMenu>
+                                                        <DropdownMenuTrigger asChild>
+                                                          <Button variant="ghost" size="icon">
+                                                            <MoreVertical className="w-5 h-5" />
+                                                          </Button>
+                                                        </DropdownMenuTrigger>
+                                                        <DropdownMenuContent align="end">
+                                                          <DropdownMenuItem>
+                                                            Edit
+                                                          </DropdownMenuItem>
+                                                          <DropdownMenuItem className="text-red-500">
+                                                            Delete
+                                                          </DropdownMenuItem>
+                                                        </DropdownMenuContent>
+                                                      </DropdownMenu>}
                             </div>
                           ))}
                         </div>

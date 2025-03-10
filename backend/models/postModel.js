@@ -60,6 +60,16 @@ const postSchema = new Schema({
         default: 0
     },
 
+    upvotedBy: [{ 
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+    }], 
+
+    downvotedBy: [{ 
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+    }], 
+
     tags: [{
         type: String
     }],

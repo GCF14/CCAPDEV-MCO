@@ -254,7 +254,9 @@ const getPost = async(req, res) => {
         const {id} = req.params;
         const post = await Post.findById(id)
             .populate('user', 'username pfp')
-            .populate('comments.user', 'username pfp');
+            .populate('comments.user', 'username pfp')
+            .populate('upvotedBy', 'username')  // populate upvoters
+            .populate('downvotedBy', 'username') // populate downvoters
         if (!post) {
             return res.status(404).json({ message: 'Post not found' });
         }
@@ -267,38 +269,74 @@ const getPost = async(req, res) => {
 // Upvote a post
 const upvotePost = async (req, res) => {
     try {
-        const {id} = req.params;
-        const post = await Post.findByIdAndUpdate(
-            id,
-            {$inc: {upvotes: 1}},
-            {new: true}
-        );
+        const { id } = req.params;
+        const userId = req.user._id;
 
-        if (!post)
-            return res.status(404).json({message: 'Post not found'});
+        const post = await Post.findById(id);
+        if (!post) return res.status(404).json({ message: 'Post not found' });
 
-        res.json({message: 'Post upvoted', upvotes: post.upvotes})
-    } catch(error) {
-        res.status(400).json({error: error.message});
+        // Check if user has already upvoted
+        const hasUpvoted = post.upvotedBy.includes(userId);
+        const hasDownvoted = post.downvotedBy.includes(userId);
+
+        if (hasUpvoted) {
+            // Remove upvote
+            post.upvotedBy = post.upvotedBy.filter(id => id.toString() !== userId.toString());
+            post.upvotes--;
+        } else {
+            // Remove downvote if user has downvoted before
+            if (hasDownvoted) {
+                post.downvotedBy = post.downvotedBy.filter(id => id.toString() !== userId.toString());
+                post.downvotes--;
+            }
+
+            // Add upvote
+            post.upvotedBy.push(userId);
+            post.upvotes++;
+        }
+
+        await post.save();
+        res.json({ message: 'Vote updated', upvotes: post.upvotes, downvotes: post.downvotes, upvotedBy: post.upvotedBy, downvotedBy: post.downvotedBy });
+
+    } catch (error) {
+        res.status(400).json({ error: error.message });
     }
 };
 
 // Downvote a post
 const downvotePost = async (req, res) => {
     try {
-        const {id} = req.params;
-        const post = await Post.findByIdAndUpdate(
-            id,
-            {$inc: {downvotes: 1}},
-            {new: true}
-        );
+        const { id } = req.params;
+        const userId = req.user._id;
 
-        if (!post)
-            return res.status(404).json({message: 'Post not found'});
+        const post = await Post.findById(id);
+        if (!post) return res.status(404).json({ message: 'Post not found' });
 
-        res.json({message: 'Post upvoted', downvotes: post.downvotes})
-    } catch(error) {
-        res.status(400).json({error: error.message});
+        // Check if user has already downvoted
+        const hasDownvoted = post.downvotedBy.includes(userId);
+        const hasUpvoted = post.upvotedBy.includes(userId);
+
+        if (hasDownvoted) {
+            // Remove downvote
+            post.downvotedBy = post.downvotedBy.filter(id => id.toString() !== userId.toString());
+            post.downvotes--;
+        } else {
+            // Remove upvote if user has upvoted before
+            if (hasUpvoted) {
+                post.upvotedBy = post.upvotedBy.filter(id => id.toString() !== userId.toString());
+                post.upvotes--;
+            }
+
+            // Add downvote
+            post.downvotedBy.push(userId);
+            post.downvotes++;
+        }
+
+        await post.save();
+        res.json({ message: 'Vote updated', upvotes: post.upvotes, downvotes: post.downvotes, upvotedBy: post.upvotedBy, downvotedBy: post.downvotedBy });
+
+    } catch (error) {
+        res.status(400).json({ error: error.message });
     }
 };
 

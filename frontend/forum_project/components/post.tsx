@@ -19,7 +19,7 @@ import {
     HoverCardTrigger,
   } from "@/components/ui/hover-card"
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ThumbsUp, ThumbsDown, MessageSquare, Share2 } from "lucide-react";
 import Link from "next/link";
 import axios from 'axios';
@@ -49,6 +49,8 @@ export interface PostProps {
     downvotes: number;
     tags?: string[];
     edited: boolean;
+    upvotedBy: string[]; 
+    downvotedBy: string[]; 
 }
 
 
@@ -60,30 +62,47 @@ export interface PostProps {
 //   };
 
 
-export default function Post({_id, user, title, content, upvotes, downvotes, tags, edited}: PostProps) {
+export default function Post({_id, user, title, content, upvotes, downvotes, tags, edited, upvotedBy, downvotedBy}: PostProps) {
     const [likes, setLikes] = useState(upvotes);
     const [dislikes, setDislikes] = useState(downvotes);
+    const [isUpvoted, setIsUpvoted] = useState(false);
+    const [isDownvoted, setIsDownvoted] = useState(false);
+
+
     const userData = sessionStorage.getItem('user');
     const token = userData ? JSON.parse(userData).token : null;
-    const handleVote = async(type: 'upvote' | 'downvote', e: React.MouseEvent) => {
+    const userId = userData ? JSON.parse(userData)._id : null;
+
+    useEffect(() => {
+        if (!userId) return;
+        setIsUpvoted(upvotedBy?.includes(userId) || false);
+        setIsDownvoted(downvotedBy?.includes(userId) || false);
+    }, [userId, upvotedBy, downvotedBy]);
+    
+
+    const handleVote = async (type: 'upvote' | 'downvote', e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
-        
     
         try {
             const resp = await axios.put(`http://localhost:3001/api/posts/${_id}/${type}`, {}, {
-                headers: {Authorization: `Bearer ${token}`}
+                headers: { Authorization: `Bearer ${token}` }
             });
-
-            if (type === 'upvote') {
-                setLikes((prevLikes) => prevLikes + 1);
-            } else {
-                setDislikes((prevDislikes) => prevDislikes + 1);
+    
+            if (resp.data) {
+                setLikes(resp.data.upvotes);
+                setDislikes(resp.data.downvotes);
+    
+                setIsUpvoted(resp.data.upvotedBy.includes(userId));
+                setIsDownvoted(resp.data.downvotedBy.includes(userId));
             }
+    
         } catch (error) {
             console.error('Error voting:', error);
-          }
-    }
+        }
+    };
+    
+    
 
     return (
         <Link href={`/post?id=${_id}`} className="block w-full max-w-lg cursor-pointer hover:bg-gray-100 transition">
@@ -149,13 +168,23 @@ export default function Post({_id, user, title, content, upvotes, downvotes, tag
                         
                     <div className="flex items-center space-x-2">
                         {/* upvote button */}
-                        <button onClick={(e) => handleVote('upvote', e)}>
-                            <ThumbsUp className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />
+                        <button 
+                            onClick={(e) => handleVote('upvote', e)}
+                            className={`flex items-center space-x-1 transition-transform ${
+                                isUpvoted ? "text-blue-500 scale-110 font-bold" : "text-gray-600 hover:text-blue-500 hover:scale-110"
+                            }`}
+                        >
+                            <ThumbsUp className="w-5 h-5" />
                             <span>{likes}</span>
                         </button>
                         {/* downvote button */}
-                        <button onClick={(e) => handleVote('downvote', e)}>
-                            <ThumbsDown className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />
+                        <button 
+                            onClick={(e) => handleVote('downvote', e)}
+                            className={`flex items-center space-x-1 transition-transform ${
+                                isDownvoted ? "text-red-500 scale-110 font-bold" : "text-gray-600 hover:text-red-500 hover:scale-110"
+                            }`}
+                        >
+                            <ThumbsDown className="w-5 h-5" />
                             <span>{dislikes}</span>
                         </button>
                         <MessageSquare className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />
