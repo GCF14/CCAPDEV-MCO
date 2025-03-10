@@ -25,11 +25,11 @@ export interface ProfileInfo {
   bio: string;
 }
 
-export default function ProfileCard({username, pfp, bio }: ProfileInfo){
+export default function ProfileCard({_id, username, pfp, bio }: ProfileInfo){
 
   const userData = sessionStorage.getItem('user');
   const user = userData ? JSON.parse(userData) : null;
-  const loggedUsername = user?.username; // checks user token
+  const loggedId = user?._id; // checks user token
 
 
   return (
@@ -61,7 +61,7 @@ export default function ProfileCard({username, pfp, bio }: ProfileInfo){
         </form>
       </CardContent>
       <CardFooter className="flex justify-end">
-        {(loggedUsername == username) && (
+        {(loggedId == _id) && (
           <>
             <EditProfileButton />
             <DeleteAccountButton />

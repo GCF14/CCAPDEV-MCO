@@ -89,12 +89,27 @@ export default function PostPage() {
       });
   
       alert("Post deleted successfully.");
-      window.location.href = "/"; // Redirect to homepage or another page
+      window.location.href = "/"; // Redirect to homepage 
     } catch (error) {
       console.error("Error deleting post:", error);
       alert("Failed to delete the post. Please try again.");
     }
   };
+
+  // di pa tapos
+  const handleEditPost = async () => {
+
+    try{
+      await axios.patch(`http://localhost:3001/api/posts/${_id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      alert("Post succesfully edited.");
+
+    } catch (error){
+      alert(`Error Deleting post: ${error}`)
+    }
+
+  }
 
   return (
     <SidebarProvider>
@@ -110,7 +125,7 @@ export default function PostPage() {
                     <Avatar>
                       <AvatarImage src={post.user.pfp} alt="Avatar" /> 
                     </Avatar>
-                    <span className='ml-2'>{post.user.username}</span>
+                    <span className='ml-2'>{post.user?.username || "Unknown User"}</span>
                   </p>
                 </Link>
                 
@@ -142,7 +157,7 @@ export default function PostPage() {
                     </button>
                     {/* <MessageSquare className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" /> */}
                     {/* <Share2 className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />   */}
-                    {post.user._id === userId && <Button className="mt-2">Edit</Button>}
+                    {post.user._id === userId && <Button className="mt-2" onClick={handleEditPost}>Edit</Button>}
                     {post.user._id === userId && <Button className="mt-2" onClick={handleDeletePost}>Delete</Button>}
                       
                 </div>
@@ -169,9 +184,9 @@ export default function PostPage() {
                     <div key={comment._id} className="p-3 border rounded">
                       <p className="text-gray-800 font-semibold flex items-center">
                         <Avatar>
-                          <AvatarImage src={comment.user.pfp} alt="Avatar" /> 
+                          <AvatarImage src={comment.user?.pfp || "/default-avatar.png"} alt="Avatar" />
                         </Avatar>
-                        <span className='ml-2'>{comment.user.username}</span>
+                        <span className='ml-2'>{comment.user?.username || "Anonymous"}</span>
                       </p>
                       <p>{comment.content} {comment.edited && <span className="text-gray-500 text-sm">(edited)</span>}</p>
                       {comment.user._id === userId && <Button>Edit</Button>}
@@ -184,7 +199,7 @@ export default function PostPage() {
                               <Avatar>
                                 <AvatarImage src={nestedComment.user.pfp} alt="Avatar" /> 
                               </Avatar>
-                               {nestedComment.user.username}</p>
+                               {nestedComment.user?.username || "Anonymous"}</p>
                               <p>{nestedComment.content} {nestedComment.edited && <span className="text-gray-500 text-sm">(edited)</span>}</p>
                               {nestedComment.user._id === userId && <Button>Edit</Button>}
                             </div>
