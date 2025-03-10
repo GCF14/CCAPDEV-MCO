@@ -109,5 +109,27 @@ const deleteUser = async(req, res) => {
     
 }
 
+const editUser = async(req, res) => {
+    try {
+        const {id} = get.user._id;
+        const {pfp = null, username = null, bio = null} = req.body;
+        const user = await User.findById(id);
 
-module.exports = { signUpUser, loginUser, logoutUser, getUser, getAllUsers, deleteUser }
+        // only get fields that are not null
+        const updateFields = Object.fromEntries(
+            Object.entries({pfp, username, bio}).filter(([_, v]) => v != null)
+        );
+
+        // only update if at least one field was changed
+        if (Object.keys(updateFields).length > 0) {
+            const editedUser = await User.findByIdAndUpdate(id, updateFields, { new: true });
+            res.json({ message: 'User edited successfully', user: editedUser });
+        }
+
+    } catch(error) {
+        res.status(400).json({error: error.message})
+    }
+}
+
+
+module.exports = { signUpUser, loginUser, logoutUser, getUser, getAllUsers, deleteUser, editUser }

@@ -88,6 +88,23 @@ export default function PostPage() {
       console.error('Error posting comment:', error);
   }
   }
+
+  const handleDeletePost = async () => {
+    if (!window.confirm("Are you sure you want to delete this post?")) return;
+  
+    try {
+      await axios.delete(`http://localhost:3001/api/posts/${_id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+  
+      alert("Post deleted successfully.");
+      window.location.href = "/"; // Redirect to homepage or another page
+    } catch (error) {
+      console.error("Error deleting post:", error);
+      alert("Failed to delete the post. Please try again.");
+    }
+  };
+
   return (
     <SidebarProvider>
         <AppSidebar />
@@ -134,6 +151,8 @@ export default function PostPage() {
                     </button>
                     {/* <MessageSquare className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" /> */}
                     {/* <Share2 className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />   */}
+                    {post.user._id === userId && <Button className="mt-2">Edit</Button>}
+                    {post.user._id === userId && <Button className="mt-2" onClick={handleDeletePost}>Delete</Button>}
                   {post.user._id === userId && <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="icon">

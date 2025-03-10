@@ -1,5 +1,16 @@
 'use client'
-
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar";
 import { useState, useEffect } from 'react'
 import Header from '@/components/Header';
 import Post, {PostProps, CommentProps} from "@/components/post";
@@ -19,10 +30,8 @@ interface TabItem{
 }
 
 const tabs: TabItem[] = [
-  { name: "Posts", href: "/profile" },
-  { name: "Replies", href: "/replies" },
-  { name: "Likes", href: "/likes" },
-  { name: "Media", href: "/media" },
+  { name: "Posts", href: "#posts" },
+  { name: "Replies", href: "#replies" },
 ]
 
 export default function Profile() {
@@ -31,6 +40,7 @@ export default function Profile() {
   const [comments, setComments] = useState<CommentProps[] | null>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<string>('posts');
   const pathname = usePathname()
   const searchParams = useSearchParams();
   const _id = searchParams.get("id") || "0";
@@ -65,7 +75,6 @@ export default function Profile() {
           headers: {Authorization: `Bearer ${token}`}
         });
         setPosts(resp.data);
-        setComments(resp.data.comments);
         setLoading(false);
       } catch (err) {
         if (axios.isAxiosError(err)) {
@@ -78,6 +87,26 @@ export default function Profile() {
     };
 
     fetchPosts();
+
+    const fetchComments = async () => {
+      setLoading(true);
+      try {
+        const resp = await axios.get(`http://localhost:3001/api/posts/user/${_id}/comments`, {
+          headers: {Authorization: `Bearer ${token}`}
+        });
+        setComments(resp.data);
+        setLoading(false);
+      } catch (err) {
+        if (axios.isAxiosError(err)) {
+          setError(err.response?.data?.message || 'Error fetching profile');
+        } else {
+          setError('An unexpected error occured');
+        }
+        setLoading(false);
+      }
+    };
+
+    fetchComments();
 
   }, [_id]);
 
@@ -106,40 +135,66 @@ export default function Profile() {
                   <ProfileCard _id={profile._id} username={profile.username} pfp={profile.pfp} bio={profile.bio}/>
                   <nav className="w-full flex justify-evenly space-x-8 border p-2" aria-label="Profile navigation">
                     {tabs.map((tab) => (
-                      <Link
+                      <button
                         key={tab.name}
-                        href={tab.href}
+                        onClick={() => setActiveTab(tab.name.toLowerCase())}
                         className={cn(
                           "group relative inline-flex h-6 items-center border-b-2 px-1 text-sm font-medium transition-colors hover:text-foreground/80",
-                          pathname === tab.href
+                          activeTab === tab.name.toLowerCase()
                             ? "border-primary text-foreground"
                             : "border-transparent text-muted-foreground hover:border-muted",
                         )}
                       >
                         {tab.name}
-                        {pathname === tab.href && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500" />}
-                      </Link>
+                        {activeTab === tab.name.toLowerCase() && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500" />}
+                      </button>
                     ))}
                   </nav>
-                  {loading ? (
-                    <p>Loading...</p>
-                  ) : posts && posts.length > 0 ? (
-                    posts.map((post) => (
-                      <Post
-                        key={post._id}
-                        _id={post._id}
-                        user={post.user}
-                        title={post.title}
-                        content={post.content}
-                        upvotes={post.upvotes}
-                        downvotes={post.downvotes}
-                        tags={post.tags}
-                        edited={post.edited}
-                      />
-                    ))
-                  ) : (
-                    <p>No posts available.</p>
+                  {activeTab === 'posts' && (
+                    <div>
+                      {loading ? (
+                        <p>Loading...</p>
+                      ) : posts && posts.length > 0 ? (
+                        posts.map((post) => (
+                          <Post
+                            key={post._id}
+                            _id={post._id}
+                            user={post.user}
+                            title={post.title}
+                            content={post.content}
+                            upvotes={post.upvotes}
+                            downvotes={post.downvotes}
+                            tags={post.tags}
+                            edited={post.edited}
+                          />
+                        ))
+                      ) : (
+                        <p>No posts available.</p>
+                      )}
+                    </div>
                   )}
+                  {activeTab === 'replies' && (
+                    <div className="mt-3 space-y-4">
+                      {loading ? (
+                        <p>Loading...</p>
+                      ) : comments && comments.length > 0 ? (
+                        comments.map((comment) => (
+                         <div key={comment._id} className="p-3 border rounded">
+                            <p className="text-gray-800 font-semibold flex items-center">
+                              <Avatar>
+                                <AvatarImage src={comment.user.pfp} alt="Avatar" /> 
+                              </Avatar>
+                              <span className='ml-2'>{comment.user.username}</span>
+                            </p>
+                            <p>{comment.content} {comment.edited && <span className="text-gray-500 text-sm">(edited)</span>}</p>
+                          </div>
+                        ))
+                      ) : (
+                        <p>No replies yet.</p>
+                      )}
+                    </div>
+                  )}
+
                 </div>
               </div>
             </div>

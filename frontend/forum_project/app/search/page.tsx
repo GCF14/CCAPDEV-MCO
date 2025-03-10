@@ -46,7 +46,7 @@ export default function Search() {
         useEffect(() => {
             const fetchPosts = async() => {
             try {
-                const resp = await axios.get(`http://localhost:3001/api/posts/search/${tags}`, {
+                const resp = await axios.get(`http://localhost:3001/api/posts/search/tags/${tags}`, {
                     headers: {Authorization: `Bearer ${token}`}
                 });
                 setPosts(resp.data);
