@@ -22,44 +22,49 @@ export default function EditProfileButton() {
     const userData = sessionStorage.getItem('user');
     const token = userData ? JSON.parse(userData).token : null;
 
-    const handleEdit = async(pfp: string, username: string, bio: string, e: React.MouseEvent ) => {
+    const handleEdit = async (pfp: string, username: string, bio: string, e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
-
-        const body: {pfp?: string, username?: string, bio?: string } = {
-        };
-
-        // Conditionally add pfp, username, bio
-        if (pfp && pfp.length > 0) {
-            body.pfp = pfp;
+    
+        if (!token) {
+            console.error("No token found. User may not be logged in.");
+            return;
         }
-        if (username && username.length > 0) {
-            body.username = username;
-        }
-        if (bio && bio.length > 0) {
-            body.bio = bio;
-        }
-
-        try {   
-            const res = await axios.get('http://localhost:3001/api/users/', {
-                headers: {Authorization: `Bearer ${token}`}
+    
+        const body: { pfp?: string; username?: string; bio?: string } = {};
+        
+        if (pfp.trim()) body.pfp = pfp;
+        if (username.trim()) body.username = username;
+        if (bio.trim()) body.bio = bio;
+    
+        try {
+            // Fetch all users to check for duplicate username
+            const res = await axios.get('http://localhost:3001/api/users', {
+                headers: { Authorization: `Bearer ${token}` },
             });
-            setUsers(res.data);
-            if (!users) {
+    
+            const existingUsers: ProfileInfo[] = res.data;
+            
+            if (existingUsers.some(user => user.username === username)) {
+                alert("Username is already taken. Please choose another one.");
                 return;
             }
-            // need to check for if username is taken already
-
-            const resp = await axios.put('http://localhost:3001/api/users/edit', body, {
-                headers: {Authorization: `Bearer ${token}`}
+    
+            // Send the update request
+            await axios.put('http://localhost:3001/api/users/edit', body, {
+                headers: { Authorization: `Bearer ${token}` },
             });
-
-        
+    
+            alert("Profile updated successfully!");
+            setIsOpen(false);
+            // Instead of reloading, update state or refetch user data
         } catch (error) {
-            console.error('Error:', error);
+            console.error("Error updating profile:", error);
+            alert("Failed to update profile. Please try again.");
         }
-    }
+    };
 
+    
     return (
         <div>
             <Button onClick={() => setIsOpen(true)}>Edit Profile</Button>

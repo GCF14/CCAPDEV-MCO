@@ -18,6 +18,32 @@ const DeleteAccountButton = () => {
     }
 
     try {
+      const deletePosts = await fetch(`http://localhost:3001/api/posts/user/${userId}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!deletePosts.ok) {
+        throw new Error('Failed to delete posts');
+      }
+
+      // Then, delete all comments of the user
+      const deleteComments = await fetch(`http://localhost:3001/api/posts/user/${userId}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!deleteComments.ok) {
+        throw new Error('Failed to delete comments');
+      }
+
+      // delete Account
       const response = await fetch(`http://localhost:3001/api/users/${userId}`, {
         method: 'DELETE',
         headers: {
