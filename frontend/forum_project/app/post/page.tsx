@@ -220,12 +220,19 @@ export default function PostPage() {
                 {comments.length > 0 ? (
                   comments.map((comment) => (
                     <div key={comment._id} className="p-3 border rounded">
-                      <p className="text-gray-800 font-semibold flex items-center">
-                        <Avatar>
-                          <AvatarImage src={comment.user?.pfp || "/default-avatar.png"} alt="Avatar" />
-                        </Avatar>
-                        <span className='ml-2'>{comment.user?.username || "Anonymous"}</span>
-                      </p>
+                      <Link href={`/profile?id=${comment.user._id}`}>
+                      <div>
+                        <p className="text-gray-800 font-semibold flex items-center">
+                          <Avatar>
+                            <AvatarImage src={comment.user?.pfp || "/default-avatar.png"} alt="Avatar" />
+                          </Avatar>
+                          <span className='ml-2'>{comment.user?.username || "Anonymous"}</span>
+                        </p>
+                      </div>
+                      
+                      </Link>
+                      
+                      
                       <p>{comment.content} {comment.edited && <span className="text-gray-500 text-sm">(edited)</span>}</p>
                       {comment.user._id === userId && <DropdownMenu>
                                                         <DropdownMenuTrigger asChild>
