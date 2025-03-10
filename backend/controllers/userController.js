@@ -111,7 +111,7 @@ const deleteUser = async(req, res) => {
 
 const editUser = async(req, res) => {
     try {
-        const {id} = get.user._id;
+        const {id} = req.params;
         const {pfp = null, username = null, bio = null} = req.body;
         const user = await User.findById(id);
 
@@ -130,6 +130,5 @@ const editUser = async(req, res) => {
         res.status(400).json({error: error.message})
     }
 }
-
 
 module.exports = { signUpUser, loginUser, logoutUser, getUser, getAllUsers, deleteUser, editUser }
