@@ -32,11 +32,15 @@ const userSchema = new Schema({
 })
 
 // static signup method
-userSchema.statics.signup = async function(password, username, firstName, lastName, pfp) {
+userSchema.statics.signup = async function(password, username, firstName, lastName, pfp, confirmPassword) {
 
     // validation check
-    if(!password || !username || !firstName || !lastName) {
+    if(!password || !username || !firstName || !lastName || !confirmPassword) {
         throw Error("All fields must be filled")
+    }
+
+    if(password !== confirmPassword) {
+        throw Error("Passwords do not match")
     }
 
 

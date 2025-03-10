@@ -27,12 +27,11 @@ const loginUser = async (req, res) => {
 const signUpUser = async (req, res) => {
     console.log(req.body);
     try {
-        const {password, username, firstName, lastName} = req.body
-        console.log("Extracted data:", password, username, firstName, lastName);
+        const {password, username, firstName, lastName, confirmPassword} = req.body
 
         const pfp = `https://api.dicebear.com/9.x/thumbs/svg?seed=${encodeURIComponent(username)}`;
         
-        const user = await User.signup(password, username, firstName, lastName, pfp);
+        const user = await User.signup(password, username, firstName, lastName, pfp, confirmPassword);
         
 
         // create a token when signing up
