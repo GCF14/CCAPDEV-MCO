@@ -26,10 +26,17 @@ const editPost = async (req, res) => {
         const {id} = req.params; // post id
         const {title = null, content = null, tags = null} = req.body; // all of em optional
 
+        const post = await Post.findById(id);
+
+        if (post.user.toString() !== req.user._id.toString()) {
+            return res.status(403).json({ message: 'You can only edit your own posts' });
+        }
+
         // only get fields that are not null
         const updateFields = Object.fromEntries(
             Object.entries({title, content, tags}).filter(([_, v]) => v != null)
         );
+
         // only update if at least one field was changed
         if (Object.keys(updateFields).length > 0) {
             const editedPost = await Post.findByIdAndUpdate(id, {...updateFields, edited:true}, { new: true });
@@ -46,7 +53,13 @@ const editPost = async (req, res) => {
 // Delete post
 const deletePost = async (req, res) => {
     try {
-        const {id} = req.params;
+        const {id} = req.params; // post id
+        const post = await Post.findById(id);
+
+        if (post.user.toString() !== req.user._id.toString()) {
+            return res.status(403).json({ message: 'You can only delete your own posts' });
+        }
+
         const deletedPost = await Post.findByIdAndDelete(id);
         res.json({ message: 'Post deleted successfully' });
     } catch(error) {
@@ -113,7 +126,7 @@ const findCommentById = (comments, commentId) => {
 // Add a comment
 const createComment = async (req, res) => {
     const {postId} = req.params;  
-    const {content, parentCommentId = null} = req.body; // parentCommendId optional if nested comment 
+    const {content, parentCommentId = null} = req.body;
     try {
         const post = await Post.findById(postId);
         if (!post) {
@@ -121,12 +134,14 @@ const createComment = async (req, res) => {
         }
         const user = req.user._id;
 
-        let newComment = {
+        const newComment = {
             user: user,
             content: content,
             comments: []
         }
-        // if nested comment
+        
+
+        // add the comment to the post's comments array
         if (parentCommentId) {
             const parentComment = findCommentById(post.comments, parentCommentId);
             if (!parentComment) {
@@ -135,9 +150,9 @@ const createComment = async (req, res) => {
             // add comment to parent comment
             parentComment.comments.push(newComment);
         } else {
-            // add the comment to the post's comments array
             post.comments.push(newComment);
         }
+        
         
         await post.save();
         res.json(post); // return updated post
@@ -145,6 +160,8 @@ const createComment = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 };
+
+
 // Edit a comment
 const editComment = async (req, res) => {
     const {postId, commentId} = req.params;  
@@ -195,7 +212,7 @@ const editComment = async (req, res) => {
 //             return res.status(403).json({ message: 'You can only delete your own comments' });
 //         }
     
-//         // remove the comment from the comments array
+//         // remove the content of the comment
 //         comment.content = 'This comment has been deleted.';
 //         comment.edited = false;
 //         await post.save();
@@ -223,9 +240,8 @@ const deleteComment = async (req, res) => {
         }
     
         // remove the comment from the comments array
-        comment.content = 'This comment has been deleted.';
-        comment.edited = false;
-        deletedComment = await 
+        post.comments = post.comments.filter(c => c._id.toString() !== commentId);
+         
         await post.save();
         res.json(post);
     } catch (error) {
@@ -238,7 +254,9 @@ const getPost = async(req, res) => {
         const {id} = req.params;
         const post = await Post.findById(id)
             .populate('user', 'username pfp')
-            .populate('comments.user', 'username pfp');
+            .populate('comments.user', 'username pfp')
+            .populate('upvotedBy', 'username')  // populate upvoters
+            .populate('downvotedBy', 'username') // populate downvoters
         if (!post) {
             return res.status(404).json({ message: 'Post not found' });
         }
@@ -251,38 +269,74 @@ const getPost = async(req, res) => {
 // Upvote a post
 const upvotePost = async (req, res) => {
     try {
-        const {id} = req.params;
-        const post = await Post.findByIdAndUpdate(
-            id,
-            {$inc: {upvotes: 1}},
-            {new: true}
-        );
+        const { id } = req.params;
+        const userId = req.user._id;
 
-        if (!post)
-            return res.status(404).json({message: 'Post not found'});
+        const post = await Post.findById(id);
+        if (!post) return res.status(404).json({ message: 'Post not found' });
 
-        res.json({message: 'Post upvoted', upvotes: post.upvotes})
-    } catch(error) {
-        res.status(400).json({error: error.message});
+        // Check if user has already upvoted
+        const hasUpvoted = post.upvotedBy.includes(userId);
+        const hasDownvoted = post.downvotedBy.includes(userId);
+
+        if (hasUpvoted) {
+            // Remove upvote
+            post.upvotedBy = post.upvotedBy.filter(id => id.toString() !== userId.toString());
+            post.upvotes--;
+        } else {
+            // Remove downvote if user has downvoted before
+            if (hasDownvoted) {
+                post.downvotedBy = post.downvotedBy.filter(id => id.toString() !== userId.toString());
+                post.downvotes--;
+            }
+
+            // Add upvote
+            post.upvotedBy.push(userId);
+            post.upvotes++;
+        }
+
+        await post.save();
+        res.json({ message: 'Vote updated', upvotes: post.upvotes, downvotes: post.downvotes, upvotedBy: post.upvotedBy, downvotedBy: post.downvotedBy });
+
+    } catch (error) {
+        res.status(400).json({ error: error.message });
     }
 };
 
 // Downvote a post
 const downvotePost = async (req, res) => {
     try {
-        const {id} = req.params;
-        const post = await Post.findByIdAndUpdate(
-            id,
-            {$inc: {downvotes: 1}},
-            {new: true}
-        );
+        const { id } = req.params;
+        const userId = req.user._id;
 
-        if (!post)
-            return res.status(404).json({message: 'Post not found'});
+        const post = await Post.findById(id);
+        if (!post) return res.status(404).json({ message: 'Post not found' });
 
-        res.json({message: 'Post upvoted', downvotes: post.downvotes})
-    } catch(error) {
-        res.status(400).json({error: error.message});
+        // Check if user has already downvoted
+        const hasDownvoted = post.downvotedBy.includes(userId);
+        const hasUpvoted = post.upvotedBy.includes(userId);
+
+        if (hasDownvoted) {
+            // Remove downvote
+            post.downvotedBy = post.downvotedBy.filter(id => id.toString() !== userId.toString());
+            post.downvotes--;
+        } else {
+            // Remove upvote if user has upvoted before
+            if (hasUpvoted) {
+                post.upvotedBy = post.upvotedBy.filter(id => id.toString() !== userId.toString());
+                post.upvotes--;
+            }
+
+            // Add downvote
+            post.downvotedBy.push(userId);
+            post.downvotes++;
+        }
+
+        await post.save();
+        res.json({ message: 'Vote updated', upvotes: post.upvotes, downvotes: post.downvotes, upvotedBy: post.upvotedBy, downvotedBy: post.downvotedBy });
+
+    } catch (error) {
+        res.status(400).json({ error: error.message });
     }
 };
 
@@ -327,6 +381,27 @@ const searchPosts = async (req, res) => {
     }
 };
 
+const getCommentsByUserId = async (req, res) => {
+    try {
+        const {userId} = req.params;
+        const posts = await Post.find({"comments.user": userId})
+            .populate('comments.user', 'username pfp')
+            .sort({date: -1});
+        let comments = [];
+
+        posts.forEach(post => {
+            const userComments = post.comments.filter(comment => 
+                comment.user._id.toString() === userId 
+            );
+            comments = [...comments, ...userComments];
+        });
+
+        res.json(comments);
+    } catch(error) {
+        res.status(400).json({error: error.message});
+    }
+} 
+
 module.exports = {
     createPost,
     editPost,
@@ -341,5 +416,6 @@ module.exports = {
     upvotePost,
     downvotePost,
     getPostsByTag,
-    searchPosts
+    searchPosts,
+    getCommentsByUserId
 };
