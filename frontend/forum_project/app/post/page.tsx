@@ -26,6 +26,7 @@ import { MoreVertical } from "lucide-react";
 
 
 
+
 export default function PostPage() {
   const searchParams = useSearchParams();
   const _id = searchParams.get("id") || "0";
@@ -115,9 +116,21 @@ export default function PostPage() {
       alert("Post succesfully edited.");
 
     } catch (error){
-      alert(`Error Deleting post: ${error}`)
+      alert(`Under Construction`)
     }
+  }
 
+  const handleEditComments = async () => {
+
+    try{
+      await axios.patch(`http://localhost:3001/api/posts/${_id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      alert("Post succesfully edited.");
+
+    } catch (error){
+      alert(`Under Construction`)
+    }
   }
 
   return (
@@ -175,10 +188,10 @@ export default function PostPage() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem>
+                      <DropdownMenuItem onClick={handleEditPost}>
                         Edit
                       </DropdownMenuItem>
-                      <DropdownMenuItem className="text-red-500">
+                      <DropdownMenuItem onClick={handleDeletePost} className="text-red-500">
                         Delete
                       </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -221,7 +234,7 @@ export default function PostPage() {
                                                           </Button>
                                                         </DropdownMenuTrigger>
                                                         <DropdownMenuContent align="end">
-                                                          <DropdownMenuItem>
+                                                          <DropdownMenuItem onClick={handleEditComments}>
                                                             Edit
                                                           </DropdownMenuItem>
                                                           <DropdownMenuItem className="text-red-500">
@@ -247,7 +260,7 @@ export default function PostPage() {
                                                           </Button>
                                                         </DropdownMenuTrigger>
                                                         <DropdownMenuContent align="end">
-                                                          <DropdownMenuItem>
+                                                          <DropdownMenuItem onClick={handleEditComments}>
                                                             Edit
                                                           </DropdownMenuItem>
                                                           <DropdownMenuItem className="text-red-500">
