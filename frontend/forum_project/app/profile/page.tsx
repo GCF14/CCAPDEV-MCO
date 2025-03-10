@@ -166,6 +166,8 @@ export default function Profile() {
                             downvotes={post.downvotes}
                             tags={post.tags}
                             edited={post.edited}
+                            upvotedBy={post.upvotedBy} 
+                            downvotedBy={post.downvotedBy}
                           />
                         ))
                       ) : (
