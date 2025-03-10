@@ -11,6 +11,7 @@ import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import {PostProps, CommentProps} from "@/components/post";
+import EditPostButton from '@/components/edit-post-button'
 import {
   Avatar,
   AvatarImage,
@@ -109,18 +110,18 @@ export default function PostPage() {
   };
 
   // di pa tapos
-  const handleEditPost = async () => {
+  // const handleEditPost = async () => {
 
-    try{
-      await axios.patch(`http://localhost:3001/api/posts/${_id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      alert("Post succesfully edited.");
+  //   try{
+  //     await axios.patch(`http://localhost:3001/api/posts/${_id}`, {
+  //       headers: { Authorization: `Bearer ${token}` }
+  //     })
+  //     alert("Post succesfully edited.");
 
-    } catch (error){
-      alert(`Under Construction`)
-    }
-  }
+  //   } catch (error){
+  //     alert(`Under Construction`)
+  //   }
+  // }
 
   const handleEditComments = async () => {
 
@@ -183,21 +184,27 @@ export default function PostPage() {
                     {/* <Share2 className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />   */}
                     {/* {post.user._id === userId && <Button className="mt-2" onClick={handleEditPost}>Edit</Button>}
                     {post.user._id === userId && <Button className="mt-2" onClick={handleDeletePost}>Delete</Button>} */}
-                  {post.user._id === userId && <DropdownMenu>
+                  {post.user._id === userId && 
+                  <div>
+
+                  <EditPostButton/>
+                  <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="icon">
                         <MoreVertical className="w-5 h-5" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={handleEditPost}>
+                      {/* <DropdownMenuItem onClick={handleEditPost}>
                         Edit
-                      </DropdownMenuItem>
+                      </DropdownMenuItem> */}
                       <DropdownMenuItem onClick={handleDeletePost} className="text-red-500">
                         Delete
                       </DropdownMenuItem>
                     </DropdownMenuContent>
-                  </DropdownMenu>}
+                  </DropdownMenu>
+                  </div>
+                  }
 
                       
                 </div>
