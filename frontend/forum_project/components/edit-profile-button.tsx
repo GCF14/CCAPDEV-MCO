@@ -20,9 +20,12 @@ export default function EditProfileButton() {
     const [newBio, setNewBio] = useState<string>('');
 
     const userData = sessionStorage.getItem('user');
+    const userId = userData ? JSON.parse(userData)._id : null;
     const token = userData ? JSON.parse(userData).token : null;
 
-    const handleEdit = async (pfp: string, username: string, bio: string, e: React.MouseEvent) => {
+
+    // handler for editing the profile
+    const handleEdit = async (newPfp: string, newUsername: string, newBio: string, e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
     
@@ -33,38 +36,31 @@ export default function EditProfileButton() {
     
         const body: { pfp?: string; username?: string; bio?: string } = {};
         
-        if (pfp.trim()) body.pfp = pfp;
-        if (username.trim()) body.username = username;
-        if (bio.trim()) body.bio = bio;
+        if (newPfp.trim()) body.pfp = newPfp;
+        if (newUsername.trim()) body.username = newUsername;
+        if (newBio.trim()) body.bio = newBio;
+    
+        if (Object.keys(body).length === 0) {
+            alert("No changes made.");
+            return;
+        }
     
         try {
-            // Fetch all users to check for duplicate username
-            const res = await axios.get('http://localhost:3001/api/users', {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-    
-            const existingUsers: ProfileInfo[] = res.data;
-            
-            if (existingUsers.some(user => user.username === username)) {
-                alert("Username is already taken. Please choose another one.");
-                return;
-            }
-    
-            // Send the update request
-            await axios.put('http://localhost:3001/api/users/edit', body, {
+            const res = await axios.patch(`http://localhost:3001/api/users/edit/${userId}`, body, {
                 headers: { Authorization: `Bearer ${token}` },
             });
     
             alert("Profile updated successfully!");
+            setUsers((prev) => prev?.map((user) => (user._id === userId ? { ...user, ...body } : user)) || []);
             setIsOpen(false);
-            // Instead of reloading, update state or refetch user data
         } catch (error) {
             console.error("Error updating profile:", error);
             alert("Failed to update profile. Please try again.");
         }
     };
-
     
+
+
     return (
         <div>
             <Button onClick={() => setIsOpen(true)}>Edit Profile</Button>
@@ -89,16 +85,7 @@ export default function EditProfileButton() {
                         placeholder="Write something..."
                         value={newBio}
                         onChange={(e) => setNewBio(e.target.value)}
-                    />
-                    Profile Picture:
-                    <input
-                        type='text'
-                        className="w-full h-11 rounded-md border p-2"
-                        placeholder="Image link..."
-                        value={newPfp}
-                        onChange={(e) => setNewPfp(e.target.value)}
-                    />
-                         
+                    />                         
                     
                 </CardContent>
                 <CardFooter className="flex justify-between">

@@ -1,66 +1,65 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
 
 const DeleteAccountButton = () => {
-  const router = useRouter(); // To redirect user after deletion
+  const router = useRouter();
 
   const userData = sessionStorage.getItem('user');
   const token = userData ? JSON.parse(userData).token : null;
-  const userId = userData ? JSON.parse(userData)._id : null; // Extract user ID
+  const userId = userData ? JSON.parse(userData)._id : null;
+  const username = userData ? JSON.parse(userData).username : null;
 
-  console.log(userId)
+  console.log("User ID:", userId);
 
   const handleClick = async () => {
-    if (!userId) {
-      console.log("User ID not found");
+    if (!userId || !token) {
+      console.log("User ID or token not found");
       return;
     }
 
     try {
-      const deletePosts = await fetch(`http://localhost:3001/api/posts/user/${userId}`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
+      // Delete all comments by user (fixed API call)
+      await axios.delete(`http://localhost:3001/api/posts/user/${userId}/comments`, {
+        headers: { Authorization: `Bearer ${token}` },
       });
 
-      if (!deletePosts.ok) {
-        throw new Error('Failed to delete posts');
-      }
+      console.log(`All comments by ${username} have been deleted`);
 
-      // Then, delete all comments of the user
-      const deleteComments = await fetch(`http://localhost:3001/api/posts/user/${userId}`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
+      // Fetch all user posts
+      const { data: posts } = await axios.get(`http://localhost:3001/api/posts/user/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` },
       });
 
-      if (!deleteComments.ok) {
-        throw new Error('Failed to delete comments');
-      }
+      console.log("Deleting posts:", posts.map((post: any) => post._id));
 
-      // delete Account
-      const response = await fetch(`http://localhost:3001/api/users/${userId}`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
+      // Delete all posts
+      await Promise.all(
+        posts.map((post: any) =>
+          axios.delete(`http://localhost:3001/api/posts/${post._id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          })
+        )
+      );
+
+      console.log("All posts deleted successfully");
+
+      // Delete user account
+      const response = await axios.delete(`http://localhost:3001/api/users/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` },
       });
 
-      if (response.ok) {
+      if (response.status === 200) {
         alert('Account deleted successfully');
-        sessionStorage.removeItem('user'); // deletes the user in the  session
-        router.push('/login'); // redirect to tehlogin page
+        sessionStorage.removeItem('user'); // Deletes user from session
+        router.push('/login'); // Redirect to login page
       } else {
         console.error('Failed to delete account');
       }
-    } catch (error) {
-      console.error('Error:', error);
+    } catch (error: any) {
+      console.error('Error deleting account:', error.response?.data || error.message);
+      alert('An error occurred while deleting your account.');
     }
   };
 
