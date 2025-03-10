@@ -83,6 +83,11 @@ export default function Login() {
             </div>
             <Button type="submit" className="w-full" disabled={isLoading}>Login</Button>
           </form>
+          {error && (
+            <div className="text-center text-sm text-red-500 mt-2">
+              {error}
+            </div>
+          )}
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
               <span className="w-full border-t"/>

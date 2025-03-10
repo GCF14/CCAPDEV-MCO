@@ -166,8 +166,8 @@ export default function PostPage() {
                     </button>
                     {/* <MessageSquare className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" /> */}
                     {/* <Share2 className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />   */}
-                    {post.user._id === userId && <Button className="mt-2" onClick={handleEditPost}>Edit</Button>}
-                    {post.user._id === userId && <Button className="mt-2" onClick={handleDeletePost}>Delete</Button>}
+                    {/* {post.user._id === userId && <Button className="mt-2" onClick={handleEditPost}>Edit</Button>}
+                    {post.user._id === userId && <Button className="mt-2" onClick={handleDeletePost}>Delete</Button>} */}
                   {post.user._id === userId && <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="icon">

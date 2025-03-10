@@ -101,6 +101,11 @@ export default function Login() {
             </div>
             <Button type="submit" className="w-full" disabled={isLoading}>Sign-up</Button>
           </form>
+          {error && (
+            <div className="text-center text-sm text-red-500 mt-2">
+              {error}
+            </div>
+          )}
           <div className="text-center mt-4">
             <p className="text-muted-foreground">Already have an account?</p>
             <Link
