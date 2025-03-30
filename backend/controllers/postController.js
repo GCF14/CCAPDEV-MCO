@@ -1,4 +1,5 @@
 const Post = require('../models/postModel');
+const User = require('../models/userModel')
 const mongoose = require('mongoose');
 
 // Create post
@@ -221,6 +222,18 @@ const deleteComment = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 }
+const populateComments = async(comments) => {
+    return Promise.all(
+        comments.map(async (comment) => {
+            const commentUser = await User.findById(comment.user, 'username pfp').lean();
+            comment.user = commentUser || comment.user;
+            if (comment.comments && comment.comments.length > 0) {
+                comment.comments = await populateComments(comment.comments);
+            }
+            return comment;
+        })
+    )
+}
 
 // Get a specific post
 const getPost = async(req, res) => {
@@ -231,10 +244,9 @@ const getPost = async(req, res) => {
             .populate('comments.user', 'username pfp')
             .populate('upvotedBy', 'username')  // populate upvoters
             .populate('downvotedBy', 'username') // populate downvoters
-
-        // if (post.comments.comments)
-        //     post.comments.populate('comments.user', 'username pfp')
-       
+            
+        
+        post.comments = await populateComments(post.comments);
 
         if (!post) {
             return res.status(404).json({ message: 'Post not found' });

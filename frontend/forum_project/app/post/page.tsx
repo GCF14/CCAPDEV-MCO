@@ -13,6 +13,8 @@ import axios from 'axios';
 import {PostProps, CommentProps} from "@/components/post";
 import EditPostButton from '@/components/edit-post-button'
 import EditCommentButton from '@/components/edit-comment-button'
+import Comment from '@/components/comment'
+import Dropdown from '@/components/dropdown'
 
 import {
   Avatar,
@@ -112,20 +114,7 @@ export default function PostPage() {
   };
 
   // di pa tapos
-  // const handleEditPost = async () => {
-
-  //   try{
-  //     await axios.patch(`http://localhost:3001/api/posts/${_id}`, {
-  //       headers: { Authorization: `Bearer ${token}` }
-  //     })
-  //     alert("Post succesfully edited.");
-
-  //   } catch (error){
-  //     alert(`Under Construction`)
-  //   }
-  // }
-
-  const handleEditComments = async () => {
+  const handleEditPost = async () => {
 
     try{
       await axios.patch(`http://localhost:3001/api/posts/${_id}`, {
@@ -138,6 +127,7 @@ export default function PostPage() {
     }
   }
 
+  
   return (
     <SidebarProvider>
         <AppSidebar />
@@ -190,21 +180,10 @@ export default function PostPage() {
                   <div>
 
                   <EditPostButton/>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon">
-                        <MoreVertical className="w-5 h-5" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      {/* <DropdownMenuItem onClick={handleEditPost}>
-                        Edit
-                      </DropdownMenuItem> */}
-                      <DropdownMenuItem onClick={handleDeletePost} className="text-red-500">
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <Dropdown
+                    onEdit={handleEditPost}
+                    onDelete={handleDeletePost}
+                  />
                   </div>
                   }
 
@@ -228,80 +207,23 @@ export default function PostPage() {
                 {/* COMMENTS */}
                 <h2 className="mt-6 text-xl font-semibold">Comments</h2>
                 <div className="mt-3 space-y-4">
-                {comments.length > 0 ? (
-                  comments.map((comment) => (
-                    <div key={comment._id} className="p-3 border rounded">
-                      <Link href={`/profile?id=${comment.user._id}`}>
-                      <div>
-                        <p className="text-gray-800 font-semibold flex items-center">
-                          <Avatar>
-                            <AvatarImage src={comment.user?.pfp || "/default-avatar.png"} alt="Avatar" />
-                          </Avatar>
-                          <span className='ml-2'>{comment.user?.username || "Anonymous"}</span>
-                        </p>
-                      </div>
-                      
-                      </Link>
-                      
-                      
-                      <p>{comment.content} {comment.edited && <span className="text-gray-500 text-sm">(edited)</span>}</p>
-                      <ReplyButton/>
-                      {comment.user._id === userId && 
-                      <div className='mt-3'>
-                        <EditCommentButton/>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                              <MoreVertical className="w-5 h-5" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            {/* <DropdownMenuItem onClick={handleEditComments}>
-                              Edit
-                            </DropdownMenuItem> */}
-                            <DropdownMenuItem className="text-red-500">
-                              Delete
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                                                      </div>}
-                      {/* If the comment has nested comments, recursively render them */}
-                      {comment.comments && comment.comments.length > 0 && (
-                        <div className="ml-4 mt-3 space-y-2">
-                          {comment.comments.map((nestedComment) => (
-                            <div key={nestedComment._id} className="p-3 border rounded">
-                              <p className="text-gray-800 font-semibold">
-                              <Avatar>
-                                <AvatarImage src={nestedComment.user.pfp} alt="Avatar" /> 
-                              </Avatar>
-                               {nestedComment.user?.username || "Anonymous"}</p>
-                              <p>{nestedComment.content} {nestedComment.edited && <span className="text-gray-500 text-sm">(edited)</span>}</p>
-                              {nestedComment.user._id === userId && <DropdownMenu>
-                                                        <DropdownMenuTrigger asChild>
-                                                          <Button variant="ghost" size="icon">
-                                                            <MoreVertical className="w-5 h-5" />
-                                                          </Button>
-                                                        </DropdownMenuTrigger>
-                                                        <DropdownMenuContent align="end">
-                                                          <DropdownMenuItem onClick={handleEditComments}>
-                                                            Edit
-                                                          </DropdownMenuItem>
-                                                          <DropdownMenuItem className="text-red-500">
-                                                            Delete
-                                                          </DropdownMenuItem>
-                                                        </DropdownMenuContent>
-                                                      </DropdownMenu>}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-gray-500">No comments yet.</p>
-                )}
+                  {comments.length > 0 ? (
+                    comments.map((comment) => (
+                    <Comment 
+                      key={comment._id}
+                      _id={comment._id}
+                      user={comment.user}
+                      content={comment.content}
+                      edited={comment.edited}
+                      comments={comment.comments}
+                      postId={_id}
+                    />
+                    ))
+                  ) : (
+                    <p className="text-gray-500">No comments yet.</p>
+                  )}
 
-              </div>
+                </div>
             </div>
           </div>
         </SidebarInset>

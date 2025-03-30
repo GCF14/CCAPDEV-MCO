@@ -34,6 +34,7 @@ export interface CommentProps {
     content: string;
     edited: boolean;
     comments?: CommentProps[];
+    postId: string;
 }
 export interface PostProps {
     _id: string;
