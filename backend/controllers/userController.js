@@ -109,28 +109,35 @@ const deleteUser = async(req, res) => {
     
 }
 
-const editUser = async(req, res) => {
+const editUser = async (req, res) => {
     try {
-        const {id} = req.params;
-        const {pfp = null, username = null, bio = null} = req.body;
-        // only get fields that are not null
-        const updateFields = Object.fromEntries(
-            Object.entries({pfp, username, bio}).filter(([_, v]) => v != null)
-        );
-        const exists = await User.findOne({ username: { $regex: `^${updateFields.username}$`, $options: 'i' }});
+        const { id } = req.params;
+        const { pfp = null, username = null, bio = null } = req.body;
 
-        if (exists) {
-            return res.json({message: 'Username already in use'})
+        // Only get fields that are not null
+        const updateFields = Object.fromEntries(
+            Object.entries({ pfp, username, bio }).filter(([_, v]) => v != null)
+        );
+
+        // Check if username already exists
+        if (username) {  // Only check if username is being updated
+            const exists = await User.findOne({ username: { $regex: `^${username}$`, $options: 'i' } });
+
+            if (exists && exists._id.toString() !== id) { 
+                return res.status(409).json({ message: 'Username already in use' }); // Return a 409 Conflict status
+            }
         }
-        // only update if at least one field was changed
-        if (Object.keys(updateFields).length > 0 && !exists) {
+
+        // Only update if at least one field was changed
+        if (Object.keys(updateFields).length > 0) {
             const editedUser = await User.findByIdAndUpdate(id, updateFields, { new: true });
             return res.json({ message: 'User edited successfully', user: editedUser });
         }
 
-    } catch(error) {
-        res.status(400).json({error: error.message})
+    } catch (error) {
+        res.status(400).json({ error: error.message });
     }
-}
+};
+
 
 module.exports = { signUpUser, loginUser, logoutUser, getUser, getAllUsers, deleteUser, editUser }

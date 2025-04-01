@@ -132,8 +132,6 @@ export default function Comment({_id, user, content, edited, comments, postId}: 
           </Card>
         </div>
       )}
-
-        
   
         {/* Recursive Rendering for Nested Comments */}
         {comments && comments.length > 0 && (
