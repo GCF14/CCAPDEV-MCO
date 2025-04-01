@@ -84,16 +84,6 @@ const getAllUsers = async (req, res) => {
     }
 }
 
-const findUsername = async (req, res) => {
-    try {
-        const {username} = req.params;
-        const user = await User.findOne({ username: { $regex: `^${username}$`, $options: 'i' }});
-        res.json(user? 1 : 0)
-    } catch(error) {
-        res.status(400).json({error: error.message})
-    }
-}
-
 // delete a user
 const deleteUser = async(req, res) => {
 
@@ -130,12 +120,12 @@ const editUser = async(req, res) => {
         const exists = await User.findOne({ username: { $regex: `^${updateFields.username}$`, $options: 'i' }});
 
         if (exists) {
-            res.json({message: 'Username already in use'})
+            return res.json({message: 'Username already in use'})
         }
         // only update if at least one field was changed
         if (Object.keys(updateFields).length > 0 && !exists) {
             const editedUser = await User.findByIdAndUpdate(id, updateFields, { new: true });
-            res.json({ message: 'User edited successfully', user: editedUser });
+            return res.json({ message: 'User edited successfully', user: editedUser });
         }
 
     } catch(error) {
@@ -143,4 +133,4 @@ const editUser = async(req, res) => {
     }
 }
 
-module.exports = { signUpUser, loginUser, logoutUser, getUser, getAllUsers, findUsername, deleteUser, editUser }
+module.exports = { signUpUser, loginUser, logoutUser, getUser, getAllUsers, deleteUser, editUser }
