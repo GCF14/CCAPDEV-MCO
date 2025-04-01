@@ -178,7 +178,7 @@ const editComment = async (req, res) => {
         }
 
         // Find the comment inside the post
-        const comment = post.comments.id(commentId);
+        const comment = findCommentById(post.comments, commentId);
         if (!comment) {
             return res.status(404).json({ message: 'Comment not found' });
         }
@@ -191,6 +191,8 @@ const editComment = async (req, res) => {
         // Update the comment
         comment.content = content;
         comment.edited = true;
+        // Mark modified (because mongoose doesn’t track changes in deeply nested objects unless explicitly marked as modified)
+        post.markModified('comments');
 
         // Save the updated post with the edited comment
         await post.save();
@@ -203,6 +205,20 @@ const editComment = async (req, res) => {
     }
 };
 
+// Helper function for deleting nested comments
+const deleteCommentRecursive = (comments, commentId) => {
+    for (let i = 0; i < comments.length; i++) {
+        if (comments[i]._id.toString() === commentId) {
+            comments.splice(i, 1); // Remove comment from array
+            return true;
+        }
+        if (comments[i].comments && comments[i].comments.length > 0) {
+            const deleted = deleteCommentRecursive(comments[i].comments, commentId);
+            if (deleted) return true; // If deleted in deeper level, return
+        }
+    }
+    return false; // Not found
+};
 
 // permanently delete comment
 const deleteComment = async (req, res) => {
@@ -223,8 +239,12 @@ const deleteComment = async (req, res) => {
         }
     
         // remove the comment from the comments array
-        post.comments = post.comments.filter(c => c._id.toString() !== commentId);
-         
+        const deleted = deleteCommentRecursive(post.comments, commentId);
+        if (!deleted) {
+            return res.status(404).json({ message: 'Failed to delete comment' });
+        }
+
+        post.markModified('comments');
         await post.save();
         res.json(post);
     } catch (error) {
