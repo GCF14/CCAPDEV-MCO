@@ -161,7 +161,7 @@ export default function PostPage() {
                 )}
 
                 { post.photo && (
-                    <div className="mt-3">
+                    <div className="mt-3 mb-3">
                         <img src={post.photo} alt="Post Image" className="w-full rounded-lg" />
                     </div>
                 )}
