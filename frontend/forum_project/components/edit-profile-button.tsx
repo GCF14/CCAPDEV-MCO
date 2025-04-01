@@ -57,11 +57,9 @@ export default function EditProfileButton() {
                 headers: { Authorization: `Bearer ${token}` },
             });
         
-            if (res.status === 200) {
+            if (res.status === 200) 
                 alert("Successfully updated profile");
-                setIsOpen(false);
-                window.location.reload();
-            }
+            
         } catch (error: any) {
             if (error.response && error.response.status === 409) {
                 alert("Username already exists. Please choose a different one.");
