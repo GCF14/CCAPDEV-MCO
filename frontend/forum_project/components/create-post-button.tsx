@@ -18,13 +18,18 @@ export default function CreatePostButton() {
     const [content, setContent] = useState('');
     const [tags, setTags] = useState<string[]>([]);
     const [tagInput, setTagInput] = useState('');
+    const [video, setVideo] = useState('');
+    const [photo, setPhoto] = useState('');
+    const [showVideoInput, setShowVideoInput] = useState(false)
+    const [showPhotoInput, setShowPhotoInput] = useState(false)
+
     const userData = sessionStorage.getItem('user');
     const token = userData ? JSON.parse(userData).token : null;
-    const handlePost = async(title: string, content: string, tags: string[], e: React.MouseEvent ) => {
+    const handlePost = async(title: string, content: string, video: string, photo: string ,tags: string[], e: React.MouseEvent ) => {
         e.preventDefault();
         e.stopPropagation();
 
-        const body: { title: string, content: string, tags?: string[] } = {
+        const body: { title: string, content: string, video?: string, photo?: string , tags?: string[] } = {
             title,
             content,
         };
@@ -32,6 +37,14 @@ export default function CreatePostButton() {
         // Conditionally add tags if they are provided
         if (tags && tags.length > 0) {
             body.tags = tags;
+        }
+
+        if (video) {
+            body.video = video;
+        }
+
+        if (photo) {
+            body.photo = photo;
         }
 
         try {   
@@ -94,6 +107,33 @@ export default function CreatePostButton() {
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                 />
+
+                <button onClick={(e) => {setShowVideoInput((prev) => !prev);}} className="rounded-md bg-black text-white mb-3 mr-4 px-4 py-2">
+                    Add Video
+                </button>
+
+                <button onClick={(e) => {setShowPhotoInput((prev) => !prev);}} className="rounded-md bg-black text-white px-4 py-2">
+                    Add Photo
+                </button>
+
+                {showVideoInput && (
+                    <textarea
+                    className="w-full h-11 mb-1 rounded-md border p-2"
+                    placeholder="Video URL..."
+                    value={video}
+                    onChange={(e) => setVideo(e.target.value)}
+                    />
+                )}
+
+                {showPhotoInput && (
+                    <textarea
+                    className="w-full h-11 mb-1 rounded-md border p-2"
+                    placeholder="Photo URL..."
+                    value={photo}
+                    onChange={(e) => setPhoto(e.target.value)}
+                    />
+                )}
+
                 <div>
                     <input
                         type='text'
@@ -133,7 +173,7 @@ export default function CreatePostButton() {
                     >
                         Cancel
                     </button>
-                    <button onClick={(e) => {handlePost(title, content, tags, e); setIsOpen(false); window.location.reload();}} className="rounded-md bg-black text-white px-4 py-2">
+                    <button onClick={(e) => {handlePost(title, content, video, photo, tags, e); setIsOpen(false); window.location.reload();}} className="rounded-md bg-black text-white px-4 py-2">
                         Post
                     </button>
                 </div>

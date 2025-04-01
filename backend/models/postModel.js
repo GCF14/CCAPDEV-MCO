@@ -48,6 +48,16 @@ const postSchema = new Schema({
         required: true
     },
 
+    video: {
+        type: String,
+        default: ''
+    },
+
+    photo: {
+        type: String,
+        default: ''
+    },
+
     date: {
         type: Date,
         default: Date.now

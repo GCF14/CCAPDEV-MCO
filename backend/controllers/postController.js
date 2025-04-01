@@ -10,9 +10,9 @@ const createPost = async (req, res) => {
         }
         
         const user = req.user._id;
-        const {title, content, tags = null} = req.body; // tags are optional
+        const {title, content, video, photo, tags = null} = req.body; // tags are optional
 
-        const newPost = new Post({user, title, content, tags})
+        const newPost = new Post({user, title, content,video, photo, tags})
         await newPost.save();
 
         res.status(201).json({message: 'New post created', post: newPost})
