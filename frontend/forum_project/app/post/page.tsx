@@ -4,15 +4,13 @@ import { useSearchParams } from 'next/navigation';
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ThumbsUp, ThumbsDown, MessageSquare, Share2 } from "lucide-react";
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import {PostProps, CommentProps} from "@/components/post";
-import EditPostButton from '@/components/edit-post-button'
-import EditCommentButton from '@/components/edit-comment-button'
+
 import Comment from '@/components/comment'
 import Dropdown from '@/components/dropdown'
 
@@ -21,14 +19,6 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar";
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { MoreVertical } from "lucide-react";
-import ReplyButton from '@/components/reply-button';
 
 
 
@@ -39,8 +29,6 @@ export default function PostPage() {
   const [post, setPost] = useState<PostProps | null>(null);
   const [newComment, setNewComment] = useState<string>('');
   const [comments, setComments] = useState<CommentProps[]>([]);
-  const [parentCommentId, setParentCommentId] = useState<string>('');
-  const [isOpen, setIsOpen] = useState(false);
 
   const userData = sessionStorage.getItem('user');
   const token = userData ? JSON.parse(userData).token : null;
@@ -80,14 +68,11 @@ export default function PostPage() {
   if (!post) 
     return <p>Post not found.</p>;
 
-  const handlePostComment = async(content: string, parentCommentId: string) => {
-    const body: {content: string, parentCommentId?: string} = {
+  const handlePostComment = async(content: string) => {
+    const body: {content: string} = {
       content
     }
-    if (parentCommentId && parentCommentId.length > 0) {
-      body.parentCommentId = parentCommentId
-    }
-
+   
     try {
       const resp = await axios.post(`http://localhost:3001/api/posts/${_id}`, body, {
         headers: {Authorization: `Bearer ${token}`}
@@ -117,9 +102,8 @@ export default function PostPage() {
   const handleEditPost = async () => {
 
     try{
-      await axios.patch(`http://localhost:3001/api/posts/${_id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
+      
+      
       alert("Post succesfully edited.");
 
     } catch (error){
@@ -179,7 +163,7 @@ export default function PostPage() {
                   {post.user._id === userId && 
                   <div>
 
-                  <EditPostButton/>
+                  {/* <EditPostButton/> */}
                   <Dropdown
                     onEdit={handleEditPost}
                     onDelete={handleDeletePost}
@@ -201,7 +185,7 @@ export default function PostPage() {
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
                 />
-                <Button onClick={(e) => {handlePostComment(newComment, parentCommentId); window.location.reload();}} className="mt-2">Post Comment</Button>
+                <Button onClick={(e) => {handlePostComment(newComment); window.location.reload();}} className="mt-2">Post Comment</Button>
                 </div>
 
                 {/* COMMENTS */}

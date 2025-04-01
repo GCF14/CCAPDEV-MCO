@@ -8,18 +8,23 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import {Button} from '@/components/ui/button'
-
+import {PostProps} from '@/components/post'
 import axios from 'axios'
 
-export default function EditPostButton() {
+export default function EditPostButton({_id, title, content, tags}: PostProps) {
     const [isOpen, setIsOpen] = useState(false);
-    const [title, setTitle] = useState('');
-    const [content, setContent] = useState('');
-    const [tags, setTags] = useState<string[]>([]);
+    const [newTitle, setNewTitle] = useState('');
+    const [newContent, setNewContent] = useState('');
+    const [newTags, setNewTags] = useState<string[]>([]);
     const [tagInput, setTagInput] = useState('');
     const userData = sessionStorage.getItem('user');
     const token = userData ? JSON.parse(userData).token : null;
-    const handlePost = async(title: string, content: string, tags: string[], e: React.MouseEvent ) => {
+    setNewTitle(title);
+    setNewContent(content);
+    if (tags && tags.length > 0)
+        setNewTags(tags);
+
+    const handleEditPost = async(title: string, content: string, tags: string[], e: React.MouseEvent ) => {
         e.preventDefault();
         e.stopPropagation();
 
@@ -34,7 +39,7 @@ export default function EditPostButton() {
         }
 
         try {   
-            const resp = await axios.put('http://localhost:3001/api/posts/create', body, {
+            const resp = await axios.put(`http://localhost:3001/api/posts/${_id}`, body, {
                 headers: {Authorization: `Bearer ${token}`}
             });
 
@@ -46,8 +51,8 @@ export default function EditPostButton() {
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter' && tagInput.trim() !== '') {
-            if (!tags.includes(tagInput.trim())) {
-                setTags([...tags, tagInput.trim()]);
+            if (!newTags.includes(tagInput.trim())) {
+                setNewTags([...newTags, tagInput.trim()]);
             }
             setTagInput(''); // Reset input field
         }
@@ -55,15 +60,12 @@ export default function EditPostButton() {
 
     // to remove a tag
     const removeTag = (tagToRemove: string) => {
-        const updatedTags = tags.filter(tag => tag !== tagToRemove);
-        setTags(updatedTags);
+        const updatedTags = newTags.filter(tag => tag !== tagToRemove);
+        setNewTags(updatedTags);
     };
 
     return (
     <>
-        <Button onClick={() => setIsOpen(true)}>Edit Post</Button>
-
-        {isOpen && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50 backdrop-blur-sm">
             <Card className="w-[600px] bg-white">
                 <CardHeader>
@@ -74,13 +76,13 @@ export default function EditPostButton() {
                     className="w-full h-11 mb-1 rounded-md border p-2"
                     placeholder="Title..."
                     value={title}
-                    onChange={(e) => setTitle(e.target.value)}
+                    onChange={(e) => setNewTitle(e.target.value)}
                 />
                 <textarea
                     className="w-full h-40 mb-3 rounded-md border p-2"
                     placeholder="Write something..."
                     value={content}
-                    onChange={(e) => setContent(e.target.value)}
+                    onChange={(e) => setNewContent(e.target.value)}
                 />
                 <div>
                     <input
@@ -92,7 +94,7 @@ export default function EditPostButton() {
                         onKeyDown={handleKeyDown}
                     />
                      <div className="flex flex-wrap gap-2 mt-2">
-                        {tags.map((tag, index) => (
+                        {newTags.map((tag, index) => (
                             <div
                                 key={index}
                                 className="px-4 py-1 bg-gray-800 text-white rounded-full flex items-center"
@@ -121,7 +123,7 @@ export default function EditPostButton() {
                     >
                         Cancel
                     </button>
-                    <button onClick={(e) => {handlePost(title, content, tags, e); setIsOpen(false); window.location.reload();}} className="rounded-md bg-black text-white px-4 py-2">
+                    <button onClick={(e) => {handleEditPost(newTitle, newContent, newTags, e); window.location.reload();}} className="rounded-md bg-black text-white px-4 py-2">
                         Edit
                     </button>
                 </div>
@@ -129,7 +131,6 @@ export default function EditPostButton() {
             </CardFooter>
           </Card>
         </div>
-      )}
     </>
   );
 }

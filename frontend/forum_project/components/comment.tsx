@@ -67,7 +67,7 @@ export default function Comment({_id, user, content, edited, comments, postId}: 
         <p>
           {content} {edited && <span className="text-gray-500 text-sm">(edited)</span>}
         </p>
-        <ReplyButton />
+        <ReplyButton parentCommentId={_id} />
   
         {user._id === userId && (
           <div className="mt-3">

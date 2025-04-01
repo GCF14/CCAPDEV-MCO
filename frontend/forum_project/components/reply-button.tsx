@@ -1,11 +1,33 @@
 import React, { useState } from 'react';
 import { Button } from './ui/button';
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from './ui/card'; // Assuming these are from your UI components
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from './ui/card'; 
+import axios from 'axios';
+import { useSearchParams } from 'next/navigation';
 
-const ReplyButton = () => {
+// const ReplyButton = () => {
+export default function ReplyButton({parentCommentId}: {parentCommentId: string}) {
+  const searchParams = useSearchParams();
+  const _id = searchParams.get("id") || "0";
   const [isOpen, setIsOpen] = useState(false);
-  const [replyText, setReplyText] = useState('');
+  const [newContent, setNewContent] = useState('');
+  const userData = sessionStorage.getItem('user');
+  const token = userData ? JSON.parse(userData).token : null;
+  const handleReply = async(content: string, parentCommentId: string) => {
+    const body: { content: string, parentCommentId: string } = {
+        content,
+        parentCommentId
+    };
 
+    try {   
+        const resp = await axios.post(`http://localhost:3001/api/posts/${_id}`, body, {
+            headers: {Authorization: `Bearer ${token}`}
+        });
+
+    
+    } catch (error) {
+        console.error('Error:', error);
+    }
+  }
   return (
     <>
       <Button onClick={() => setIsOpen(true)}>Reply</Button>
@@ -17,13 +39,11 @@ const ReplyButton = () => {
               <CardTitle>Reply</CardTitle>
             </CardHeader>
             <CardContent>
-              <label className="block mb-2">Reply:</label>
-              <input
-                type="text"
+              <textarea
                 className="w-full h-11 mb-3 rounded-md border p-2"
                 placeholder="Write your reply..."
-                value={replyText}
-                onChange={(e) => setReplyText(e.target.value)}
+                value={newContent}
+                onChange={(e) => setNewContent(e.target.value)}
               />
             </CardContent>
             <CardFooter className="flex justify-between">
@@ -37,9 +57,10 @@ const ReplyButton = () => {
                 <button
                   className="rounded-md bg-black text-white px-4 py-2"
                   onClick={() => {
-                    console.log('Reply submitted:', replyText); // Replace with API call if needed
+                    handleReply(newContent, parentCommentId); 
+                    window.location.reload();
                     setIsOpen(false);
-                  }}
+                  }} 
                 >
                   Reply
                 </button>
@@ -52,4 +73,3 @@ const ReplyButton = () => {
   );
 };
 
-export default ReplyButton;

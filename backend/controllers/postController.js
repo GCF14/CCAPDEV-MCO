@@ -136,10 +136,11 @@ const createComment = async (req, res) => {
         const user = req.user._id;
 
         const newComment = {
-            _id: new mongoose.Types.ObjectId,
+            _id: new mongoose.Types.ObjectId(),
             user: user,
             content: content,
-            comments: []
+            comments: [],
+            edited: false
         }
         
 
@@ -151,10 +152,11 @@ const createComment = async (req, res) => {
             }
             // add comment to parent comment
             parentComment.comments.push(newComment);
+            post.markModified('comments');
+
         } else {
             post.comments.push(newComment);
         }
-        
         
         await post.save();
         res.json(post); // return updated post
