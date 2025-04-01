@@ -112,7 +112,7 @@ const deleteUser = async(req, res) => {
 const editUser = async (req, res) => {
     try {
         const { id } = req.params;
-        const { pfp = null, username = null, bio = null } = req.body;
+        const { pfp, username, bio } = req.body;
 
         // Only get fields that are not null
         const updateFields = Object.fromEntries(

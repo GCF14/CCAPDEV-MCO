@@ -24,6 +24,6 @@ router.delete('/:id', deleteUser)
 router.get('/', getAllUsers)
 
 // edit user route
-router.put('/edit/:id', editUser)
+router.patch('/edit/:id', editUser)
 
 module.exports = router

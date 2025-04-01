@@ -39,7 +39,7 @@ export default function EditPostButton({_id, title, content, tags}: PostProps) {
         }
 
         try {   
-            const resp = await axios.put(`http://localhost:3001/api/posts/${_id}`, body, {
+            const resp = await axios.patch(`http://localhost:3001/api/posts/${_id}`, body, {
                 headers: {Authorization: `Bearer ${token}`}
             });
 

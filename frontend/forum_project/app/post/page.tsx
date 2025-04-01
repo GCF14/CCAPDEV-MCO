@@ -70,7 +70,7 @@ export default function PostPage() {
   const handleVote = async(type: 'upvote' | 'downvote') => {
     
     try {
-        const resp = await axios.put(`http://localhost:3001/api/posts/${_id}/${type}`, {}, {
+        const resp = await axios.patch(`http://localhost:3001/api/posts/${_id}/${type}`, {}, {
           headers: { Authorization: `Bearer ${token}`}
         });
         // backend handles the addition of an upvote or downvote

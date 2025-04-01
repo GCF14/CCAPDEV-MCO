@@ -10,7 +10,7 @@ const createPost = async (req, res) => {
         }
         
         const user = req.user._id;
-        const {title, content, video, photo, tags = null} = req.body; // tags are optional
+        const {title, content, video, photo, tags} = req.body; 
 
         const newPost = new Post({user, title, content,video, photo, tags})
         await newPost.save();
@@ -25,7 +25,7 @@ const createPost = async (req, res) => {
 const editPost = async (req, res) => {
     try {
         const {id} = req.params; // post id
-        const {title = null, content = null, tags = null} = req.body; // all of em optional
+        const {title, content, tags} = req.body; // all of em optional
 
         const post = await Post.findById(id);
 

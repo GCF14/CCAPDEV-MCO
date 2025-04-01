@@ -32,7 +32,7 @@ router.use(requireAuth);
 router.post('/create', createPost);
 
 // edit post route
-router.put('/:id', editPost);
+router.patch('/:id', editPost);
 
 // delete post route
 router.delete('/:id', deletePost);
@@ -59,10 +59,10 @@ router.delete('/:postId/comments/:commentId', deleteComment);
 router.get('/:id', getPost);
 
 // upvote post route
-router.put('/:id/upvote', upvotePost);
+router.patch('/:id/upvote', upvotePost);
 
 // downvote post route
-router.put('/:id/downvote', downvotePost);
+router.patch('/:id/downvote', downvotePost);
 
 // get posts by tag route
 router.get('/search/tags/:tag', getPostsByTag);
