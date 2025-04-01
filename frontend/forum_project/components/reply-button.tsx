@@ -4,7 +4,6 @@ import { Card, CardHeader, CardTitle, CardContent, CardFooter } from './ui/card'
 import axios from 'axios';
 import { useSearchParams } from 'next/navigation';
 
-// const ReplyButton = () => {
 export default function ReplyButton({parentCommentId}: {parentCommentId: string}) {
   const searchParams = useSearchParams();
   const _id = searchParams.get("id") || "0";
@@ -12,7 +11,10 @@ export default function ReplyButton({parentCommentId}: {parentCommentId: string}
   const [newContent, setNewContent] = useState('');
   const userData = sessionStorage.getItem('user');
   const token = userData ? JSON.parse(userData).token : null;
-  const handleReply = async(content: string, parentCommentId: string) => {
+  const handleReply = async(content: string, parentCommentId: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
     const body: { content: string, parentCommentId: string } = {
         content,
         parentCommentId
@@ -56,8 +58,8 @@ export default function ReplyButton({parentCommentId}: {parentCommentId: string}
                 </button>
                 <button
                   className="rounded-md bg-black text-white px-4 py-2"
-                  onClick={() => {
-                    handleReply(newContent, parentCommentId); 
+                  onClick={(e) => {
+                    handleReply(newContent, parentCommentId, e); 
                     window.location.reload();
                     setIsOpen(false);
                   }} 

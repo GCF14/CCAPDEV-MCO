@@ -74,10 +74,24 @@ const getUser = async (req, res) => {
   
 };
 
+// get all users
 const getAllUsers = async (req, res) => {
     try {
         const users = await User.find();
         res.json(users);
+    } catch(error) {
+        res.status(400).json({error: error.message})
+    }
+}
+
+const getAllUsernames = async (req, res) => {
+    try {
+        const users = await User.find();
+        const usernames = [];
+        users.forEach(user => {
+            usernames.push(user.username);
+        })
+        res.json(usernames);
     } catch(error) {
         res.status(400).json({error: error.message})
     }
@@ -130,4 +144,4 @@ const editUser = async(req, res) => {
     }
 }
 
-module.exports = { signUpUser, loginUser, logoutUser, getUser, getAllUsers, deleteUser, editUser }
+module.exports = { signUpUser, loginUser, logoutUser, getUser, getAllUsers, getAllUsernames, deleteUser, editUser }

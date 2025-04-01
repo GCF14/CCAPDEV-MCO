@@ -1,7 +1,7 @@
 const express = require('express')
 
 // controller
-const { signUpUser, loginUser, logoutUser, getUser, getAllUsers, deleteUser, editUser } = require('../controllers/userController')
+const { signUpUser, loginUser, logoutUser, getUser, getAllUsers, getAllUsernames, deleteUser, editUser } = require('../controllers/userController')
 
 const router = express.Router()
 
@@ -14,13 +14,19 @@ router.post('/signup', signUpUser)
 //logout route
 router.post('/logout', logoutUser)
 
+// get all usernames
+router.get('/usernames', getAllUsernames)
+
 // get user route
 router.get('/:id', getUser);
 
 // delete user route
 router.delete('/:id', deleteUser)
 
-router.get('/', getAllUsers);
+// get all users route
+router.get('/', getAllUsers)
+
+
 
 // edit user route
 router.patch('/edit/:id', editUser)
