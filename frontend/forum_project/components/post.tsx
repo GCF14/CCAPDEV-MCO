@@ -182,8 +182,9 @@ export default function Post({_id, user, title, content, video, photo, upvotes, 
                             <ThumbsDown className="w-5 h-5" />
                             <span>{dislikes}</span>
                         </button>
-                        <MessageSquare className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />
-                        {/* <Share2 className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />           */}
+                        <Link href={`/post?id=${_id}`}>
+                            <MessageSquare className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />
+                        </Link>
                     </div>
 
                     
