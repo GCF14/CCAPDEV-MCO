@@ -57,7 +57,6 @@ export default function EditProfileButton() {
                 headers: { Authorization: `Bearer ${token}` },
             });
             alert(res.data);
-            setIsOpen(false);
         } catch (error) {
             console.error("Error updating profile:", error);
             alert("Failed to update profile. Please try again.");
