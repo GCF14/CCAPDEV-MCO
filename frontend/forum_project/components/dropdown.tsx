@@ -18,7 +18,7 @@ import {Button} from '@/components/ui/button'
 
 import axios from 'axios'
 interface DropdownProps {
-    onEdit: (commentId: string, content: string) => void;
+    onEdit: () => void;
     onDelete: () => void;
 }
 
@@ -35,7 +35,7 @@ export default function Dropdown({ onEdit, onDelete }: DropdownProps) {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
                 {/* Edit action */}
-                <DropdownMenuItem onClick={() => onEdit(commentId, content)}>
+                <DropdownMenuItem onClick={() => onEdit()}>
                     Edit
                 </DropdownMenuItem>
 

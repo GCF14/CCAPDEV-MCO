@@ -18,6 +18,7 @@ import {
   Avatar,
   AvatarImage,
 } from "@/components/ui/avatar";
+import EditPostEvent from '@/components/edit-post-button';
 
 
 const convertToEmbedURL = (url: string) => {
@@ -44,6 +45,7 @@ export default function PostPage() {
   const [post, setPost] = useState<PostProps | null>(null);
   const [newComment, setNewComment] = useState<string>('');
   const [comments, setComments] = useState<CommentProps[]>([]);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const userData = sessionStorage.getItem('user');
   const token = userData ? JSON.parse(userData).token : null;
@@ -112,19 +114,6 @@ export default function PostPage() {
       alert("Failed to delete the post. Please try again.");
     }
   };
-
-  // di pa tapos
-  const handleEditPost = async () => {
-
-    try{
-      
-      
-      alert("Post succesfully edited.");
-
-    } catch (error){
-      alert(`Under Construction`)
-    }
-  }
 
   
   return (
@@ -200,7 +189,7 @@ export default function PostPage() {
 
                   {/* <EditPostButton/> */}
                   <Dropdown
-                    onEdit={handleEditPost}
+                    onEdit={() => setIsEditModalOpen(true)}
                     onDelete={handleDeletePost}
                   />
                   </div>
@@ -222,6 +211,10 @@ export default function PostPage() {
                 />
                 <Button onClick={(e) => {handlePostComment(newComment); window.location.reload();}} className="mt-2">Post Comment</Button>
                 </div>
+
+                {isEditModalOpen && (
+                  <EditPostEvent postId={post._id} isOpen={isEditModalOpen} setIsOpen={setIsEditModalOpen} />
+                )}
 
                 {/* COMMENTS */}
                 <h2 className="mt-6 text-xl font-semibold">Comments</h2>

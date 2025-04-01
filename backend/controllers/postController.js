@@ -25,7 +25,7 @@ const createPost = async (req, res) => {
 const editPost = async (req, res) => {
     try {
         const {id} = req.params; // post id
-        const {title, content, tags} = req.body; // all of em optional
+        const {title, content, video , photo ,tags} = req.body; // all of em optional
 
         const post = await Post.findById(id);
 
@@ -35,7 +35,7 @@ const editPost = async (req, res) => {
 
         // only get fields that are not null
         const updateFields = Object.fromEntries(
-            Object.entries({title, content, tags}).filter(([_, v]) => v != null)
+            Object.entries({title, content, video, photo, tags}).filter(([_, v]) => v != null && v !== "")
         );
 
         // only update if at least one field was changed
@@ -44,8 +44,6 @@ const editPost = async (req, res) => {
             res.json({ message: 'Post edited successfully', post: editedPost });
         }
         
-        
-
     } catch(error) {
         res.status(400).json({error: error.message});
     }
