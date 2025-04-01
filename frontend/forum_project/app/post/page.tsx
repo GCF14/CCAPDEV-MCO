@@ -20,7 +20,22 @@ import {
 } from "@/components/ui/avatar";
 
 
-
+const convertToEmbedURL = (url: string) => {
+  if (url.includes("youtube.com") || url.includes("youtu.be")) {
+      // Extract YouTube Video ID and return embedded URL
+      let videoId = "";
+      if (url.includes("youtube.com")) {
+          const urlParams = new URL(url).searchParams;
+          videoId = urlParams.get("v") || "";
+      } else if (url.includes("youtu.be")) {
+          videoId = url.split("/").pop() || "";
+      }
+      return `https://www.youtube.com/embed/${videoId}`;
+  } 
+  
+  // If it's not YouTube, assume it's a direct MP4 file and embed it
+  return url;
+};
 
 
 export default function PostPage() {
@@ -131,6 +146,26 @@ export default function PostPage() {
                 </Link>
                 
                 <p className="mt-4 text-gray-800">{post.content}</p>
+
+                {/* SUBSET OF POST */}
+
+                { post.video && (
+                    <div className="mt-3">
+                        <iframe
+                            className="w-full h-64 rounded-lg"
+                            src={convertToEmbedURL(post.video)}
+                            title="Video Player"
+                            allowFullScreen
+                        />
+                    </div>
+                )}
+
+                { post.photo && (
+                    <div className="mt-3">
+                        <img src={post.photo} alt="Post Image" className="w-full rounded-lg" />
+                    </div>
+                )}
+
                 {/* tags */}
                 {post.tags && post.tags.length > 0 && (
                     <div className="flex flex-wrap gap-2 mt-2">

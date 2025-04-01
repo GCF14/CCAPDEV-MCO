@@ -45,6 +45,8 @@ export interface PostProps {
     };
     title: string;
     content: string;
+    video: string;
+    photo: string;
     comments?: CommentProps[];
     upvotes: number;
     downvotes: number;
@@ -63,12 +65,11 @@ export interface PostProps {
 //   };
 
 
-export default function Post({_id, user, title, content, upvotes, downvotes, tags, edited, upvotedBy, downvotedBy}: PostProps) {
+export default function Post({_id, user, title, content, video, photo, upvotes, downvotes, tags, edited, upvotedBy, downvotedBy}: PostProps) {
     const [likes, setLikes] = useState(upvotes);
     const [dislikes, setDislikes] = useState(downvotes);
     const [isUpvoted, setIsUpvoted] = useState(false);
     const [isDownvoted, setIsDownvoted] = useState(false);
-
 
     const userData = sessionStorage.getItem('user');
     const token = userData ? JSON.parse(userData).token : null;
@@ -149,6 +150,7 @@ export default function Post({_id, user, title, content, upvotes, downvotes, tag
             
                     <CardDescription>
                         {content}
+                        
                         <br/>
                         {/* tags */}
                         {tags && tags.length > 0 && (
