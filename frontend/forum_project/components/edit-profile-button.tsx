@@ -40,7 +40,7 @@ export default function EditProfileButton() {
             console.error("No token found. User may not be logged in.");
             return;
         }
-
+    
         const body: { pfp?: string; username?: string; bio?: string } = {};
         
         if (newPfp.trim()) body.pfp = newPfp;
@@ -51,16 +51,23 @@ export default function EditProfileButton() {
             alert("No changes made.");
             return;
         }
-
+    
         try {
             const res = await axios.put(`http://localhost:3001/api/users/edit/${userId}`, body, {
                 headers: { Authorization: `Bearer ${token}` },
             });
-            alert(res.data);
-            setIsOpen(false);
-        } catch (error) {
-            console.error("Error updating profile:", error);
-            alert("Failed to update profile. Please try again.");
+        
+            if (res.status === 200) {
+                alert("Successfully updated profile");
+                setIsOpen(false);
+                window.location.reload();
+            }
+        } catch (error: any) {
+            if (error.response && error.response.status === 409) {
+                alert("Username already exists. Please choose a different one.");
+            } else {
+                alert("Failed to update profile. Please try again.");
+            }
         }
     };
     
@@ -111,7 +118,14 @@ export default function EditProfileButton() {
                         >
                             Cancel
                         </button>
-                        <button onClick={(e) => {handleEdit(newPfp, newUsername, newBio, e); setIsOpen(false); window.location.reload();}} className="rounded-md bg-black text-white px-4 py-2">
+                        <button 
+                            onClick={async (e) => {
+                                await handleEdit(newPfp, newUsername, newBio, e); // Wait for API response
+                                setIsOpen(false);
+                                window.location.reload();
+                            }} 
+                            className="rounded-md bg-black text-white px-4 py-2"
+                        >
                             Edit
                         </button>
                     </div>
