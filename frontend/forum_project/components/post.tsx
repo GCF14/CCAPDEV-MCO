@@ -147,10 +147,16 @@ export default function Post({_id, user, title, content, video, photo, upvotes, 
                 </CardHeader>
 
                 <CardContent>     
-            
+                    { photo && (
+                        <div className="mt-3">
+                            <img src={photo} alt="Post Image" className="w-full rounded-lg" />
+                        </div>
+                    )}
+
                     <CardDescription>
                         {content}
                         
+
                         <br/>
                         {/* tags */}
                         {tags && tags.length > 0 && (
