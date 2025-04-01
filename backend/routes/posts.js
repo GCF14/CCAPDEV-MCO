@@ -50,7 +50,7 @@ router.get('/popular', getPopularPosts);
 router.post('/:postId', createComment);
 
 // edit comment route
-router.put('/:postId/comments/:commentId', editComment);
+router.patch('/:postId/comments/:commentId', editComment);
 
 // delete comment route
 router.delete('/:postId/comments/:commentId', deleteComment);

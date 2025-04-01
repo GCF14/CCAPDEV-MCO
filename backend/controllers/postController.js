@@ -166,36 +166,43 @@ const createComment = async (req, res) => {
 };
 
 
-// Edit a comment
 const editComment = async (req, res) => {
-    const {postId, commentId} = req.params;  
-    const {content} = req.body;              
+    const { postId, commentId } = req.params;  
+    const { content } = req.body;              
 
     try {
+        // Find the post
         const post = await Post.findById(postId);
         if (!post) {
             return res.status(404).json({ message: 'Post not found' });
         }
 
-        const comment = findCommentById(post.comments, commentId)
+        // Find the comment inside the post
+        const comment = post.comments.id(commentId);
         if (!comment) {
             return res.status(404).json({ message: 'Comment not found' });
         }
 
+        // Check if the user is authorized to edit this comment
         if (comment.user.toString() !== req.user._id.toString()) {
             return res.status(403).json({ message: 'You can only edit your own comments' });
         }
 
-        // update the comment
+        // Update the comment
         comment.content = content;
         comment.edited = true;
+
+        // Save the updated post with the edited comment
         await post.save();
 
-        res.json(post);  // return the updated post with the edited comment
+        res.json({ message: 'Comment updated successfully', comment });
+
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        console.error('Error updating comment:', error);
+        res.status(500).json({ message: 'Server error' });
     }
 };
+
 
 // permanently delete comment
 const deleteComment = async (req, res) => {
