@@ -107,8 +107,7 @@ export default function Post({_id, user, title, content, video, photo, upvotes, 
     
 
     return (
-        <Link href={`/post?id=${_id}`} className="block w-full max-w-lg cursor-pointer hover:bg-gray-100 transition">
-            <Card>
+            <Card className="block w-full max-w-lg">
                 <CardHeader>
                     <div className="flex items-center space-x-3">
                     <Link href={user?._id ? `/profile?id=${user._id}` : '#'}>
@@ -119,31 +118,18 @@ export default function Post({_id, user, title, content, video, photo, upvotes, 
                             </AvatarFallback>
                         </Avatar>
                     </Link>
-
-                    <HoverCard>
-                        <Link href={user?._id ? `/profile?id=${user._id}` : '#'}>
-                            <HoverCardTrigger className="hover:underline font-medium">
-                                {user?.username || "Unknown User"}
-                            </HoverCardTrigger>
-                        </Link>
-                        <HoverCardContent className="w-80">
-                            <div className="flex items-center space-x-4">
-                                <Avatar>
-                                    <AvatarImage src={user?.pfp || '/default-avatar.png'} />
-                                    <AvatarFallback>
-                                        <span className="material-symbols-rounded medium">account_circle</span>
-                                    </AvatarFallback>
-                                </Avatar>
-                                <div>
-                                    <p className="font-semibold">{user?.username || "Unknown User"}</p>
-                                </div>
-                            </div>
-                        </HoverCardContent>
-                    </HoverCard>
+                    
+                    <Link href={user?._id ? `/profile?id=${user._id}` : '#'}>
+                        <span className="hover:underline font-medium">
+                            {user?.username || "Unknown User"}
+                        </span>
+                    </Link>
+                    
 
                     </div>
-                    <CardTitle className="text-lg font-semibold">{title} {edited && <span className="text-gray-500 text-sm">(edited)</span>}</CardTitle> 
-                    
+                    <Link href={`/post?id=${_id}`}>
+                        <CardTitle className="text-lg font-semibold">{title} {edited && <span className="text-gray-500 text-sm">(edited)</span>}</CardTitle> 
+                    </Link>
                 </CardHeader>
 
                 <CardContent>     
@@ -203,7 +189,6 @@ export default function Post({_id, user, title, content, video, photo, upvotes, 
                     
                 </CardFooter>
             </Card>
-        </Link>    
     )
 
 }

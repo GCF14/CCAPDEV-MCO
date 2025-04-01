@@ -13,7 +13,6 @@ import {
 import Link from 'next/link';
 import { MoreVertical } from "lucide-react";
 import ReplyButton from '@/components/reply-button';
-import EditCommentButton from '@/components/edit-comment-button'
 import { Button } from "@/components/ui/button";
 import Dropdown from '@/components/dropdown'
 import axios from 'axios'
@@ -85,20 +84,18 @@ export default function Comment({_id, user, content, edited, comments, postId}: 
         <p>
           {content} {edited && <span className="text-gray-500 text-sm">(edited)</span>}
         </p>
-        <ReplyButton parentCommentId={_id} />
+
+        <div className="flex mt-2 gap-1">
+        <ReplyButton parentCommentId={_id}/>
   
         {user._id === userId && (
-          <div className="mt-3">
-            <EditCommentButton />
             <Dropdown
                 onEdit={() => openEditModal(_id, content)}
-
                 onDelete={handleDeleteComment} 
             />
-          </div>
-
-          
         )}
+        </div>
+        
 
         {/* Modal for editing comment */}
       {isOpen && (
