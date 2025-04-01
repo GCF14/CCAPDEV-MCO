@@ -48,7 +48,7 @@ userSchema.statics.signup = async function(password, username, firstName, lastNa
         throw Error("Password not strong enough")
     }
 
-    const exists = await this.findOne({ username })
+    const exists = await this.findOne({ username: { $regex: `^${username}$`, $options: 'i' } })
 
     if(exists) {
         throw Error('Username is already in use')

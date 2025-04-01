@@ -41,25 +41,6 @@ export default function EditProfileButton() {
             return;
         }
 
-        // need to figure this out
-        // try { // get all users to check if username exists
-        //     const resp = await axios.get('http://localhost:3001/api/users/usernames', {
-        //         headers: { Authorization: `Bearer ${token}` },
-        //     });
-        //     const usernames = resp.data;
-        //     console.log(usernames);
-        //     const usernamesLower = usernames.map((username: string) => username.toLowerCase())
-        //     if (usernamesLower.includes(newUsername.trim().toLowerCase())) {
-        //         alert("Username already in use");
-        //         return;
-        //     } 
-    
-        // } catch (error) {
-        //     console.error("Error fetching users:", error);
-        //     alert("Failed to update profile. Please try again.");
-        // }
-        
-
         const body: { pfp?: string; username?: string; bio?: string } = {};
         
         if (newPfp.trim()) body.pfp = newPfp;
@@ -72,11 +53,10 @@ export default function EditProfileButton() {
         }
 
         try {
-            const res = await axios.patch(`http://localhost:3001/api/users/edit/${userId}`, body, {
+            const res = await axios.put(`http://localhost:3001/api/users/edit/${userId}`, body, {
                 headers: { Authorization: `Bearer ${token}` },
             });
-    
-            alert("Profile updated successfully!");
+            alert(res.data);
             setIsOpen(false);
         } catch (error) {
             console.error("Error updating profile:", error);

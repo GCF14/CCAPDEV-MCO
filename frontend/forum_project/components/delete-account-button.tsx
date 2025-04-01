@@ -11,12 +11,6 @@ const DeleteAccountButton = () => {
   const userId = userData ? JSON.parse(userData)._id : null;
   const username = userData ? JSON.parse(userData).username : null;
 
-  console.log("User ID:", userId);
-
-  
-
-  
-
   const handleClick = async () => {
 
     const confirm = window.confirm("Are you sure you want to delete your account?")
