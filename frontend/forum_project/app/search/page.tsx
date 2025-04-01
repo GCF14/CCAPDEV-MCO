@@ -92,6 +92,8 @@ export default function Search() {
                                 user={post.user}
                                 title={post.title}
                                 content={post.content}
+                                video={post.video}
+                                photo={post.photo}
                                 upvotes={post.upvotes}
                                 downvotes={post.downvotes}
                                 tags={post.tags}
