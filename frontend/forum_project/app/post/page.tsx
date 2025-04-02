@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ThumbsUp, ThumbsDown } from "lucide-react";
 import Link from 'next/link';
-import Image from 'next/image'; // Import next/image
-import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
+import React, { useEffect, useState, Suspense } from 'react';
 import axios from 'axios';
 import {PostProps, CommentProps} from "@/components/post";
 
@@ -39,8 +39,17 @@ const convertToEmbedURL = (url: string) => {
   return url;
 };
 
+// Create a loading fallback component
+function PostPageFallback() {
+  return (
+    <div className="flex justify-center items-center h-screen">
+      <div className="text-lg">Loading post...</div>
+    </div>
+  );
+}
 
-export default function PostPage() {
+// Move the main content to a separate component
+function PostPageContent() {
   const searchParams = useSearchParams();
   const _id = searchParams.get("id") || "0";
   const [post, setPost] = useState<PostProps | null>(null);
@@ -139,139 +148,147 @@ export default function PostPage() {
       alert("Failed to delete the post. Please try again.");
     }
   };
-
   
   return (
-    <SidebarProvider>
-        <AppSidebar />
-        <SidebarInset>
-          <div className="flex justify-center px-6 py-10 w-full">
-            <div className="w-full max-w-4xl bg-white rounded-lg shadow-lg p-6 dark:bg-black">
-              
-                {/* POST AND TITLE*/}
-                <h1 className="text-2xl font-bold">{post.title} {post.edited && <span className="text-gray-500 text-sm">(edited)</span>}</h1>
-                <Link href={`/profile?id=${post.user._id}`}>
-                  <p className="text-gray-600 flex items-center dark:text-gray-400">
-                    <Avatar>
-                      <AvatarImage src={post.user.pfp} alt="Avatar" /> 
-                    </Avatar>
-                    <span className='ml-2'>{post.user?.username || "Unknown User"}</span>
-                  </p>
+    <div className="flex justify-center px-6 py-10 w-full">
+      <div className="w-full max-w-4xl bg-white rounded-lg shadow-lg p-6 dark:bg-black">
+        
+        {/* POST AND TITLE*/}
+        <h1 className="text-2xl font-bold">{post.title} {post.edited && <span className="text-gray-500 text-sm">(edited)</span>}</h1>
+        <Link href={`/profile?id=${post.user._id}`}>
+          <p className="text-gray-600 flex items-center dark:text-gray-400">
+            <Avatar>
+              <AvatarImage src={post.user.pfp} alt="Avatar" /> 
+            </Avatar>
+            <span className='ml-2'>{post.user?.username || "Unknown User"}</span>
+          </p>
+        </Link>
+        
+        <p className="mt-4 text-gray-800 dark:text-gray-200">{post.content}</p>
+
+        {/* SUBSET OF POST */}
+
+        { post.video && (
+            <div className="mt-3">
+                <iframe
+                    className="w-full h-64 rounded-lg"
+                    src={convertToEmbedURL(post.video)}
+                    title="Video Player"
+                    allowFullScreen
+                />
+            </div>
+        )}
+
+        { post.photo && (
+            <div className="mt-3 mb-3">
+                <Image 
+                    src={post.photo} 
+                    alt="Post Image" 
+                    className="w-full rounded-lg"
+                    width={800}
+                    height={600}
+                    layout="responsive"
+                />
+            </div>
+        )}
+
+        {/* tags */}
+        {post.tags && post.tags.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-2">
+            {post.tags.map((tag) => (
+                <Link href={`/search?tags=${encodeURIComponent(tag)}`} key={tag}>
+                    <span className="px-2 py-1 text-sm bg-secondary rounded-lg cursor-pointer hover:bg-primary hover:text-primary-foreground">
+                        {tag}
+                    </span>
                 </Link>
                 
-                <p className="mt-4 text-gray-800 dark:text-gray-200">{post.content}</p>
+            ))}
+        </div>
+        )}
+        <br/>
 
-                {/* SUBSET OF POST */}
-
-                { post.video && (
-                    <div className="mt-3">
-                        <iframe
-                            className="w-full h-64 rounded-lg"
-                            src={convertToEmbedURL(post.video)}
-                            title="Video Player"
-                            allowFullScreen
-                        />
-                    </div>
-                )}
-
-                { post.photo && (
-                    <div className="mt-3 mb-3">
-                        <Image 
-                            src={post.photo} 
-                            alt="Post Image" 
-                            className="w-full rounded-lg"
-                            width={800}
-                            height={600}
-                            layout="responsive"
-                        />
-                    </div>
-                )}
-
-                {/* tags */}
-                {post.tags && post.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mt-2">
-                    {post.tags.map((tag) => (
-                        <Link href={`/search?tags=${encodeURIComponent(tag)}`} key={tag}>
-                            <span className="px-2 py-1 text-sm bg-secondary rounded-lg cursor-pointer hover:bg-primary hover:text-primary-foreground">
-                                {tag}
-                            </span>
-                        </Link>
-                        
-                    ))}
-                </div>
-                )}
-                <br/>
-
-                {/* BUTTONS */}
-                <div className="flex items-center space-x-2">
-                    <button onClick={() => handleVote('upvote')}
-                    className={`flex items-center space-x-1 transition-transform ${
-                    isUpvoted ? "text-blue-500 scale-110 font-bold" : "text-gray-600 hover:text-blue-500 hover:scale-110"
-                    }`}>
-                      <ThumbsUp className="w-5 h-5" />
-                      <span>{post.upvotes}</span>
-                    </button>
-                    <button onClick={() => handleVote('downvote')}
-                    className={`flex items-center space-x-1 transition-transform ${
-                    isDownvoted ? "text-red-500 scale-110 font-bold" : "text-gray-600 hover:text-red-500 hover:scale-110"
-                    }`}>
-                      <ThumbsDown className="w-5 h-5" />
-                      <span>{post.downvotes}</span>
-                    </button>
-                  
-                  {post.user._id === userId && 
-                  <div>
-                    <Dropdown
-                      onEdit={() => setIsEditModalOpen(true)}
-                      onDelete={handleDeletePost}
-                    />
-                  </div>
-                  }
-                </div>
-
-                {/* COMMENT */}
-                <div className="mt-3">
-                <Textarea
-                  id="comment-box"
-                  placeholder="Write your comment here..."
-                  className="w-full mt-2 p-2 border rounded-lg resize-none"
-                  value={newComment}
-                  onChange={(e) => setNewComment(e.target.value)}
-                />
-                <Button 
-                  onClick={() => handlePostComment(newComment)} 
-                  className="mt-2"
-                >
-                  Post Comment
-                </Button>
-                </div>
-
-                {isEditModalOpen && (
-                  <EditPostEvent postId={post._id} isOpen={isEditModalOpen} setIsOpen={setIsEditModalOpen} />
-                )}
-
-                {/* COMMENTS */}
-                <h2 className="mt-6 text-xl font-semibold">Comments</h2>
-                <div className="mt-3 space-y-4">
-                  {comments.length > 0 ? (
-                    comments.map((comment) => (
-                    <Comment 
-                      key={comment._id}
-                      _id={comment._id}
-                      user={comment.user}
-                      content={comment.content}
-                      edited={comment.edited}
-                      comments={comment.comments}
-                      postId={_id}
-                    />
-                    ))
-                  ) : (
-                    <p className="text-gray-500">No comments yet.</p>
-                  )}
-                </div>
-            </div>
+        {/* BUTTONS */}
+        <div className="flex items-center space-x-2">
+            <button onClick={() => handleVote('upvote')}
+            className={`flex items-center space-x-1 transition-transform ${
+            isUpvoted ? "text-blue-500 scale-110 font-bold" : "text-gray-600 hover:text-blue-500 hover:scale-110"
+            }`}>
+              <ThumbsUp className="w-5 h-5" />
+              <span>{post.upvotes}</span>
+            </button>
+            <button onClick={() => handleVote('downvote')}
+            className={`flex items-center space-x-1 transition-transform ${
+            isDownvoted ? "text-red-500 scale-110 font-bold" : "text-gray-600 hover:text-red-500 hover:scale-110"
+            }`}>
+              <ThumbsDown className="w-5 h-5" />
+              <span>{post.downvotes}</span>
+            </button>
+          
+          {post.user._id === userId && 
+          <div>
+            <Dropdown
+              onEdit={() => setIsEditModalOpen(true)}
+              onDelete={handleDeletePost}
+            />
           </div>
-        </SidebarInset>
+          }
+        </div>
+
+        {/* COMMENT */}
+        <div className="mt-3">
+        <Textarea
+          id="comment-box"
+          placeholder="Write your comment here..."
+          className="w-full mt-2 p-2 border rounded-lg resize-none"
+          value={newComment}
+          onChange={(e) => setNewComment(e.target.value)}
+        />
+        <Button 
+          onClick={() => handlePostComment(newComment)} 
+          className="mt-2"
+        >
+          Post Comment
+        </Button>
+        </div>
+
+        {isEditModalOpen && (
+          <EditPostEvent postId={post._id} isOpen={isEditModalOpen} setIsOpen={setIsEditModalOpen} />
+        )}
+
+        {/* COMMENTS */}
+        <h2 className="mt-6 text-xl font-semibold">Comments</h2>
+        <div className="mt-3 space-y-4">
+          {comments.length > 0 ? (
+            comments.map((comment) => (
+            <Comment 
+              key={comment._id}
+              _id={comment._id}
+              user={comment.user}
+              content={comment.content}
+              edited={comment.edited}
+              comments={comment.comments}
+              postId={_id}
+            />
+            ))
+          ) : (
+            <p className="text-gray-500">No comments yet.</p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Main wrapper component
+export default function PostPage() {
+  return (
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset>
+        <Suspense fallback={<PostPageFallback />}>
+          <PostPageContent />
+        </Suspense>
+      </SidebarInset>
     </SidebarProvider>
   );
 }
