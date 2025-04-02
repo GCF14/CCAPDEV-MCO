@@ -76,7 +76,7 @@ export default function EditProfileButton() {
             <Button onClick={() => setIsOpen(true)}>Edit Profile</Button>
             {isOpen && (
             <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-                <Card className="w-[600px] bg-white">
+                <Card className="w-[600px] bg-card">
                     <CardHeader>
                         <CardTitle>Edit Profile</CardTitle>
                     </CardHeader>
@@ -111,7 +111,7 @@ export default function EditProfileButton() {
                     {/* edit and cancel buttons */}
                     <div className="flex gap-4" >
                         <button
-                            className="rounded-md bg-gray-200 px-4 py-2"
+                            className="rounded-md bg-secondary text-secondary-foreground px-4 py-2"
                             onClick={() => setIsOpen(false)}
                         >
                             Cancel
@@ -122,7 +122,7 @@ export default function EditProfileButton() {
                                 setIsOpen(false);
                                 window.location.reload();
                             }} 
-                            className="rounded-md bg-black text-white px-4 py-2"
+                            className="rounded-md bg-primary text-primary-foreground px-4 py-2"
                         >
                             Edit
                         </button>

@@ -173,7 +173,7 @@ export default function Post({_id, user, title, content, video, photo, upvotes, 
                             <div className="flex flex-wrap gap-2 mt-2">
                             {tags.map((tag) => (
                                 <Link href={`/search?tags=${encodeURIComponent(tag)}`} key={tag}>
-                                    <span className="px-2 py-1 text-sm bg-gray-100 rounded-lg cursor-pointer hover:bg-gray-200">
+                                    <span className="px-2 py-1 text-sm bg-secondary rounded-lg cursor-pointer hover:bg-primary hover:text-primary-foreground">
                                         {tag}
                                     </span>
                                 </Link>

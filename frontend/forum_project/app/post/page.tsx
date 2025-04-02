@@ -146,12 +146,12 @@ export default function PostPage() {
         <AppSidebar />
         <SidebarInset>
           <div className="flex justify-center px-6 py-10 w-full">
-            <div className="w-full max-w-4xl bg-white rounded-lg shadow-lg p-6">
+            <div className="w-full max-w-4xl bg-white rounded-lg shadow-lg p-6 dark:bg-black">
               
                 {/* POST AND TITLE*/}
                 <h1 className="text-2xl font-bold">{post.title} {post.edited && <span className="text-gray-500 text-sm">(edited)</span>}</h1>
                 <Link href={`/profile?id=${post.user._id}`}>
-                  <p className="text-gray-600 flex items-center">
+                  <p className="text-gray-600 flex items-center dark:text-gray-400">
                     <Avatar>
                       <AvatarImage src={post.user.pfp} alt="Avatar" /> 
                     </Avatar>
@@ -159,7 +159,7 @@ export default function PostPage() {
                   </p>
                 </Link>
                 
-                <p className="mt-4 text-gray-800">{post.content}</p>
+                <p className="mt-4 text-gray-800 dark:text-gray-200">{post.content}</p>
 
                 {/* SUBSET OF POST */}
 
@@ -185,7 +185,7 @@ export default function PostPage() {
                     <div className="flex flex-wrap gap-2 mt-2">
                     {post.tags.map((tag) => (
                         <Link href={`/search?tags=${encodeURIComponent(tag)}`} key={tag}>
-                            <span className="px-2 py-1 text-sm bg-gray-100 rounded-lg cursor-pointer hover:bg-gray-200">
+                            <span className="px-2 py-1 text-sm bg-secondary rounded-lg cursor-pointer hover:bg-primary hover:text-primary-foreground">
                                 {tag}
                             </span>
                         </Link>

@@ -72,7 +72,7 @@ export default function Comment({_id, user, content, edited, comments, postId}: 
       <div key={_id} className="p-3 border rounded">
         <Link href={`/profile?id=${user._id}`}>
           <div>
-            <p className="text-gray-800 font-semibold flex items-center">
+            <p className="text-foreground font-semibold flex items-center">
               <Avatar>
                 <AvatarImage src={user?.pfp || "/default-avatar.png"} alt="Avatar" />
               </Avatar>
@@ -100,7 +100,7 @@ export default function Comment({_id, user, content, edited, comments, postId}: 
         {/* Modal for editing comment */}
       {isOpen && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <Card className="w-[600px] bg-white">
+          <Card className="w-[600px] bg-card">
             <CardHeader>
               <CardTitle>Edit Comment</CardTitle>
             </CardHeader>
@@ -116,12 +116,12 @@ export default function Comment({_id, user, content, edited, comments, postId}: 
             <CardFooter className="flex justify-between">
               <div className="flex gap-4">
                 <button
-                  className="rounded-md bg-gray-200 px-4 py-2"
+                  className="rounded-md bg-secondary text-secondary-foreground px-4 py-2"
                   onClick={() => setIsOpen(false)}
                 >
                   Cancel
                 </button>
-                <button onClick={handleEditComment} className="rounded-md bg-black text-white px-4 py-2">
+                <button onClick={handleEditComment} className="rounded-md bg-primary text-primary-foreground px-4 py-2">
                   Edit
                 </button>
               </div>

@@ -43,7 +43,7 @@ export default function Login() {
         transition={{ duration: 0.5 }}
         className=" w-full max-w-lg"
       >
-        <div className="bg-white rounded-2xl shadow-xl p-8 space-y-6">
+        <div className="bg-card dark:border-2 dark:border-secondary rounded-2xl shadow-xl p-8 space-y-6">
           <div className="text-center space-y-2">
             <h1 className="text-3xl font-bold tracking-tighter">Sign-up</h1>
             <p className="text-muted-foreground">Enter your credentials to register an account</p>

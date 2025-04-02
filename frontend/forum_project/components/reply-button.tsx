@@ -36,7 +36,7 @@ export default function ReplyButton({parentCommentId}: {parentCommentId: string}
 
       {isOpen && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <Card className="w-[600px] bg-white">
+          <Card className="w-[600px] bg-card">
             <CardHeader>
               <CardTitle>Reply</CardTitle>
             </CardHeader>
@@ -51,13 +51,13 @@ export default function ReplyButton({parentCommentId}: {parentCommentId: string}
             <CardFooter className="flex justify-between">
               <div className="flex gap-4">
                 <button
-                  className="rounded-md bg-gray-200 px-4 py-2"
+                  className="rounded-md bg-secondary text-secondary-foreground px-4 py-2"
                   onClick={() => setIsOpen(false)}
                 >
                   Cancel
                 </button>
                 <button
-                  className="rounded-md bg-black text-white px-4 py-2"
+                  className="rounded-md bg-primary text-primary-foreground px-4 py-2"
                   onClick={(e) => {
                     handleReply(newContent, parentCommentId, e); 
                     window.location.reload();

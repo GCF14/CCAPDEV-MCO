@@ -79,7 +79,7 @@ export default function EditPostEvent({ postId, isOpen, setIsOpen }: EditPostEve
 
     return (
       <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <Card className="w-[600px] bg-white">
+          <Card className="w-[600px] bg-card">
               <CardHeader>
                   <CardTitle>Edit Post</CardTitle>
               </CardHeader>
@@ -100,11 +100,11 @@ export default function EditPostEvent({ postId, isOpen, setIsOpen }: EditPostEve
                     />
 
                     {/* PHOTO AND VIDEO */}
-                    <button onClick={(e) => {setShowVideoInput((prev) => !prev);}} className="rounded-md bg-black text-white mb-3 mr-4 px-4 py-2">
+                    <button onClick={(e) => {setShowVideoInput((prev) => !prev);}} className="rounded-md bg-secondary text-secondary-foreground mb-3 mr-4 px-4 py-2">
                         Add Video
                     </button>
 
-                    <button onClick={(e) => {setShowPhotoInput((prev) => !prev);}} className="rounded-md bg-black text-white px-4 py-2">
+                    <button onClick={(e) => {setShowPhotoInput((prev) => !prev);}} className="rounded-md bg-secondary text-secondary-foreground px-4 py-2">
                         Add Photo
                     </button>
 
@@ -140,12 +140,12 @@ export default function EditPostEvent({ postId, isOpen, setIsOpen }: EditPostEve
                             {newTags.map((tag, index) => (
                                 <div
                                     key={index}
-                                    className="px-4 py-1 bg-gray-800 text-white rounded-full flex items-center"
+                                    className="px-4 py-1 bg-accent text-accent-foreground rounded-full flex items-center"
                                 >
                                     {tag}
                                     <span
                                         onClick={() => removeTag(tag)}
-                                        className="ml-2 cursor-pointer text-sm text-white hover:text-gray-200"
+                                        className="ml-2 cursor-pointer text-sm text-primary hover:text-gray-600"
                                     >
                                         &#x2715;
                                     </span>
@@ -157,7 +157,7 @@ export default function EditPostEvent({ postId, isOpen, setIsOpen }: EditPostEve
               <CardFooter className="flex justify-between">
                   <div className="flex gap-4">
                       <button
-                          className="rounded-md bg-gray-200 px-4 py-2"
+                          className="rounded-md bg-secondary text-secondary-foreground px-4 py-2"
                           onClick={() => setIsOpen(false)}
                       >
                           Cancel
@@ -169,7 +169,7 @@ export default function EditPostEvent({ postId, isOpen, setIsOpen }: EditPostEve
                               window.location.reload();
                               console.log("it should close");
                           }} 
-                          className="rounded-md bg-black text-white px-4 py-2"
+                          className="rounded-md bg-primary text-primary-foreground px-4 py-2"
                       >
                           Edit
                       </button>
