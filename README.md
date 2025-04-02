@@ -1,7 +1,7 @@
-#Forum Project
+# Forum Project
 This project consists of a backend and a frontend that need to be set up separately.
 
-##Prerequisites
+## Prerequisites
 
 Make sure you have the following installed:
 
@@ -9,7 +9,7 @@ Node.js (LTS recommended)
 
 npm (comes with Node.js)
 
-##Installation
+## Installation
 1. **Set up the Backend**
     ```sh
     cd backend
@@ -30,7 +30,7 @@ npm (comes with Node.js)
     ```sh
     NEXT_PUBLIC_PORT=3001
 
-##Running the Project
+## Running the Project
 Run the following commands in separate terminals:
 
 1. **Start the Backend**
@@ -40,12 +40,13 @@ Run the following commands in separate terminals:
 
 2. **Start the Frontend**
     ```sh
+    cd frontend
     cd forum_project
     npm run dev
 
-##Your project should now be running!
+Your project should now be running!
 
-##Troubleshooting
+## Troubleshooting
 If you encounter any issues, make sure:
 
 ✅ You have installed all dependencies (npm install in both directories)
