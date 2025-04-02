@@ -54,7 +54,9 @@ export default function Comment({_id, user, content, edited, comments, postId}: 
           alert("Comment successfully edited.");
           setIsOpen(false);
           window.location.reload();
-        } catch (err) {
+        } catch (error) {
+          // Changed 'err' to 'error' to be consistent with naming and to use the parameter
+          console.error("Error updating comment:", error);
           alert(`Error updating comment`);
         }
       }

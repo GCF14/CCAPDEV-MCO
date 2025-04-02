@@ -41,18 +41,18 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>('posts');
-  const [userData, setUserData] = useState<UserData | null>(null); // Fixed type
+  // Removed the unused userData state variable
   const [token, setToken] = useState<string | null>(null);
   const searchParams = useSearchParams();
   const _id = searchParams.get("id") || "0";
 
-  // Initialize userData and token safely with useEffect
+  // Initialize token safely with useEffect
   useEffect(() => {
     // This code will only run in the browser
     const storedUserData = sessionStorage.getItem('user');
     if (storedUserData) {
       const parsedUserData = JSON.parse(storedUserData);
-      setUserData(parsedUserData);
+      // We only need the token, so don't set userData
       setToken(parsedUserData.token);
     }
   }, []); // No dependencies needed as this runs once on mount

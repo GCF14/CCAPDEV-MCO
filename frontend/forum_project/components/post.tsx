@@ -138,7 +138,7 @@ export default function Post({_id, user, title, content, video, photo, upvotes, 
                             className="rounded-lg"
                             width={800} 
                             height={450}
-                            layout="responsive"
+                            unoptimized={true}
                         />
                     </div>
                     )}
