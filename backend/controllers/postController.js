@@ -249,6 +249,7 @@ const deleteComment = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 }
+// Function to populate users in comments
 const populateComments = async(comments) => {
     return Promise.all(
         comments.map(async (comment) => {
@@ -411,16 +412,29 @@ const searchPosts = async (req, res) => {
 const getCommentsByUserId = async (req, res) => {
     try {
         const {userId} = req.params;
-        const posts = await Post.find({"comments.user": userId})
+        const posts = await Post.find()
             .populate('comments.user', 'username pfp')
             .sort({date: -1});
+
+        for (let post of posts) {
+            post.comments = await populateComments(post.comments);
+        }
+
         let comments = [];
 
+        const findUserComments = (commentsArr) => {
+            commentsArr.forEach(comment => {
+                if (comment.user._id.toString() === userId) {
+                    comments.push(comment);
+                }
+                if (comment.comments && comment.comments.length > 0) {
+                    findUserComments(comment.comments);
+                }
+            })
+        }
+
         posts.forEach(post => {
-            const userComments = post.comments.filter(comment => 
-                comment.user._id.toString() === userId 
-            );
-            comments = [...comments, ...userComments];
+            findUserComments(post.comments)
         });
 
         res.json(comments);
