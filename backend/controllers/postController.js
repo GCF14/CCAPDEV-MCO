@@ -409,6 +409,7 @@ const searchPosts = async (req, res) => {
     }
 };
 
+// Get comments by a specific user
 const getCommentsByUserId = async (req, res) => {
     try {
         const {userId} = req.params;
@@ -443,22 +444,31 @@ const getCommentsByUserId = async (req, res) => {
     }
 } 
 
+// Delete comments by a specific user
 const deleteCommentsByUserId = async (req, res) => {
     try {
         const { userId } = req.params;
 
         // Find all posts that contain comments by this user
-        const posts = await Post.find({ "comments.user": userId });
+        const posts = await Post.find()
+            .populate('comments.user', 'username pfp')
+            .sort({ date: -1 });
 
-        if (!posts.length) {
-            return res.status(404).json({ message: "No comments found for this user." });
-        }
-
+        const deleteUserComments = (commentsArr) => {
+            return commentsArr.filter(comment => {
+                if (comment.user._id.toString() === userId) {
+                    return false; // delete comment
+                }
+                if (comment.comments && comment.comments.length > 0) {
+                    comment.comments = deleteUserComments(comment.comments);
+                }
+                return true;
+            }); 
+        };
         // Iterate through posts and remove the user's comments
-        for (const post of posts) {
-            post.comments = post.comments.filter(comment => 
-                comment.user.toString() !== userId
-            );
+        for (let post of posts) {
+            post.comments = deleteUserComments(post.comments)
+            post.markModified('comments')
             await post.save(); // Save the updated post
         }
 
