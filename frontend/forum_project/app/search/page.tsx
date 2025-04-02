@@ -17,56 +17,58 @@ export default function Search() {
     const [posts, setPosts] = useState<PostProps[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const userData = sessionStorage.getItem('user');
-    const token = userData ? JSON.parse(userData).token : null;
+    const [token, setToken] = useState<string | null>(null);
+    
+    // Move sessionStorage access into useEffect
+    useEffect(() => {
+        try {
+            const userData = sessionStorage.getItem('user');
+            if (userData) {
+                const parsedData = JSON.parse(userData);
+                setToken(parsedData.token);
+            }
+        } catch (err) {
+            console.error('Error accessing session storage:', err);
+        }
+    }, []);
+    
+    // Only fetch posts when token is available
+    useEffect(() => {
+        if (!token) return;
+        
+        const fetchPosts = async() => {
+            try {
+                let url = '';
+                if (search) {
+                    url = `http://localhost:3001/api/posts/search/${search}`;
+                } else if (tags) {
+                    url = `http://localhost:3001/api/posts/search/tags/${tags}`;
+                } else {
+                    setLoading(false);
+                    return;
+                }
+                
+                const resp = await axios.get(url, {
+                    headers: {Authorization: `Bearer ${token}`}
+                });
+                setPosts(resp.data);
+                setLoading(false);
+            } catch (err) {
+                if (axios.isAxiosError(err)) {
+                    setError(err.response?.data?.message || 'Error fetching posts');
+                } else {
+                    setError('An unexpected error occurred');
+                }
+                setLoading(false);
+            }
+        };
+        
+        fetchPosts();
+    }, [search, tags, token]);
 
-    
-    if (search) {
-        useEffect(() => {
-            const fetchPosts = async() => {
-            try {
-                const resp = await axios.get(`http://localhost:3001/api/posts/search/${search}`, {
-                    headers: {Authorization: `Bearer ${token}`}
-                });
-                setPosts(resp.data);
-                setLoading(false);
-            } catch (err) {
-                if (axios.isAxiosError(err)) {
-                    setError(err.response?.data?.message || 'Error fetching posts');
-                } else {
-                    setError('An unexpected error occured');
-                }
-                setLoading(false);
-            }
-            };
-    
-            fetchPosts();
-        }, [search]);
-    } else if (tags) {
-        useEffect(() => {
-            const fetchPosts = async() => {
-            try {
-                const resp = await axios.get(`http://localhost:3001/api/posts/search/tags/${tags}`, {
-                    headers: {Authorization: `Bearer ${token}`}
-                });
-                setPosts(resp.data);
-                setLoading(false);
-            } catch (err) {
-                if (axios.isAxiosError(err)) {
-                    setError(err.response?.data?.message || 'Error fetching posts');
-                } else {
-                    setError('An unexpected error occured');
-                }
-                setLoading(false);
-            }
-            };
-    
-            fetchPosts();
-        }, [tags]);
-    } else {
-        return;
+    if (!search && !tags) {
+        return null;
     }
-    
 
     if (error)
         return <p>Error: {error}</p>
@@ -112,6 +114,5 @@ export default function Search() {
             </SidebarInset>
             </SidebarProvider>
         </div>
-
     );
 }

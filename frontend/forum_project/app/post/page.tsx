@@ -46,13 +46,25 @@ export default function PostPage() {
   const [newComment, setNewComment] = useState<string>('');
   const [comments, setComments] = useState<CommentProps[]>([]);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  
+  // Changed these to use state to avoid server-side errors
+  const [userData, setUserData] = useState(null);
+  const [token, setToken] = useState(null);
+  const [userId, setUserId] = useState(null);
 
-  const userData = sessionStorage.getItem('user');
-  const token = userData ? JSON.parse(userData).token : null;
-  const userId = userData ? JSON.parse(userData)._id : null;
+  // Access browser APIs only after component mounts
+  useEffect(() => {
+    const storedUserData = sessionStorage.getItem('user');
+    if (storedUserData) {
+      const parsedUserData = JSON.parse(storedUserData);
+      setUserData(parsedUserData);
+      setToken(parsedUserData.token);
+      setUserId(parsedUserData._id);
+    }
+  }, []);
 
   useEffect(() => {
-    if (!_id) return;
+    if (!_id || !token) return;
 
     const fetchPost = async() => {
       try {
@@ -67,9 +79,10 @@ export default function PostPage() {
     }
 
     fetchPost();
-  }, [_id]);
+  }, [_id, token]);
 
   const handleVote = async(type: 'upvote' | 'downvote') => {
+    if (!token) return;
     
     try {
         const resp = await axios.patch(`http://localhost:3001/api/posts/${_id}/${type}`, {}, {
@@ -86,6 +99,8 @@ export default function PostPage() {
     return <p>Post not found.</p>;
 
   const handlePostComment = async(content: string) => {
+    if (!token) return;
+    
     const body: {content: string} = {
       content
     }
@@ -96,10 +111,11 @@ export default function PostPage() {
       });
     } catch (error) {
       console.error('Error posting comment:', error);
-  }
+    }
   }
 
   const handleDeletePost = async () => {
+    if (!token) return;
     if (!window.confirm("Are you sure you want to delete this post?")) return;
   
     try {
@@ -242,6 +258,3 @@ export default function PostPage() {
     </SidebarProvider>
   );
 }
- 
-
-    

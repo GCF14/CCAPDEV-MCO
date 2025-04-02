@@ -13,6 +13,7 @@ import { LogOut, Router } from 'lucide-react';
 import { useLogout } from "@/hooks/useLogout"
 import { useRouter } from 'next/navigation';
 import withAuth from "@/components/withAuth";
+import { ModeToggle } from "@/components/mode-toggle";
 
 function Homepage() {
   const [posts, setPosts] = useState<PostProps[]>([]);
@@ -51,11 +52,9 @@ function Homepage() {
   const handleClick = () => {
     logout()
     router.push('/login')
-    
   }
 
   return (
-    
     <div>
       <div>
         <SidebarProvider>
@@ -96,16 +95,19 @@ function Homepage() {
           </SidebarInset>
         </SidebarProvider>
       </div>
-      <button 
-      onClick={handleClick} 
-      className="absolute top-5 right-5 px-4 py-2 bg-black text-white rounded-md shadow-md hover:bg-gray-800 transition"
-      >
-        Log out
-      </button>
-        <CreatePostButton/>  
-        
-
-
+      
+      {/* Header controls container with flex to position buttons side by side */}
+      <div className="absolute top-5 right-5 flex items-center gap-2">
+        <ModeToggle />
+        <button 
+          onClick={handleClick} 
+          className="px-4 py-2 bg-black text-white dark:bg-white dark:text-black rounded-md shadow-md hover:bg-gray-800 dark:hover:bg-gray-200 transition"
+        >
+          Log out
+        </button>
+      </div>
+      
+      <CreatePostButton/>
     </div>
   );
 }

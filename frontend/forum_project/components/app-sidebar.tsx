@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { useEffect, useState } from "react"
 import {
   Home,
   Flame,
@@ -21,15 +22,23 @@ import {
 
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const userData = sessionStorage.getItem('user');
-  const userId = userData ? JSON.parse(userData)._id : null;
+  // Initialize userId state
+  const [userId, setUserId] = useState<string | null>(null);
+  
+  // Move sessionStorage access into useEffect
+  useEffect(() => {
+    const userData = sessionStorage.getItem('user');
+    if (userData) {
+      const parsedData = JSON.parse(userData);
+      setUserId(parsedData._id);
+    }
+  }, []);
   
   // sample data.
   const data = {
-    forumTitle:
-      {
-        name: "Inspiration Station",
-      },
+    forumTitle: {
+      name: "Inspiration Station",
+    },
     navMain: [
       {
         title: "Home",
@@ -45,7 +54,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       },
       {
         title: "Profile",
-        url: `/profile?id=${encodeURIComponent(userId)}`,
+        // Use a conditional URL that works even if userId is null initially
+        url: userId ? `/profile?id=${encodeURIComponent(userId)}` : "/profile",
         icon: CircleUserRound,
         badge: "10",
       },
@@ -77,9 +87,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         emoji: "🎥",
       },
     ],
-    
   }
-
 
   return (
     // <Sidebar className="border-r-0 " {...props}>
