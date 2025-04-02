@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -11,12 +11,52 @@ import Link from 'next/link'
 import { useLogin } from "@/hooks/useLogin"
 import { useRouter } from "next/navigation";
 
+function setCookie(name: string, value: string, days: number): void {
+  const date: Date = new Date();
+  date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+  document.cookie = `${name}=${value};expires=${date.toUTCString()}; path=/`
+}
+
+function removeCookie(name: string): void {
+  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
+}
+
+function getCookie(name: string): string | null {
+  const nameEq = name + '=';
+  const cookies = document.cookie.split(';');
+
+  for (let cookie of cookies) {
+    cookie = cookie.trim();
+    if (cookie.startsWith(nameEq)) {
+      return cookie.substring(nameEq.length);
+    }
+  }
+  return null;
+}
+
+
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const { login, error, isLoading } = useLogin()
   const router = useRouter() 
+
+  useEffect(() => {
+    const remembered = getCookie("rememberMe");
+    const storedUsername = getCookie("username");
+    const storedPassword = localStorage.getItem("password");
+
+    if (remembered === 'true' && storedUsername && storedPassword) {
+      (async () => {
+        const success = await login(storedUsername, storedPassword);
+        if (success) {
+          router.push('/')
+        }
+      })();
+    }
+  }, [login, router]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -24,7 +64,16 @@ export default function Login() {
     const success = await login(username, password);
 
     if (success) { 
-      router.push("/");
+      if (rememberMe) {
+        setCookie("rememberMe", "true", 21); 
+        setCookie("username", username, 21); 
+        localStorage.setItem('password', password);
+      } else {
+        setCookie("rememberMe", "false", 1); // Clear quickly
+        removeCookie('username');
+        localStorage.removeItem('password');
+      }
+      router.push("/");;
     }
 
   };
@@ -76,7 +125,9 @@ export default function Login() {
 
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <Checkbox id="remember" />
+                <Checkbox id="remember"
+                checked={rememberMe}
+                onCheckedChange={(checked) => setRememberMe(!!checked)} />
                 <Label htmlFor="remember">Remember me</Label>
               </div>
               <a href="#" className="text-primary-500 hover:underline">Forgot password?</a>
