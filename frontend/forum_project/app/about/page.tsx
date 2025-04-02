@@ -15,7 +15,7 @@ export default function About() {
         { name: "Express.js", description: "Web application framework for Node.js" },
         { name: "MongoDB", description: "NoSQL database" },
         { name: "Mongoose", description: "MongoDB object modeling for Node.js" },
-        { name: "bcrypt", description: "Library for hashing passwords" },
+        { name: "bcryptjs", description: "Library for hashing passwords" },
         { name: "validator", description: "Library for string validation and sanitization" },
         { name: "jsonwebtoken", description: "Implementation of JSON Web Tokens" },
         { name: "cors", description: "Middleware for enabling CORS" },
