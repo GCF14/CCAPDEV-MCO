@@ -48,11 +48,10 @@ export default function CreatePostButton() {
         }
 
         try {   
-            const resp = await axios.post('http://localhost:3001/api/posts/create', body, {
+            await axios.post('http://localhost:3001/api/posts/create', body, {
                 headers: {Authorization: `Bearer ${token}`}
             });
-
-        
+            // Response is received but not used
         } catch (error) {
             console.error('Error:', error);
         }
@@ -108,11 +107,11 @@ export default function CreatePostButton() {
                     onChange={(e) => setContent(e.target.value)}
                 />
 
-                <button onClick={(e) => {setShowVideoInput((prev) => !prev);}} className="rounded-md bg-secondary text-secondary-foreground mb-3 mr-4 px-4 py-2">
+                <button onClick={() => setShowVideoInput((prev) => !prev)} className="rounded-md bg-secondary text-secondary-foreground mb-3 mr-4 px-4 py-2">
                     Add Video
                 </button>
 
-                <button onClick={(e) => {setShowPhotoInput((prev) => !prev);}} className="rounded-md bg-secondary text-secondary-foreground px-4 py-2">
+                <button onClick={() => setShowPhotoInput((prev) => !prev)} className="rounded-md bg-secondary text-secondary-foreground px-4 py-2">
                     Add Photo
                 </button>
 

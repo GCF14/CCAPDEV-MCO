@@ -1,14 +1,6 @@
 'use client'
 import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from "@/components/ui/card";
-import {
   Avatar,
-  AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar";
 import { useState, useEffect } from 'react'
@@ -17,9 +9,8 @@ import Post, {PostProps, CommentProps} from "@/components/post";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import ProfileCard from '../../components/ProfileCard';
-import Link from 'next/link';
 import { cn } from "@/lib/utils"
-import { usePathname } from "next/navigation"
+// Removed unused pathname import
 import { ProfileInfo } from '@/components/ProfileCard'
 import { useSearchParams } from 'next/navigation';
 import axios from 'axios';
@@ -27,6 +18,15 @@ import axios from 'axios';
 interface TabItem{
   name: string;
   href: string;
+}
+
+// Define a more specific type for your user data
+interface UserData {
+  token: string;
+  // Add other user properties as needed
+  id?: string;
+  username?: string;
+  // etc.
 }
 
 const tabs: TabItem[] = [
@@ -41,9 +41,8 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>('posts');
-  const [userData, setUserData] = useState<any>(null);
+  const [userData, setUserData] = useState<UserData | null>(null); // Fixed type
   const [token, setToken] = useState<string | null>(null);
-  const pathname = usePathname()
   const searchParams = useSearchParams();
   const _id = searchParams.get("id") || "0";
 
@@ -56,7 +55,7 @@ export default function Profile() {
       setUserData(parsedUserData);
       setToken(parsedUserData.token);
     }
-  }, []);
+  }, []); // No dependencies needed as this runs once on mount
 
   useEffect(() => {
     // Only run the API calls after we have the token
@@ -67,8 +66,10 @@ export default function Profile() {
         const resp = await axios.get(`http://localhost:3001/api/users/${_id}`, {
           headers: {Authorization: `Bearer ${token}`}
         });
-        setProfile(resp.data);
-        setLoading(false);
+        if(resp.status == 200) {
+          setProfile(resp.data);
+          setLoading(false);
+        }
       } catch (err) {
         if (axios.isAxiosError(err)) {
           setError(err.response?.data?.message || 'Error fetching profile');
@@ -118,7 +119,7 @@ export default function Profile() {
     fetchProfile();
     fetchPosts();
     fetchComments();
-  }, [_id, token]); // Added token as a dependency
+  }, [_id, token]); // token is now properly listed as a dependency
 
   if (loading)
     return <p>Loading...</p>

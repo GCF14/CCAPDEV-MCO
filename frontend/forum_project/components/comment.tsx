@@ -3,17 +3,8 @@ import {
     Avatar,
     AvatarImage,
 } from "@/components/ui/avatar";
-
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import Link from 'next/link';
-import { MoreVertical } from "lucide-react";
 import ReplyButton from '@/components/reply-button';
-import { Button } from "@/components/ui/button";
 import Dropdown from '@/components/dropdown'
 import axios from 'axios'
 import { useState } from 'react';
@@ -63,7 +54,7 @@ export default function Comment({_id, user, content, edited, comments, postId}: 
           alert("Comment successfully edited.");
           setIsOpen(false);
           window.location.reload();
-        } catch (error) {
+        } catch (err) {
           alert(`Error updating comment`);
         }
       }

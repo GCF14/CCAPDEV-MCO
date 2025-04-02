@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
-import { Eye, EyeOff, Mail} from 'lucide-react'
+import { Eye, EyeOff} from 'lucide-react'
 import Link from 'next/link'
 import { useLogin } from "@/hooks/useLogin"
 import { useRouter } from "next/navigation";
@@ -89,7 +89,7 @@ export default function Login() {
             </div>
           )}
           <div className="text-center mt-4">
-            <p className="text-muted-foreground">Don't have an account?</p>
+            <p className="text-muted-foreground">Don&apos;t have an account?</p>
             <Link
               href="/signup" 
               className="text-primary-500 hover:underline"

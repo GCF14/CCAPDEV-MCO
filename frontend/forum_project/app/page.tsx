@@ -9,7 +9,6 @@ import {
 import Header from "@/components/Header"
 import CreatePostButton from "@/components/create-post-button";
 import axios from 'axios';
-import { LogOut, Router } from 'lucide-react';
 import { useLogout } from "@/hooks/useLogout"
 import { useRouter } from 'next/navigation';
 import withAuth from "@/components/withAuth";
@@ -21,14 +20,13 @@ function Homepage() {
   const [error, setError] = useState<string | null>(null);
   const { logout } = useLogout();
   const router = useRouter();
-  const port = process.env.NEXT_PUBLIC_PORT
   const userData = sessionStorage.getItem('user');
   const token = userData ? JSON.parse(userData).token : null;
 
   useEffect(() => {
     const fetchPosts = async() => {
       try {
-        const resp = await axios.get(`http://localhost:${port}/api/posts/`, {
+        const resp = await axios.get(`http://localhost:${process.env.NEXT_PUBLIC_PORT}/api/posts/`, {
           headers: { Authorization: `Bearer ${token}`}
         });
         setPosts(resp.data);
@@ -42,9 +40,9 @@ function Homepage() {
         setLoading(false);
       }
     };
-
+  
     fetchPosts();
-  }, []);
+  }, [token]); // Add token to the dependency array
 
   if (error)
     return <p>Error: {error}</p>

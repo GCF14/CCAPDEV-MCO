@@ -1,12 +1,3 @@
-import { useState} from "react";
-
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -16,16 +7,14 @@ import {
   import { MoreVertical } from "lucide-react";
 import {Button} from '@/components/ui/button'
 
-import axios from 'axios'
+
 interface DropdownProps {
     onEdit: () => void;
     onDelete: () => void;
 }
 
 export default function Dropdown({ onEdit, onDelete }: DropdownProps) {
-    const commentId = "someCommentId";  // Replace with actual comment ID
-    const content = "someContent"; // Replace with actual content
-
+ 
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>

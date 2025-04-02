@@ -21,7 +21,7 @@ export default function ReplyButton({parentCommentId}: {parentCommentId: string}
     };
 
     try {   
-        const resp = await axios.post(`http://localhost:3001/api/posts/${_id}`, body, {
+        await axios.post(`http://localhost:3001/api/posts/${_id}`, body, {
             headers: {Authorization: `Bearer ${token}`}
         });
 
