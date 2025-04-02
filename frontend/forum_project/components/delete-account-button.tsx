@@ -2,6 +2,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import axios, { AxiosError } from 'axios';
+import { useLogout } from "@/hooks/useLogout"
 
 // Define interfaces for better type safety
 interface UserData {
@@ -28,10 +29,11 @@ const DeleteAccountButton = () => {
   const token = parsedUserData?.token || null;
   const userId = parsedUserData?._id || null;
   const username = parsedUserData?.username || null;
+  const { logout } = useLogout();
 
   const handleClick = async () => {
     const confirm = window.confirm("Are you sure you want to delete your account?");
-
+    
     if (confirm) {
       if (!userId || !token) {
         console.log("User ID or token not found");
@@ -78,8 +80,8 @@ const DeleteAccountButton = () => {
 
         if (response.status === 200) {
           alert('Account deleted successfully');
-          sessionStorage.removeItem('user'); // Deletes user from session
-          router.push('/login'); // Redirect to login page
+          logout();
+          router.push('/login');
         } else {
           console.error('Failed to delete account');
         }
