@@ -45,7 +45,7 @@ const postSchema = new Schema({
 
     content: {
         type: String,
-        required: true
+        default: ''  // Not required anymore
     },
 
     video: {
@@ -93,7 +93,14 @@ const postSchema = new Schema({
         type: Boolean,
         default: false
     }
-    
+}, {
+    // Add a custom validation function
+    validate: {
+        validator: function(post) {
+            return post.content.trim() !== '' || post.video.trim() !== '' || post.photo.trim() !== '';
+        },
+        message: "Post must contain at least content, a video URL, or a photo URL."
+    }
 });
 
 

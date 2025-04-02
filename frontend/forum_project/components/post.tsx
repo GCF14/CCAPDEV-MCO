@@ -139,6 +139,30 @@ export default function Post({_id, user, title, content, video, photo, upvotes, 
                         </div>
                     )}
 
+                    {video && (
+                        <div className="mt-3 mb-3">
+                            {video.includes("youtube.com") || video.includes("youtu.be") ? (
+                                <iframe
+                                    width="100%"
+                                    height="315"
+                                    src={`https://www.youtube.com/embed/${video.split("v=")[1]?.split("&")[0]}`}
+                                    title="YouTube video player"
+                                    frameBorder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowFullScreen
+                                    className="w-full rounded-lg"
+                                ></iframe>
+                            ) : (
+                                <video 
+                                    src={video} 
+                                    controls 
+                                    className="w-full rounded-lg"
+                                />
+                            )}
+                        </div>
+                    )}
+
+
                     <CardDescription>
                         {content}
                         
