@@ -28,6 +28,7 @@ npm (comes with Node.js)
 3. **Set up the Frontend**
     ```sh
     cd frontend
+    cd forum_project
     npm install
 
 4. **Create a .env file in the forum_project directory and add the following:**
