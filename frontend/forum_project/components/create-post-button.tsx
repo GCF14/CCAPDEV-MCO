@@ -77,7 +77,7 @@ export default function CreatePostButton() {
     <>
         <div className="fixed bottom-6 right-6 z-50">
             <button
-                className="group flex items-center justify-center gap-2 rounded-full bg-black px-4 py-3 text-white shadow-lg transition-all hover:w-40 hover:bg-black"
+                className="group flex items-center justify-center gap-2 rounded-full bg-primary px-4 py-3 text-primary-foreground shadow-lg transition-all hover:w-40"
                 onClick={() => setIsOpen(true)}
             >
             <Plus className="size-5" />
