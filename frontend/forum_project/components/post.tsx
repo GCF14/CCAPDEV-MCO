@@ -84,7 +84,7 @@ export default function Post({_id, user, title, content, video, photo, upvotes, 
         e.stopPropagation();
     
         try {
-            const resp = await axios.patch(`http://localhost:3001/api/posts/${_id}/${type}`, {}, {
+            const resp = await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts/${_id}/${type}`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
     

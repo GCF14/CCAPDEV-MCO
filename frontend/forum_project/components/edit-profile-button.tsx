@@ -46,7 +46,7 @@ export default function EditProfileButton() {
         }
     
         try {
-            const res = await axios.patch(`http://localhost:3001/api/users/edit/${userId}`, body, {
+            const res = await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/edit/${userId}`, body, {
                 headers: { Authorization: `Bearer ${token}` },
             });
         

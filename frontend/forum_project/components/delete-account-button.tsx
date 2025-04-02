@@ -40,18 +40,18 @@ const DeleteAccountButton = () => {
 
       try {
         // Fetch all posts of the user
-        const { data: posts } = await axios.get<Post[]>(`http://localhost:3001/api/posts/user/${userId}`, {
+        const { data: posts } = await axios.get<Post[]>(`${process.env.NEXT_PUBLIC_API_URL}/api/posts/user/${userId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
         // Fetch all user replies
-        const { data: comments } = await axios.get<Comment[]>(`http://localhost:3001/api/posts/user/${userId}/comments`, {
+        const { data: comments } = await axios.get<Comment[]>(`${process.env.NEXT_PUBLIC_API_URL}/api/posts/user/${userId}/comments`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
         if (comments.length > 0) {
           // Delete all comments by user
-          await axios.delete(`http://localhost:3001/api/posts/user/${userId}/comments`, {
+          await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/posts/user/${userId}/comments`, {
             headers: { Authorization: `Bearer ${token}` },
           });
           console.log(`All comments by ${username} have been deleted`);
@@ -63,7 +63,7 @@ const DeleteAccountButton = () => {
           // Delete all posts
           await Promise.all(
             posts.map((post) =>
-              axios.delete(`http://localhost:3001/api/posts/${post._id}`, {
+              axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/posts/${post._id}`, {
                 headers: { Authorization: `Bearer ${token}` },
               })
             )
@@ -72,7 +72,7 @@ const DeleteAccountButton = () => {
         }
 
         // Delete user account
-        const response = await axios.delete(`http://localhost:3001/api/users/${userId}`, {
+        const response = await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${userId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 

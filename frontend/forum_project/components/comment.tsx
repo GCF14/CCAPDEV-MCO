@@ -24,7 +24,7 @@ export default function Comment({_id, user, content, edited, comments, postId}: 
         if (!window.confirm("Are you sure you want to delete this comment?")) return;
       
         try {
-          await axios.delete(`http://localhost:3001/api/posts/${postId}/comments/${_id}`, {
+          await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/posts/${postId}/comments/${_id}`, {
             headers: { Authorization: `Bearer ${token}` }
           });
       
@@ -47,7 +47,7 @@ export default function Comment({_id, user, content, edited, comments, postId}: 
     
         try {
           await axios.patch(
-            `http://localhost:${process.env.NEXT_PUBLIC_PORT}/api/posts/${postId}/comments/${editingCommentId}`,
+            `${process.env.NEXT_PUBLIC_API_URL}/api/posts/${postId}/comments/${editingCommentId}`,
             { content: newContent },
             { headers: { Authorization: `Bearer ${token}` } }
           );

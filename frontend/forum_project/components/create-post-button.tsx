@@ -48,7 +48,7 @@ export default function CreatePostButton() {
         }
 
         try {   
-            await axios.post('http://localhost:3001/api/posts/create', body, {
+            await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/posts/create`, body, {
                 headers: {Authorization: `Bearer ${token}`}
             });
             // Response is received but not used
