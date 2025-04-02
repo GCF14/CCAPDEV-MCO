@@ -1,5 +1,8 @@
 # Forum Project
-This project consists of a backend and a frontend that need to be set up separately.
+The Forum Project is a simple yet interactive web forum that allows users to create accounts, post content, and engage with others.
+
+
+🚀 **Live Demo:** [https://ccapdev-mco-1-gdwv.onrender.com]
 
 ## Prerequisites
 
@@ -17,6 +20,7 @@ npm (comes with Node.js)
 
 2. **Create a .env file in the backend directory and add the following:**
     ```sh
+    NEXT_PUBLIC_PORT=3001
     PORT=3001
     MONGO_URI=mongodb+srv://user1:harCIsiJJE91I8e0@cluster0.wrbl6.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
     SECRET=oqiwndqondasndaskajsnd
@@ -28,7 +32,7 @@ npm (comes with Node.js)
 
 4. **Create a .env file in the forum_project directory and add the following:**
     ```sh
-    NEXT_PUBLIC_PORT=3001
+    NEXT_PUBLIC_API_URL=http://localhost:3001
 
 ## Running the Project
 Run the following commands in separate terminals:
