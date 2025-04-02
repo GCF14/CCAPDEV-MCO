@@ -41,9 +41,9 @@ function SearchContent() {
             try {
                 let url = '';
                 if (search) {
-                    url = `http://localhost:3001/api/posts/search/${search}`;
+                    url = `${process.env.NEXT_PUBLIC_API_URL}/api/posts/search/${search}`;
                 } else if (tags) {
-                    url = `http://localhost:3001/api/posts/search/tags/${tags}`;
+                    url = `${process.env.NEXT_PUBLIC_API_URL}/api/posts/search/tags/${tags}`;
                 } else {
                     setLoading(false);
                     return;

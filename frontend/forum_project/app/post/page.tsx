@@ -79,7 +79,7 @@ function PostPageContent() {
 
     const fetchPost = async() => {
       try {
-        const resp = await axios.get(`http://localhost:3001/api/posts/${_id}`, {
+        const resp = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/posts/${_id}`, {
           headers: { Authorization: `Bearer ${token}`}
         });
         setPost(resp.data);
@@ -100,7 +100,7 @@ function PostPageContent() {
     if (!token) return;
     
     try {
-        const resp = await axios.patch(`http://localhost:3001/api/posts/${_id}/${type}`, {}, {
+        const resp = await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts/${_id}/${type}`, {}, {
           headers: { Authorization: `Bearer ${token}`}
         });
         // backend handles the addition of an upvote or downvote
@@ -123,7 +123,7 @@ function PostPageContent() {
     };
    
     try {
-      await axios.post(`http://localhost:3001/api/posts/${_id}`, body, {
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/posts/${_id}`, body, {
         headers: {Authorization: `Bearer ${token}`}
       });
       window.location.reload();
@@ -137,7 +137,7 @@ function PostPageContent() {
     if (!window.confirm("Are you sure you want to delete this post?")) return;
   
     try {
-      await axios.delete(`http://localhost:3001/api/posts/${_id}`, {
+      await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/posts/${_id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
   

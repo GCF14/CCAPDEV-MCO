@@ -26,7 +26,7 @@ function Homepage() {
   useEffect(() => {
     const fetchPosts = async() => {
       try {
-        const resp = await axios.get(`http://localhost:${process.env.NEXT_PUBLIC_PORT}/api/posts/`, {
+        const resp = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/posts/`, {
           headers: { Authorization: `Bearer ${token}`}
         });
         setPosts(resp.data);

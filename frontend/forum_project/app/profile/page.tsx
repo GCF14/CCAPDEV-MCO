@@ -61,7 +61,7 @@ function ProfileContent() {
     
     const fetchProfile = async() => {
       try {
-        const resp = await axios.get(`http://localhost:3001/api/users/${_id}`, {
+        const resp = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${_id}`, {
           headers: {Authorization: `Bearer ${token}`}
         });
         if(resp.status == 200) {
@@ -81,7 +81,7 @@ function ProfileContent() {
     const fetchPosts = async() => {
       setLoading(true);
       try {
-        const resp = await axios.get(`http://localhost:3001/api/posts/user/${_id}`, {
+        const resp = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/posts/user/${_id}`, {
           headers: {Authorization: `Bearer ${token}`}
         });
         setPosts(resp.data);
@@ -99,7 +99,7 @@ function ProfileContent() {
     const fetchComments = async () => {
       setLoading(true);
       try {
-        const resp = await axios.get(`http://localhost:3001/api/posts/user/${_id}/comments`, {
+        const resp = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/posts/user/${_id}/comments`, {
           headers: {Authorization: `Bearer ${token}`}
         });
         setComments(resp.data);

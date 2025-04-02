@@ -20,7 +20,7 @@ export default function Popular() {
             const userData = sessionStorage.getItem('user');
             const token = userData ? JSON.parse(userData).token : null;
 
-            const resp = await axios.get('http://localhost:3001/api/posts/popular', {
+            const resp = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/posts/popular`, {
                 headers: {Authorization: `Bearer ${token}`}
             });
             setPosts(resp.data);
