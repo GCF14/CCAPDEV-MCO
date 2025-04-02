@@ -6,11 +6,12 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar"
 import Header from "@/components/Header"
-import {useState, useEffect} from 'react';
+import {useState, useEffect, Suspense} from 'react';
 import axios from 'axios';
 import { useSearchParams } from 'next/navigation';
 
-export default function Search() {
+// Create a client component that uses the search params
+function SearchContent() {
     const searchParams = useSearchParams();
     const search = searchParams.get("search") || "";
     const tags = searchParams.get("tags") || "";
@@ -73,6 +74,43 @@ export default function Search() {
     if (error)
         return <p>Error: {error}</p>
 
+    return (
+        <div className="flex flex-col items-center justify-center min-h-screen w-full mt-16 space-y-4">
+            {loading ? (
+                <p>Loading...</p>
+            ) : posts.length > 0 ? (
+                posts.map((post) => (
+                    <Post
+                    key={post._id}
+                    _id={post._id}
+                    user={post.user}
+                    title={post.title}
+                    content={post.content}
+                    video={post.video}
+                    photo={post.photo}
+                    upvotes={post.upvotes}
+                    downvotes={post.downvotes}
+                    tags={post.tags}
+                    edited={post.edited}
+                    upvotedBy={post.upvotedBy} 
+                    downvotedBy={post.downvotedBy}
+                    />
+                ))
+                ) : (
+                <p>No posts available.</p>
+                )
+            }
+        </div>
+    );
+}
+
+// Fallback loading component
+function SearchFallback() {
+    return <div className="flex justify-center items-center h-screen">Loading search results...</div>
+}
+
+// Main page component
+export default function Search() {
     return(
         <div>
             <SidebarProvider>
@@ -83,32 +121,9 @@ export default function Search() {
                 </div>
                 <div className="flex flex-1 flex-col gap-4 px-4 pb-10">
                 <div className="mx-auto h-full w-full max-w-3xl rounded-xl">
-                    <div className="flex flex-col items-center justify-center min-h-screen w-full mt-16 space-y-4">
-                        {loading ? (
-                            <p>Loading...</p>
-                        ) : posts.length > 0 ? (
-                            posts.map((post) => (
-                                <Post
-                                key={post._id}
-                                _id={post._id}
-                                user={post.user}
-                                title={post.title}
-                                content={post.content}
-                                video={post.video}
-                                photo={post.photo}
-                                upvotes={post.upvotes}
-                                downvotes={post.downvotes}
-                                tags={post.tags}
-                                edited={post.edited}
-                                upvotedBy={post.upvotedBy} 
-                                downvotedBy={post.downvotedBy}
-                                />
-                            ))
-                            ) : (
-                            <p>No posts available.</p>
-                            )
-                        }
-                    </div>
+                    <Suspense fallback={<SearchFallback />}>
+                        <SearchContent />
+                    </Suspense>
                 </div>
                 </div>
             </SidebarInset>
