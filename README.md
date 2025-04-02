@@ -1,8 +1,7 @@
-Forum Project
-
+#Forum Project
 This project consists of a backend and a frontend that need to be set up separately.
 
-Prerequisites
+##Prerequisites
 
 Make sure you have the following installed:
 
@@ -10,51 +9,48 @@ Node.js (LTS recommended)
 
 npm (comes with Node.js)
 
-Installation
+##Installation
+1. **Set up the Backend**
+    ```sh
+    cd backend
+    npm install
 
-1. Set up the Backend
+2. **Create a .env file in the backend directory and add the following:**
+    ```sh
+    PORT=3001
+    MONGO_URI=mongodb+srv://user1:harCIsiJJE91I8e0@cluster0.wrbl6.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+    SECRET=oqiwndqondasndaskajsnd
 
-cd backend
-npm install
+3. **Set up the Frontend**
+    ```sh
+    cd frontend
+    npm install
 
-Create a .env file in the backend directory and add the following:
+4. **Create a .env file in the forum_project directory and add the following:**
+    ```sh
+    NEXT_PUBLIC_PORT=3001
 
-PORT=3001
-MONGO_URI=mongodb+srv://user1:harCIsiJJE91I8e0@cluster0.wrbl6.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
-SECRET=oqiwndqondasndaskajsnd
-
-2. Set up the Frontend
-
-cd frontend
-npm install
-
-Create a .env file in the forum_project directory and add the following:
-
-NEXT_PUBLIC_PORT=3001
-
-Running the Project
-
+##Running the Project
 Run the following commands in separate terminals:
 
-Start the Backend
+1. **Start the Backend**
+    ```sh
+    cd backend
+    npm run dev
 
-cd backend
-npm run dev
+2. **Start the Frontend**
+    ```sh
+    cd forum_project
+    npm run dev
 
-Start the Frontend
+##Your project should now be running!
 
-cd forum_project
-npm run dev
-
-Your project should now be running!
-
-Troubleshooting
-
+##Troubleshooting
 If you encounter any issues, make sure:
 
-You have installed all dependencies (npm install in both directories)
+✅ You have installed all dependencies (npm install in both directories)
 
-Your .env files are correctly set up
+✅ Your .env files are correctly set up
 
-You are running npm run dev in both directories
+✅ You are running npm run dev in both directories
 
