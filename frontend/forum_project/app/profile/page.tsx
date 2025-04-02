@@ -20,14 +20,7 @@ interface TabItem{
   href: string;
 }
 
-// Define a more specific type for your user data
-interface UserData {
-  token: string;
-  // Add other user properties as needed
-  id?: string;
-  username?: string;
-  // etc.
-}
+
 
 const tabs: TabItem[] = [
   { name: "Posts", href: "#posts" },
