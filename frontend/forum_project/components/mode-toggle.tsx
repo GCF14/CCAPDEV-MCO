@@ -12,7 +12,7 @@ import {
 import { Moon, Sun } from "lucide-react"
 
 export function ModeToggle() {
-  const { setTheme, theme } = useTheme()
+  const { setTheme } = useTheme()
   const [mounted, setMounted] = React.useState(false)
 
   // Only show the UI after mounting to prevent hydration errors

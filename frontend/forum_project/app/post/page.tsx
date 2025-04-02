@@ -5,8 +5,9 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ThumbsUp, ThumbsDown, MessageSquare, Share2 } from "lucide-react";
+import { ThumbsUp, ThumbsDown } from "lucide-react";
 import Link from 'next/link';
+import Image from 'next/image'; // Import next/image
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import {PostProps, CommentProps} from "@/components/post";
@@ -50,16 +51,14 @@ export default function PostPage() {
   const [isDownvoted, setIsDownvoted] = useState(false);
   
   // Changed these to use state to avoid server-side errors
-  const [userData, setUserData] = useState(null);
-  const [token, setToken] = useState(null);
-  const [userId, setUserId] = useState(null);
+  const [token, setToken] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
 
   // Access browser APIs only after component mounts
   useEffect(() => {
     const storedUserData = sessionStorage.getItem('user');
     if (storedUserData) {
       const parsedUserData = JSON.parse(storedUserData);
-      setUserData(parsedUserData);
       setToken(parsedUserData.token);
       setUserId(parsedUserData._id);
     }
@@ -108,16 +107,17 @@ export default function PostPage() {
     return <p>Post not found.</p>;
 
   const handlePostComment = async(content: string) => {
-    if (!token) return;
+    if (!token || !content.trim()) return;
     
-    const body: {content: string} = {
+    const body = {
       content
-    }
+    };
    
     try {
-      const resp = await axios.post(`http://localhost:3001/api/posts/${_id}`, body, {
+      await axios.post(`http://localhost:3001/api/posts/${_id}`, body, {
         headers: {Authorization: `Bearer ${token}`}
       });
+      window.location.reload();
     } catch (error) {
       console.error('Error posting comment:', error);
     }
@@ -176,7 +176,14 @@ export default function PostPage() {
 
                 { post.photo && (
                     <div className="mt-3 mb-3">
-                        <img src={post.photo} alt="Post Image" className="w-full rounded-lg" />
+                        <Image 
+                            src={post.photo} 
+                            alt="Post Image" 
+                            className="w-full rounded-lg"
+                            width={800}
+                            height={600}
+                            layout="responsive"
+                        />
                     </div>
                 )}
 
@@ -214,21 +221,16 @@ export default function PostPage() {
                   
                   {post.user._id === userId && 
                   <div>
-
-                  <Dropdown
-                    onEdit={() => setIsEditModalOpen(true)}
-                    onDelete={handleDeletePost}
-                  />
+                    <Dropdown
+                      onEdit={() => setIsEditModalOpen(true)}
+                      onDelete={handleDeletePost}
+                    />
                   </div>
                   }
-
-                      
                 </div>
-
 
                 {/* COMMENT */}
                 <div className="mt-3">
-                
                 <Textarea
                   id="comment-box"
                   placeholder="Write your comment here..."
@@ -236,7 +238,12 @@ export default function PostPage() {
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
                 />
-                <Button onClick={(e) => {handlePostComment(newComment); window.location.reload();}} className="mt-2">Post Comment</Button>
+                <Button 
+                  onClick={() => handlePostComment(newComment)} 
+                  className="mt-2"
+                >
+                  Post Comment
+                </Button>
                 </div>
 
                 {isEditModalOpen && (
@@ -261,7 +268,6 @@ export default function PostPage() {
                   ) : (
                     <p className="text-gray-500">No comments yet.</p>
                   )}
-
                 </div>
             </div>
           </div>

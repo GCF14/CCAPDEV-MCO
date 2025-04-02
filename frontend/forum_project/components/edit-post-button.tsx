@@ -6,8 +6,6 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-import { Button } from '@/components/ui/button';
-import { PostProps } from '@/components/post';
 import axios from 'axios';
 
 interface EditPostEventProps {
@@ -100,11 +98,17 @@ export default function EditPostEvent({ postId, isOpen, setIsOpen }: EditPostEve
                     />
 
                     {/* PHOTO AND VIDEO */}
-                    <button onClick={(e) => {setShowVideoInput((prev) => !prev);}} className="rounded-md bg-secondary text-secondary-foreground mb-3 mr-4 px-4 py-2">
+                    <button 
+                        onClick={() => setShowVideoInput((prev) => !prev)} 
+                        className="rounded-md bg-secondary text-secondary-foreground mb-3 mr-4 px-4 py-2"
+                    >
                         Add Video
                     </button>
 
-                    <button onClick={(e) => {setShowPhotoInput((prev) => !prev);}} className="rounded-md bg-secondary text-secondary-foreground px-4 py-2">
+                    <button 
+                        onClick={() => setShowPhotoInput((prev) => !prev)} 
+                        className="rounded-md bg-secondary text-secondary-foreground px-4 py-2"
+                    >
                         Add Photo
                     </button>
 
@@ -179,33 +183,3 @@ export default function EditPostEvent({ postId, isOpen, setIsOpen }: EditPostEve
       </div>
     );
 }
-
-
-
-// const editPost = async (req, res) => {
-//     try {
-//         const {id} = req.params; // post id
-//         const {title, content, video , photo ,tags} = req.body; // all of em optional
-
-//         const post = await Post.findById(id);
-
-//         if (post.user.toString() !== req.user._id.toString()) {
-//             return res.status(403).json({ message: 'You can only edit your own posts' });
-//         }
-
-//         // only get fields that are not null
-//         const updateFields = Object.fromEntries(
-//             Object.entries({title, content, video, photo, tags}).filter(([_, v]) => v != null && v !== "")
-//         );
-
-//         // only update if at least one field was changed
-//         if (Object.keys(updateFields).length > 0) {
-//             const editedPost = await Post.findByIdAndUpdate(id, {...updateFields, edited:true}, { new: true });
-//             res.json({ message: 'Post edited successfully', post: editedPost });
-//         }
-        
-//     } catch(error) {
-//         res.status(400).json({error: error.message});
-//     }
-// };
-

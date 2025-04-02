@@ -2,23 +2,17 @@ import {
     Card,
     CardHeader,
     CardTitle,
-    CardDescription,
     CardContent,
     CardFooter,
   } from "@/components/ui/card";
-import axios from 'axios'
+import axios, { AxiosError } from 'axios';
 import { useState } from "react";
-import {ProfileInfo} from '@/components/ProfileCard'
-import {Button} from '@/components/ui/button'
+import { Button } from '@/components/ui/button';
 
-interface User {
-    _id: string;
-    password: string;
-    username: string;
-    firstName: string;
-    lastName: string;
-    pfp: string;
-    bio: string;
+// Define interface for API error response
+interface ErrorResponse {
+    message: string;
+    status: number;
 }
 
 export default function EditProfileButton() {
@@ -29,7 +23,6 @@ export default function EditProfileButton() {
     const userData = sessionStorage.getItem('user');
     const userId = userData ? JSON.parse(userData)._id : null;
     const token = userData ? JSON.parse(userData).token : null;
-
 
     // handler for editing the profile
     const handleEdit = async (newPfp: string, newUsername: string, newBio: string, e: React.MouseEvent) => {
@@ -60,8 +53,9 @@ export default function EditProfileButton() {
             if (res.status === 200) 
                 alert("Successfully updated profile");
             
-        } catch (error: any) {
-            if (error.response && error.response.status === 409) {
+        } catch (error: unknown) {
+            const axiosError = error as AxiosError<ErrorResponse>;
+            if (axiosError.response && axiosError.response.status === 409) {
                 alert("Username already exists. Please choose a different one.");
             } else {
                 alert("Failed to update profile. Please try again.");
@@ -69,8 +63,6 @@ export default function EditProfileButton() {
         }
     };
     
-
-
     return (
         <div>
             <Button onClick={() => setIsOpen(true)}>Edit Profile</Button>
@@ -133,11 +125,5 @@ export default function EditProfileButton() {
             </div>
           )} 
         </div>
-        
-    
-
-        
-    )
-    
-
+    );
 }

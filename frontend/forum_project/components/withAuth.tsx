@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function withAuth(Component: React.FC) {
-  return function AuthWrapper(props: any) {
+// Define a generic type parameter for component props
+export default function withAuth<P extends object>(Component: React.ComponentType<P>) {
+  return function AuthWrapper(props: P) {
     const router = useRouter();
     const [loading, setLoading] = useState(true);
 
@@ -17,7 +18,7 @@ export default function withAuth(Component: React.FC) {
       } else {
         setLoading(false);
       }
-    }, []);
+    }, [router]); // Add router to dependency array
 
     if (loading) return <p>Loading...</p>; 
 

@@ -13,16 +13,13 @@ import {
     AvatarFallback,
     AvatarImage,
 } from "@/components/ui/avatar";
-import {
-    HoverCard,
-    HoverCardContent,
-    HoverCardTrigger,
-  } from "@/components/ui/hover-card"
+
 
 import React, { useState, useEffect } from "react";
-import { ThumbsUp, ThumbsDown, MessageSquare, Share2 } from "lucide-react";
+import { ThumbsUp, ThumbsDown, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import axios from 'axios';
+import Image from 'next/image';
 
 export interface CommentProps {
     _id: string;
@@ -133,10 +130,17 @@ export default function Post({_id, user, title, content, video, photo, upvotes, 
                 </CardHeader>
 
                 <CardContent>     
-                    { photo && (
-                        <div className="mt-3 mb-3">
-                            <img src={photo} alt="Post Image" className="w-full rounded-lg" />
-                        </div>
+                { photo && (
+                    <div className="mt-3 mb-3">
+                        <Image 
+                            src={photo} 
+                            alt="Post Image" 
+                            className="rounded-lg"
+                            width={800} 
+                            height={450}
+                            layout="responsive"
+                        />
+                    </div>
                     )}
 
                     {video && (

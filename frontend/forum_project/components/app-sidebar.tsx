@@ -5,10 +5,7 @@ import { useEffect, useState } from "react"
 import {
   Home,
   Flame,
-  Command,
   CircleUserRound,
-  LogOut,
-  Info
 } from "lucide-react"
 
 import { NavFavorites } from "@/components/nav-favorites"
