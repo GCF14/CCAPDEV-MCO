@@ -7,7 +7,8 @@ import {
   Flame,
   Command,
   CircleUserRound,
-  LogOut
+  LogOut,
+  Info
 } from "lucide-react"
 
 import { NavFavorites } from "@/components/nav-favorites"
@@ -85,6 +86,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         name: "Movies",
         url: "/search?tags=movies",
         emoji: "🎥",
+      },
+      {
+        name: "About",  // Change 'title' to 'name'
+        url: "/about",
+        emoji: "ℹ️",
       },
     ],
   }
