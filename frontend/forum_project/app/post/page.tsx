@@ -46,6 +46,8 @@ export default function PostPage() {
   const [newComment, setNewComment] = useState<string>('');
   const [comments, setComments] = useState<CommentProps[]>([]);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isUpvoted, setIsUpvoted] = useState(false);
+  const [isDownvoted, setIsDownvoted] = useState(false);
   
   // Changed these to use state to avoid server-side errors
   const [userData, setUserData] = useState(null);
@@ -63,6 +65,7 @@ export default function PostPage() {
     }
   }, []);
 
+  
   useEffect(() => {
     if (!_id || !token) return;
 
@@ -73,13 +76,17 @@ export default function PostPage() {
         });
         setPost(resp.data);
         setComments(resp.data.comments);
+        setIsUpvoted(resp.data.upvotedBy?.includes(userId));
+        setIsDownvoted(resp.data.downvotedBy?.includes(userId));
       } catch(error) {
         console.error("Error fetching post: ", error);
       }
     }
 
     fetchPost();
-  }, [_id, token]);
+  }, [_id, token, userId]);
+
+
 
   const handleVote = async(type: 'upvote' | 'downvote') => {
     if (!token) return;
@@ -90,6 +97,8 @@ export default function PostPage() {
         });
         // backend handles the addition of an upvote or downvote
         setPost((prev) => prev ? {...prev, ...resp.data} : prev);
+        setIsUpvoted(resp.data.upvotedBy.includes(userId));
+        setIsDownvoted(resp.data.downvotedBy.includes(userId));
     } catch (error) {
         console.error('Error voting:', error);
     }
@@ -188,22 +197,24 @@ export default function PostPage() {
 
                 {/* BUTTONS */}
                 <div className="flex items-center space-x-2">
-                    <button onClick={() => handleVote('upvote')}>
-                        <ThumbsUp className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />
-                        <span>{post.upvotes}</span>
+                    <button onClick={() => handleVote('upvote')}
+                    className={`flex items-center space-x-1 transition-transform ${
+                    isUpvoted ? "text-blue-500 scale-110 font-bold" : "text-gray-600 hover:text-blue-500 hover:scale-110"
+                    }`}>
+                      <ThumbsUp className="w-5 h-5" />
+                      <span>{post.upvotes}</span>
                     </button>
-                    <button onClick={() => handleVote('downvote')}>
-                        <ThumbsDown className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />
-                        <span>{post.downvotes}</span>
+                    <button onClick={() => handleVote('downvote')}
+                    className={`flex items-center space-x-1 transition-transform ${
+                    isDownvoted ? "text-red-500 scale-110 font-bold" : "text-gray-600 hover:text-red-500 hover:scale-110"
+                    }`}>
+                      <ThumbsDown className="w-5 h-5" />
+                      <span>{post.downvotes}</span>
                     </button>
-                    {/* <MessageSquare className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" /> */}
-                    {/* <Share2 className="w-5 h-5 cursor-pointer text-gray-600 hover:text-blue-500 hover:scale-110 transition-transform" />   */}
-                    {/* {post.user._id === userId && <Button className="mt-2" onClick={handleEditPost}>Edit</Button>}
-                    {post.user._id === userId && <Button className="mt-2" onClick={handleDeletePost}>Delete</Button>} */}
+                  
                   {post.user._id === userId && 
                   <div>
 
-                  {/* <EditPostButton/> */}
                   <Dropdown
                     onEdit={() => setIsEditModalOpen(true)}
                     onDelete={handleDeletePost}

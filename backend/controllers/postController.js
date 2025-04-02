@@ -269,9 +269,6 @@ const getPost = async(req, res) => {
         const post = await Post.findById(id)
             .populate('user', 'username pfp')
             .populate('comments.user', 'username pfp')
-            .populate('upvotedBy', 'username')  // populate upvoters
-            .populate('downvotedBy', 'username') // populate downvoters
-            
         
         post.comments = await populateComments(post.comments);
 
